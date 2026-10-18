@@ -69,11 +69,11 @@ export function buildBot(d: BotDesign): BotMesh {
   const glow: THREE.Mesh[] = [];
 
   const paintTex = paintTexture(look.primary, look.secondary, look.accent, f.has('snake-scales') ? 'checker' : look.pattern ?? 'solid', d.id.length * 13);
-  const paint = std(look.primary, f.has('bare-metal') || f.has('raw-steel') ? 0.85 : 0.35, f.has('bare-metal') ? 0.35 : 0.42, {
-    map: paintTex, clearcoat: f.has('raw-steel') || f.has('bare-metal') ? 0 : 0.6, clearcoatRoughness: 0.35,
+  const paint = std(look.primary, f.has('bare-metal') || f.has('raw-steel') ? 0.75 : 0.25, f.has('bare-metal') ? 0.5 : 0.58, {
+    map: paintTex, clearcoat: f.has('raw-steel') || f.has('bare-metal') ? 0 : 0.35, clearcoatRoughness: 0.5,
   });
-  const second = std(look.secondary, 0.4, 0.45, { clearcoat: 0.4 });
-  const accent = std(look.accent, 0.3, 0.4, { clearcoat: 0.5 });
+  const second = std(look.secondary, 0.35, 0.62, { clearcoat: 0.12 });
+  const accent = std(look.accent, 0.25, 0.5, { clearcoat: 0.3 });
 
   // --- hull (same convex hull as the physics collider) ---
   const pts = chassisHull(d);
@@ -646,7 +646,7 @@ export function poseBot(m: BotMesh, d: BotDesign, v: { weaponAngle: number; actu
     g.rotation.z = -w.angle;
   });
   if (m.rotor) {
-    if (m.rotorAxis === 'y') m.rotor.rotation.y = d.weapon.type === 'spinner' ? d.weapon.mountX === 0 && d.weapon.style === 'shell' ? v.weaponAngle : v.weaponAngle : 0;
+    if (m.rotorAxis === 'y') m.rotor.rotation.y = v.weaponAngle + Math.PI / 2;
     else m.rotor.rotation.z = v.weaponAngle;
   }
   if (m.slide && d.secondary?.type === 'slide' && d.weapon.type === 'spinner') m.slide.position.x = d.weapon.mountX + slidePos * d.secondary.distance;

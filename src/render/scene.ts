@@ -83,7 +83,7 @@ export class GameView {
 
     this.composer = new EffectComposer(this.renderer);
     this.composer.addPass(new RenderPass(this.scene, this.camera));
-    this.bloom = new UnrealBloomPass(new THREE.Vector2(512, 512), 0.5, 0.45, 0.97);
+    this.bloom = new UnrealBloomPass(new THREE.Vector2(512, 512), 0.55, 0.4, 2.2);
     this.composer.addPass(this.bloom);
     this.composer.addPass(new OutputPass());
 
@@ -145,8 +145,8 @@ export class GameView {
       poseBot(m, this.designs[i], bv, extra.slide[i], extra.secondary[i]);
       // battle damage darkens and roughens the paint
       const avg = (bv.panels.top + bv.panels.front + bv.panels.left + bv.panels.right) / 4;
-      m.paint.roughness = 0.42 + (1 - avg) * 0.45;
-      m.paint.clearcoat = 0.6 * avg;
+      m.paint.roughness = 0.58 + (1 - avg) * 0.35;
+      m.paint.clearcoat = 0.35 * avg;
       m.paint.color.set(this.designs[i].look.primary).multiplyScalar(0.55 + 0.45 * avg);
     });
     for (const d of view.debris) {

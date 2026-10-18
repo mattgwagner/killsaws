@@ -60,7 +60,7 @@ export default function App() {
     };
     session.onCallout = (c) => setCallouts((cs) => [...cs.slice(-3), c]);
     startAttract(session);
-    (window as unknown as { killsaws: unknown }).killsaws = { session, view, setScreen };
+    (window as unknown as { killsaws: unknown }).killsaws = { session, view, setScreen, roster: ROSTER };
     return () => { window.removeEventListener('resize', onResize); session.stop(); view.dispose(); };
   }, []);
 
