@@ -7,6 +7,7 @@ import { ConvexGeometry } from 'three/examples/jsm/geometries/ConvexGeometry.js'
 import { BotDesign, isVertical, wheelCenterY } from '../sim/design';
 import { chassisHull } from '../sim/bot';
 import { paintTexture, textTexture } from './textures';
+import { IN } from '../sim/parts';
 import { blueprintGeometry, deckPlate } from './blueprintMesh';
 import { frameOf, frontXAt } from '../sim/blueprint';
 
@@ -26,6 +27,10 @@ export interface BotMesh {
   paint: THREE.MeshPhysicalMaterial;
   damage: THREE.Group;
   hullHalf: THREE.Vector3;
+  /** blueprint arms: [rest, strike] angles (rad) */
+  armRange?: [number, number];
+  /** flame nozzle in the arm's frame (Blacksmith's flaming hammer head) */
+  headFlame?: THREE.Vector3;
 }
 
 const std = (color: string | number, metal = 0.2, rough = 0.5, extra: Partial<THREE.MeshPhysicalMaterialParameters> = {}) =>
@@ -266,6 +271,8 @@ export function buildBot(d: BotDesign): BotMesh {
   let arm: THREE.Object3D | null = null;
   let armKind: BotMesh['armKind'] = null;
   let saw: THREE.Object3D | null = null;
+  let armRange: [number, number] | undefined;
+  let headFlame: THREE.Vector3 | undefined;
   let slide: THREE.Object3D | null = null;
   let secondaryArm: THREE.Object3D | null = null;
   const w = d.weapon;
@@ -283,31 +290,67 @@ export function buildBot(d: BotDesign): BotMesh {
     const tw = w.width;
     switch (w.style) {
       case 'horizontal-bar': {
+        const rs = bp?.rotor;
         if (f.has('cage-of-death')) {
           // Son of Whyachi: three black box arms, red tube triangle, hammers hanging low
           const armMat = std('#141414', 0.5, 0.3, { clearcoat: 0.8 });
           const tubeMat = std('#d11f2b', 0.3, 0.3, { clearcoat: 0.8 });
+          const aw = (rs?.chord ?? 3.5) * IN, tubeR = ((rs?.tube ?? 1.4) * IN) / 2;
           for (let i = 0; i < 3; i++) {
             const a = (i / 3) * Math.PI * 2;
-            const armM = box(R, 0.07, 0.09, armMat);
+            const armM = box(R, aw * 0.8, aw, armMat);
             armM.position.set(Math.cos(a) * R / 2, 0.05, -Math.sin(a) * R / 2);
             armM.rotation.y = a;
             spin.add(armM);
-            const hammer = box(0.11, 0.17, 0.12, armMat);
+            const hammer = box(aw * 1.3, 0.19, aw * 1.4, armMat);
             hammer.position.set(Math.cos(a) * R * 0.95, -0.04, -Math.sin(a) * R * 0.95);
             hammer.rotation.y = a;
             spin.add(hammer);
             const a2 = a + (Math.PI * 2) / 3;
             const p1 = new THREE.Vector3(Math.cos(a) * R * 0.92, 0.07, -Math.sin(a) * R * 0.92);
             const p2 = new THREE.Vector3(Math.cos(a2) * R * 0.92, 0.07, -Math.sin(a2) * R * 0.92);
-            const tube = cyl(0.018, p1.distanceTo(p2), tubeMat, 12);
+            const tube = cyl(tubeR, p1.distanceTo(p2), tubeMat, 14);
             tube.position.copy(p1).add(p2).multiplyScalar(0.5);
             tube.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), p2.clone().sub(p1).normalize());
             spin.add(tube);
           }
-          const hub = cyl(0.1, 0.12, steel(), 24);
+          const hub = cyl(((rs?.hub ?? 8) * IN) / 2, 0.13, std('#2a2a2a', 0.7, 0.4), 24);
           hub.position.y = 0.05;
           spin.add(hub);
+          const cap = cyl(((rs?.hub ?? 8) * IN) / 4, 0.14, std('#d11f2b', 0.3, 0.35), 20);
+          cap.position.y = 0.06;
+          spin.add(cap);
+        } else if (rs) {
+          // a real bar: flat blade with chord, weighted or hooked tips, on a hub
+          const chord = (rs.chord ?? 4) * IN;
+          const bm = std(rs.color ?? '#8d939a', 0.65, 0.42);
+          const tm = std(rs.tipColor ?? '#3a3d42', 0.75, 0.45);
+          const blade = box(R * 2 * 0.86, tw, chord, bm);
+          spin.add(blade);
+          for (const s of [-1, 1]) {
+            if (rs.tips === 'hooked') {
+              const hook = box(R * 0.22, tw * 1.1, chord * 1.35, bm);
+              hook.position.set(s * R * 0.9, 0, s * chord * 0.35);
+              hook.rotation.y = s * 0.55;
+              spin.add(hook);
+              const edge = box(R * 0.1, tw * 1.15, chord * 0.5, tm);
+              edge.position.set(s * R * 0.98, 0, s * chord * 0.75);
+              spin.add(edge);
+            } else {
+              const tip = box(R * 0.16, tw * 1.7, chord * 1.15, tm);
+              tip.position.set(s * R * 0.9, 0, 0);
+              spin.add(tip);
+            }
+          }
+          spin.add(cyl(((rs.hub ?? 5) * IN) / 2, tw * 1.8, std('#c41a1f', 0.4, 0.4), 28));
+          spin.add(cyl(((rs.hub ?? 5) * IN) / 5, tw * 2.4, steel(), 16));
+          if (rs.post) {
+            // fixed post from the deck up to the hub (not part of the spinning group)
+            const postH = Math.max(0.01, w.mountY - hy);
+            const post = cyl(((rs.hub ?? 5) * IN) / 2.6, postH, darkSteel(), 20);
+            post.position.set(w.mountX, hy + postH / 2, 0);
+            body.add(post);
+          }
         } else {
           const bar = box(R * 2, tw, Math.max(0.07, R * 0.16), barMat);
           spin.add(bar);
@@ -482,9 +525,20 @@ export function buildBot(d: BotDesign): BotMesh {
       // big lid hinged at the back of the plate, folds to a scoop at the front
       const hingeX = hx + d.chassis.wedgeLength * 0.4 - w.plateLength;
       g.position.set(hingeX, hy + 0.012, 0);
-      const lid = box(w.plateLength, 0.018, w.plateWidth, f.has('bare-metal') ? std('#b9babe', 0.9, 0.35) : paint);
+      // brushed, not chrome: the lid is the robot's whole top and caught the key light
+      const lid = box(w.plateLength, 0.018, w.plateWidth, f.has('bare-metal') ? std('#8e9094', 0.7, 0.6) : paint);
       lid.position.x = w.plateLength / 2;
       g.add(lid);
+      if (look.logo) {
+        // the name is painted on the lid itself, so it rides up with the flip
+        const t = textTexture(look.logo, { color: look.accent, font: '"Oswald", "Impact", sans-serif' });
+        const lw = Math.min(w.plateLength * 0.8, w.plateWidth * 1.1);
+        const name = new THREE.Mesh(new THREE.PlaneGeometry(lw, lw * 0.25), new THREE.MeshBasicMaterial({ map: t, transparent: true, depthWrite: false }));
+        name.rotation.x = -Math.PI / 2;
+        name.rotation.z = Math.PI / 2;
+        name.position.set(w.plateLength * 0.55, 0.0095, 0);
+        g.add(name);
+      }
       const lip = box(0.06, 0.014, w.plateWidth, accent);
       lip.position.set(w.plateLength, -0.02, 0);
       lip.rotation.z = -0.6;
@@ -503,6 +557,85 @@ export function buildBot(d: BotDesign): BotMesh {
       }
       armKind = 'lifter';
     }
+    body.add(g);
+    arm = g;
+  } else if (w.type === 'hammer' && bp?.arm) {
+    // pivoting arm from the blueprint: beam (solid or truss), head at the tip
+    const a = bp.arm;
+    const g = new THREE.Group();
+    g.position.set(a.pivot[0] * IN, hy + a.pivot[1] * IN, 0);
+    const len = a.length * IN, depth = a.beam[0] * IN, width = a.beam[1] * IN;
+    const armMat = std(a.color, a.truss ? 0.85 : 0.45, a.truss ? 0.38 : 0.5);
+    if (a.truss) {
+      for (const sy of [-1, 1]) {
+        const rail = box(len, depth * 0.22, width, armMat);
+        rail.position.set(len / 2, (sy * depth) / 2, 0);
+        g.add(rail);
+      }
+      const n = Math.max(3, Math.round(len / (depth * 1.1)));
+      for (let i = 0; i < n; i++) {
+        const strut = box(Math.hypot(len / n, depth), depth * 0.16, width * 0.8, armMat);
+        strut.position.set((i + 0.5) * (len / n), 0, 0);
+        strut.rotation.z = (i % 2 ? 1 : -1) * Math.atan2(depth, len / n);
+        g.add(strut);
+      }
+    } else {
+      const beam = box(len, depth, width, armMat);
+      beam.position.x = len / 2;
+      g.add(beam);
+    }
+    const pin = cyl(depth * 0.45, width * 1.6, steel(), 16, 'z');
+    g.add(pin);
+    const hm = std(a.head.color, 0.6, 0.45);
+    const [h0, h1, h2] = a.head.size.map((v) => (v ?? 0) * IN);
+    if (a.head.kind === 'saw' || a.head.kind === 'blade') {
+      const sawG = new THREE.Group();
+      sawG.position.set(len, 0, 0);
+      const r = h0 / 2;
+      if (a.head.kind === 'saw') {
+        sawG.add(cyl(r * 0.94, h1, hm, 48, 'z'));
+        for (let i = 0; i < 28; i++) {
+          const ang = (i / 28) * Math.PI * 2;
+          const tooth = box(r * 0.14, r * 0.1, h1 * 1.1, std('#e0e0e0', 0.85, 0.3));
+          tooth.position.set(Math.cos(ang) * r * 0.97, Math.sin(ang) * r * 0.97, 0);
+          tooth.rotation.z = ang;
+          sawG.add(tooth);
+        }
+      } else {
+        // asymmetric hammer-saw blade: a crescent with one big tooth
+        const sh = new THREE.Shape();
+        sh.absarc(0, 0, r, 0, Math.PI * 2, false);
+        const hole = new THREE.Path();
+        hole.absarc(-r * 0.25, 0, r * 0.5, 0, Math.PI * 2, true);
+        sh.holes.push(hole);
+        const geo = new THREE.ExtrudeGeometry(sh, { depth: h1, bevelEnabled: false, curveSegments: 32 });
+        geo.translate(0, 0, -h1 / 2);
+        const blade = new THREE.Mesh(geo, hm);
+        blade.castShadow = true;
+        sawG.add(blade);
+        const tooth = box(r * 0.45, r * 0.3, h1 * 1.05, hm);
+        tooth.position.set(r * 0.95, 0, 0);
+        tooth.rotation.z = -0.4;
+        sawG.add(tooth);
+      }
+      sawG.add(cyl(depth * 0.5, width * 1.2, steel(), 16, 'z'));
+      g.add(sawG);
+      saw = sawG;
+      armKind = 'saw';
+    } else {
+      const head = a.head.kind === 'cylinder' ? cyl(h0 / 2, h1, hm, 24, 'z') : box(h0, h2 || h1, h1, hm);
+      // the head hangs below the beam so the blow lands face-first
+      head.position.set(len, a.head.kind === 'cylinder' ? 0 : -((h2 || h1) / 2 - depth / 2), 0);
+      g.add(head);
+      if (d.flame) {
+        const nozzle = cyl(0.012, 0.06, darkSteel(), 10, 'x');
+        nozzle.position.set(len + h0 / 2 + 0.02, 0, 0);
+        g.add(nozzle);
+        headFlame = new THREE.Vector3(len + h0 / 2 + 0.05, 0, 0);
+      }
+      armKind = 'hammer';
+    }
+    armRange = [(a.rest * Math.PI) / 180, (a.strike * Math.PI) / 180];
     body.add(g);
     arm = g;
   } else if (w.type === 'hammer') {
@@ -617,17 +750,25 @@ export function buildBot(d: BotDesign): BotMesh {
     }
   }
   if (f.has('engine-housing')) {
-    // Icewave: octagonal engine housing above the bar with a golden cap and exhaust
-    const house = new THREE.Mesh(new THREE.CylinderGeometry(0.17, 0.2, 0.2, 8), std('#1f3570', 0.4, 0.4, { clearcoat: 0.6 }));
-    house.position.set(d.weapon.type === 'spinner' ? d.weapon.mountX : 0, hy + 0.27, 0);
+    // Icewave: the 15 hp concrete-saw engine in a black box housing on top of the bar,
+    // blue stripe, angled exhaust, pull-start on top
+    const cx = d.weapon.type === 'spinner' ? d.weapon.mountX : 0;
+    const top = d.weapon.type === 'spinner' ? d.weapon.mountY + d.weapon.width / 2 + 0.01 : hy + 0.1;
+    const house = box(0.34, 0.2, 0.3, std('#141516', 0.4, 0.55));
+    house.position.set(cx - 0.02, top + 0.1, 0);
+    house.rotation.y = 0.25;
     body.add(house);
-    const cap = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.17, 0.07, 8), std('#e7a62c', 0.4, 0.4, { clearcoat: 0.6 }));
-    cap.position.copy(house.position).add(new THREE.Vector3(0, 0.135, 0));
-    body.add(cap);
-    const ex = cyl(0.025, 0.18, std('#141414', 0.7, 0.4), 12);
-    ex.position.copy(house.position).add(new THREE.Vector3(-0.12, 0.2, 0.06));
-    ex.rotation.z = 0.5;
+    const stripe = box(0.345, 0.03, 0.06, std('#1f5fd0', 0.3, 0.45));
+    stripe.position.set(cx - 0.02, top + 0.17, 0.08);
+    stripe.rotation.y = 0.25;
+    body.add(stripe);
+    const ex = cyl(0.028, 0.2, std('#202224', 0.7, 0.45), 14);
+    ex.position.set(cx - 0.05, top + 0.27, -0.05);
+    ex.rotation.z = 0.35;
     body.add(ex);
+    const pull = box(0.08, 0.02, 0.02, std('#e33', 0.2, 0.5));
+    pull.position.set(cx + 0.08, top + 0.21, 0.05);
+    body.add(pull);
   }
   if (f.has('head-eyes')) {
     // Bloodsport's head with angry red eyes and the curved self-righting pole
@@ -744,7 +885,7 @@ export function buildBot(d: BotDesign): BotMesh {
   body.add(damage);
 
   return {
-    root, body, wheels, rotor, rotorAxis, arm, armKind, saw, slide, secondaryArm, flameNozzle, glow, paint, damage,
+    root, body, wheels, rotor, rotorAxis, arm, armKind, saw, slide, secondaryArm, flameNozzle, glow, paint, damage, armRange, headFlame,
     hullHalf: new THREE.Vector3(hx, hy, hz),
   };
 }
@@ -765,7 +906,16 @@ export function poseBot(m: BotMesh, d: BotDesign, v: { weaponAngle: number; actu
   if (m.secondaryArm) m.secondaryArm.rotation.z = secondary * 0.9;
   if (m.arm) {
     const a = v.actuator;
-    switch (m.armKind) {
+    if (m.armRange && (m.armKind === 'hammer' || m.armKind === 'saw')) {
+      // ease in like a swing: slow off the rest pose, fastest into the strike
+      const [rest, strike] = m.armRange;
+      m.arm.rotation.z = rest + (strike - rest) * a;
+      if (m.headFlame && m.flameNozzle) {
+        // keep the body-frame nozzle on the hammer head as it swings
+        const c = Math.cos(m.arm.rotation.z), s = Math.sin(m.arm.rotation.z);
+        m.flameNozzle.set(m.arm.position.x + c * m.headFlame.x, m.arm.position.y + s * m.headFlame.x, 0);
+      }
+    } else switch (m.armKind) {
       case 'flipper': m.arm.rotation.z = a * 1.75; break;
       case 'lifter': m.arm.rotation.z = a * 0.7; break;
       case 'hammer': m.arm.rotation.z = 1.9 - a * 2.2; break; // rests back over the deck, slams forward

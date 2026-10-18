@@ -184,6 +184,7 @@ const SPECS: Spec[] = [
     bp: {
       outline: [[-16, -13], [12, -14], [12, 14], [-16, 13]],
       height: 8, clearance: 0.5, front: { at: -2, lip: 0.4, floor: true }, rear: { at: -14, lip: 5 },
+      arm: { pivot: [-12, 2], length: 27, beam: [4, 3], head: { kind: 'saw', size: [13, 0.5], color: '#c7cacd' }, rest: 12, strike: -10, color: '#1a1a1a' },
     },
     armor: { front: P('hardox', 12), rear: P('al7075', 8), sides: P('al7075', 8), top: P('al7075', 6), bottom: P('al7075', 5) },
     wheels: 2, wheelDia: 8, wheelWidth: 3, track: 31, axleX: -9, topMph: 14, driveMotor: 'bl80-150', forks: true, flame: true, invertible: false,
@@ -241,6 +242,7 @@ const SPECS: Spec[] = [
     bp: {
       outline: [[-16, -14], [-14, -15], [14, -15], [16, -14], [16, 14], [14, 15], [-14, 15], [-16, 14]],
       height: 12, clearance: 0.5, front: { at: 10, lip: 4 },
+      arm: { pivot: [-12, 2], length: 32, beam: [3.5, 3], head: { kind: 'box', size: [6, 7, 7], color: '#48db70' }, rest: 150, strike: -21, color: '#1a1a1a' },
     },
     armor: { front: P('ar500', 8), rear: P('al7075', 8), sides: P('al7075', 8), top: P('al7075', 6), bottom: P('al7075', 5) },
     wheels: 4, wheelDia: 7, topMph: 12, forks: true, flame: true,
@@ -278,6 +280,7 @@ const SPECS: Spec[] = [
     bp: {
       outline: [[-16, -15], [-15, -16], [12, -16], [16, -16], [16, 16], [12, 16], [-15, 16], [-16, 15]],
       height: 7, clearance: 0.5, front: { at: 11, lip: 0.4, floor: true },
+      rotor: { chord: 4, tube: 2, hub: 9 },
     },
     armor: { front: P('ar500', 8), rear: P('al7075', 6), sides: P('al7075', 6), top: P('al7075', 5), bottom: P('al7075', 5) },
     wheels: 4, wheelDia: 6, topMph: 8,
@@ -301,7 +304,8 @@ const SPECS: Spec[] = [
     L: 34, W: 34, H: 6, shape: 'wedge', wedge: 7,
     bp: {
       outline: [[-17, -16], [-15, -17], [9, -17], [17, -17], [17, 17], [9, 17], [-15, 17], [-17, 16]],
-      height: 6, clearance: 0.5, front: { at: 9, lip: 0.4, floor: true },
+      height: 6, clearance: 0.5, front: { at: 9, lip: 0.4, floor: true, color: '#141414' },
+      rotor: { chord: 4, hub: 6, post: 3, tips: 'weighted', color: '#f2c400', tipColor: '#2a2a2a' },
     },
     armor: { front: P('ar500', 8), rear: P('al7075', 6), sides: P('al7075', 6), top: P('polycarb', 6), bottom: P('al7075', 5) },
     wheels: 4, wheelDia: 5, topMph: 11,
@@ -327,6 +331,7 @@ const SPECS: Spec[] = [
       outline: [[-13, -11], [-11, -13], [-10, -13], [-10, -10.5], [-4, -10.5], [-4, -13], [4, -13], [4, -10.5], [10, -10.5], [10, -13], [11, -13], [13, -11],
         [13, 11], [11, 13], [10, 13], [10, 10.5], [4, 10.5], [4, 13], [-4, 13], [-4, 10.5], [-10, 10.5], [-10, 13], [-11, 13], [-13, 11]],
       height: 6, clearance: 0.5,
+      rotor: { chord: 7, hub: 7, post: 1, tips: 'hooked', color: '#1a1a1a', tipColor: '#d7191f' },
     },
     armor: { front: P('ar500', 10), rear: P('al7075', 8), sides: P('al7075', 8), top: P('ar500', 6), bottom: P('al7075', 5) },
     track: 23, wheels: 4, wheelDia: 5, topMph: 14, forks: true, selfRighter: 'torque',
@@ -339,6 +344,7 @@ const SPECS: Spec[] = [
     bp: {
       outline: [[-17, -13], [10, -17], [17, -14], [17, 14], [10, 17], [-17, 13]],
       height: 9, clearance: 0.5, front: { at: 4, lip: 0.4, floor: true }, rear: { at: -14, lip: 5 },
+      arm: { pivot: [-6, 3], length: 32, beam: [3.5, 2], truss: true, head: { kind: 'cylinder', size: [5, 9], color: '#6b5d4a' }, rest: 130, strike: -18, color: '#cfd3d8' },
     },
     armor: { front: P('ar500', 10), rear: P('ar500', 6), sides: P('ar500', 8), top: P('polycarb', 6), bottom: P('al7075', 5) },
     wheels: 4, wheelDia: 6, topMph: 12,
@@ -415,6 +421,7 @@ const SPECS: Spec[] = [
     bp: {
       outline: [[-14, -11], [-12, -12], [8, -12], [11, -13], [21, -12.5], [18, -8], [20, -4.5], [16, -1], [16, 1], [20, 4.5], [18, 8], [21, 12.5], [11, 13], [8, 12], [-12, 12], [-14, 11]],
       height: 8, clearance: 0.5, front: { at: 7, lip: 0.4, floor: true, color: '#1d1e20' },
+      arm: { pivot: [-5, 3], length: 28, beam: [3.5, 2.5], head: { kind: 'blade', size: [14, 0.5], color: '#1fa8d8' }, rest: 72, strike: -11, color: '#151515' },
     },
     armor: { front: P('ar500', 9.5), rear: P('ar500', 4.8), sides: P('ar500', 4.8), top: P('ar500', 4.8), bottom: P('al7075', 4) },
     wheels: 2, wheelDia: 10, wheelWidth: 3.5, track: 28, axleX: -8, tire: 'pneumatic-foam', topMph: 15, driveMotor: 'bl80-150', flame: true, invertible: false,

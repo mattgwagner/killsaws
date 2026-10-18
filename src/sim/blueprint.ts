@@ -16,6 +16,36 @@ export interface Slope {
   color?: string;
 }
 
+/** A pivoting weapon arm (hammer, axe, hammer saw). Angles in degrees: 0 = pointing forward along the deck, 90 = straight up, 180 = back along the deck. */
+export interface ArmSpec {
+  /** pivot: x (in, body frame) and height above the deck (in) */
+  pivot: [number, number];
+  /** pivot to head centre (in) */
+  length: number;
+  /** beam cross-section: depth (vertical) x width (in) */
+  beam: [number, number];
+  /** box: [length, width, height]; cylinder: [diameter, length across]; saw/blade: [diameter, thickness] (in) */
+  head: { kind: 'box' | 'cylinder' | 'saw' | 'blade'; size: [number, number, number?]; color: string };
+  rest: number;
+  strike: number;
+  color: string;
+  /** open truss beam (two rails + struts) instead of a solid box beam */
+  truss?: boolean;
+}
+
+/** How a horizontal bar or cage is drawn: a flat blade with a chord, on a hub post above the deck. */
+export interface RotorSpec {
+  /** blade width across the direction of travel (in) */
+  chord?: number;
+  hub?: number; // hub diameter (in)
+  post?: number; // hub post height from the deck (in)
+  tips?: 'weighted' | 'hooked';
+  color?: string;
+  tipColor?: string;
+  /** cage tube diameter (in), for tri-bar cages */
+  tube?: number;
+}
+
 export interface Blueprint {
   /** closed polygon, inches, body frame; concave is fine (render keeps it, the collider uses its hull) */
   outline: [number, number][];
@@ -25,6 +55,16 @@ export interface Blueprint {
   clearance: number;
   front?: Slope;
   rear?: Slope;
+  arm?: ArmSpec;
+  rotor?: RotorSpec;
+}
+
+/** Arm head centre (m, body frame) at an angle (deg) -- shared by the renderer and the tests. */
+export function armHead(bp: Blueprint, deg: number) {
+  const a = bp.arm!;
+  const r = (deg * Math.PI) / 180;
+  const hy = (bp.height * IN) / 2;
+  return { x: a.pivot[0] * IN + Math.cos(r) * a.length * IN, y: hy + a.pivot[1] * IN + Math.sin(r) * a.length * IN };
 }
 
 export interface BlueprintFrame {

@@ -29,3 +29,30 @@ describe('blueprints', () => {
     });
   }
 });
+
+import { armHead, frameOf } from '../src/sim/blueprint';
+import { IN } from '../src/sim/parts';
+
+describe('blueprint arms', () => {
+  const armed = ROSTER.filter((d) => d.chassis.blueprint?.arm);
+  it('the hammers and hammer saws all have a blueprint arm', () => {
+    expect(armed.map((d) => d.id)).toEqual(expect.arrayContaining(['beta', 'blacksmith', 'sawblaze', 'skorpios']));
+  });
+  for (const d of armed) {
+    const bp = d.chassis.blueprint!;
+    const a = bp.arm!;
+    const f = frameOf(bp);
+    it(`${d.name}: the drawn arm matches the sim's reach within 4 in`, () => {
+      expect(d.weapon.type).toBe('hammer');
+      if (d.weapon.type === 'hammer') expect(Math.abs(a.length * IN - d.weapon.armLength)).toBeLessThan(4 * IN);
+    });
+    it(`${d.name}: at rest the head is up off the deck; at the strike it lands past the nose and above the floor`, () => {
+      const rest = armHead(bp, a.rest), strike = armHead(bp, a.strike);
+      expect(rest.y).toBeGreaterThan(f.hy);
+      expect(strike.x).toBeGreaterThan(f.maxX - 1 * IN);
+      const headHalf = ((a.head.kind === 'box' ? a.head.size[2] ?? a.head.size[1] : a.head.size[0]) * IN) / 2;
+      expect(strike.y - headHalf).toBeGreaterThan(f.floorY - 1 * IN);
+      expect(strike.y - headHalf).toBeLessThan(f.hy);
+    });
+  }
+});
