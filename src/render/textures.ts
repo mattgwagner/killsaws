@@ -236,6 +236,16 @@ export function paintTexture(primary: string, secondary: string, accent: string,
         g.beginPath(); g.moveTo(0, y); g.quadraticCurveTo(140 + R() * 80, y + 18, 300 + R() * 160, y + 4); g.lineTo(0, y + 14); g.fill();
       }
       break;
+    case 'jagged':
+      // white saw-tooth bands along the edges (Calypso's crab graphics)
+      g.fillStyle = '#ffffff';
+      for (const y0 of [0, 512]) {
+        g.beginPath(); g.moveTo(0, y0);
+        g.fillRect(0, y0 === 0 ? 0 : 440, 512, 72);
+        for (let x = 0; x <= 512; x += 40) { g.lineTo(x + 20, y0 === 0 ? 120 + R() * 70 : 392 - R() * 70); g.lineTo(x + 40, y0); }
+        g.closePath(); g.fill();
+      }
+      break;
     case 'rivets':
       g.fillStyle = secondary;
       for (let x = 24; x < 512; x += 64) for (let y = 24; y < 512; y += 64) { g.beginPath(); g.arc(x, y, 7, 0, Math.PI * 2); g.fill(); }

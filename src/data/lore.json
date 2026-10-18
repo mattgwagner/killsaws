@@ -1510,5 +1510,69 @@
   "sources": [
    "https://battlebots.fandom.com/wiki/Gigabyte"
   ]
+ },
+ {
+  "id": "calypso",
+  "name": "Calypso",
+  "team": "Team Horizon",
+  "captain": "Joshua Kong",
+  "hometown": "Los Angeles, CA",
+  "debut": "BattleBots FaceOffs (2024)",
+  "weaponType": "undercutter",
+  "weapon": "A 45 lb horizontal, asymmetric spinning disk mounted low under the centre of the robot as an undercutter, flanked by hinged forks so it can also fight like a control bot; the forks can be swapped for a defensive wedge. Upgraded for the 2026 Pro League with a stronger weapon shaft and fully custom electronics.",
+  "armor": [
+   "Hardox steel, 3/16 in and 1/4 in"
+  ],
+  "giantNuts": [],
+  "runnerUp": [],
+  "awards": [],
+  "records": [
+   "Only robot to go unbeaten in the 2026 BattleBots Pro League (2-0 in Group B, second to MadCatter)",
+   "Built from CAD to combat-ready in six weeks"
+  ],
+  "fights": [
+   {
+    "opponent": "Skorpios",
+    "season": "BattleBots FaceOffs (2024)",
+    "summary": "Debut, after two drive motors failed minutes before the fight. Calypso landed undercutter hits on Skorpios' plow and slashed its right tire, but kept catching its forks in the killsaw slots and took four hammer-saw blows to its front bulkhead and weapon shaft before Joshua Kong gave up control to save the robot.",
+    "result": "Lost"
+   },
+   {
+    "opponent": "MadCatter",
+    "season": "BattleBots FaceOffs (2024)",
+    "summary": "Second fight of its debut group.",
+    "result": "Lost"
+   },
+   {
+    "opponent": "Roundhouse",
+    "season": "BattleBots FaceOffs (2024)",
+    "summary": "Calypso's first win, finishing third in its FaceOffs group.",
+    "result": "Won"
+   },
+   {
+    "opponent": "Disarray",
+    "season": "BattleBots Pro League (2026)",
+    "summary": "Group B round robin, after Calypso was brought in to replace Tombstone.",
+    "result": "Won (TKO)"
+   },
+   {
+    "opponent": "Magnitude",
+    "season": "BattleBots Pro League (2026)",
+    "summary": "Second Group B fight; Calypso finished the group stage unbeaten.",
+    "result": "Won (KO)"
+   }
+  ],
+  "trivia": "The crab theme was picked to win over young fans after Horizon lost to DOOM: 'No one's going to cheer for a Greek myth or a lemonade.' It is based on Joshua Kong's 1 lb antweight of the same name, and travels with two SPAM minibots, Pork Chop and Meat-Tornado.",
+  "selfRighting": "Gyroscopic: uses the weapon's gyroscopic force to roll back over rather than being fully invertible",
+  "uncertain": [
+   "weaponSpecs.lengthOrDiameterIn",
+   "weaponSpecs.rpm",
+   "drive.topSpeedMph",
+   "appearance.primaryColorHex",
+   "appearance.secondaryColorHex"
+  ],
+  "sources": [
+   "https://battlebots.fandom.com/wiki/Calypso"
+  ]
  }
 ]

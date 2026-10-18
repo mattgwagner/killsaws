@@ -4,7 +4,7 @@
 
 import type RAPIERNS from '@dimforge/rapier3d-compat';
 import { RAPIER, COLLIDE } from './physics';
-import { blueprintHull } from './blueprint';
+import { blueprintHull, frontXAt } from './blueprint';
 import {
   BotDesign, DerivedStats, computeStats, isVertical, panelAreas, rotorInertia, wheelCenterY,
 } from './design';
@@ -203,8 +203,10 @@ export class BotRuntime {
 
     if (ch.forks) {
       for (const s of [-1, 1]) {
+        const fz = s * ch.width * 0.33;
+        const fx = ch.blueprint ? frontXAt(ch.blueprint, fz) + 0.05 : ch.length / 2 + ch.wedgeLength + 0.05;
         const fd = RAPIER.ColliderDesc.cuboid(0.09, 0.006, 0.05)
-          .setTranslation(ch.length / 2 + ch.wedgeLength + 0.05, -ch.height / 2 - ch.clearance + 0.008, s * ch.width * 0.33)
+          .setTranslation(fx, -ch.height / 2 - ch.clearance + 0.008, fz)
           .setDensity(0).setFriction(0.25).setCollisionGroups(COLLIDE.chassis);
         const fc = world.createCollider(fd, this.body);
         tags.set(fc.handle, { bot: this, part: 'fork' });

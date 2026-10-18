@@ -125,3 +125,16 @@ export function outlineArea(bp: Blueprint) {
   }
   return Math.abs(a) / 2;
 }
+
+/** Front-most x (m) of the outline at lateral position z (m): where a fork or leg mounts. */
+export function frontXAt(bp: Blueprint, z: number) {
+  const f = frameOf(bp);
+  let best = -Infinity;
+  for (let i = 0; i < f.pts.length; i++) {
+    const a = f.pts[i], b = f.pts[(i + 1) % f.pts.length];
+    if ((a.z - z) * (b.z - z) > 0 || a.z === b.z) continue;
+    const t = (z - a.z) / (b.z - a.z);
+    best = Math.max(best, a.x + (b.x - a.x) * t);
+  }
+  return Number.isFinite(best) ? best : f.maxX;
+}

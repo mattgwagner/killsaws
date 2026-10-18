@@ -394,6 +394,21 @@ const SPECS: Spec[] = [
     look: { primary: '#0e0e0e', secondary: '#151515', accent: '#3ddc3a', logo: 'COBALT', features: ['green-teeth', 'green-forks', 'speed-lines'] },
   },
   {
+    id: 'calypso', name: 'Calypso', team: 'Team Horizon',
+    L: 22, W: 54, H: 7,
+    bp: {
+      outline: [[9, -5], [6, -7], [-4, -25], [-6, -27], [-12, -27], [-13, -24], [-6, -7], [-8, -4], [-8, 4], [-6, 7], [-13, 24], [-12, 27], [-6, 27], [-4, 25], [6, 7], [9, 5]],
+      height: 7, clearance: 0.5, front: { at: 4, lip: 3.5 },
+    },
+    // crab: central pod over the disk, arms swept back to exposed wheels at the far tips
+    armor: { front: P('hardox', 6.4), rear: P('hardox', 4.8), sides: P('hardox', 4.8), top: P('hardox', 4.8), bottom: P('al7075', 4) },
+    wheels: 4, wheelDia: 7, wheelWidth: 2.5, track: 56, wheelbase: 4, axleX: -9, driveMotor: 'bl56-inrunner', motorsPerSide: 1, topMph: 16,
+    forks: true, selfRighter: 'torque', invertible: false,
+    // 45 lb asymmetric undercutter; diameter and rpm unpublished (estimate)
+    weapon: spinner({ style: 'undercutter', lb: 45, dia: 26, width: 1.25, teeth: 1, tooth: 1.5, rpm: rpmAt(220, 26), motor: 'bl80100-130', motors: 1, mountX: 4, mountY: -2 }),
+    look: { primary: '#e8641f', secondary: '#3aa6b9', accent: '#141414', logo: 'CALYPSO', pattern: 'jagged', features: ['crab-legs', 'black-rotor'], tireColor: '#1b1b1b' },
+  },
+  {
     id: 'gigabyte', name: 'Gigabyte', team: 'Robotic Death Company',
     L: 46, W: 46, H: 10, clear: 0.6, shape: 'ring',
     armor: { front: P('al7075', 3), rear: P('al7075', 3), sides: P('al7075', 3), top: P('al7075', 3), bottom: P('al7075', 3) },

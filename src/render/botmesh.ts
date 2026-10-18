@@ -8,6 +8,7 @@ import { BotDesign, isVertical, wheelCenterY } from '../sim/design';
 import { chassisHull } from '../sim/bot';
 import { paintTexture, textTexture } from './textures';
 import { blueprintGeometry, deckPlate } from './blueprintMesh';
+import { frontXAt } from '../sim/blueprint';
 
 export interface BotMesh {
   root: THREE.Group;
@@ -182,12 +183,23 @@ export function buildBot(d: BotDesign): BotMesh {
 
   // forks / wedgelets
   if (d.chassis.forks) {
-    const forkMat = f.has('green-forks') || f.has('three-forks') || f.has('accent-forks') ? accent : f.has('piano-keys') ? second : steel();
-    const n = f.has('piano-keys') ? 6 : f.has('three-forks') ? 3 : 2;
+    const forkMat = f.has('green-forks') || f.has('three-forks') || f.has('accent-forks') || f.has('crab-legs') ? accent : f.has('piano-keys') ? second : steel();
+    const n = f.has('piano-keys') ? 6 : f.has('three-forks') ? 3 : f.has('crab-legs') ? 4 : 2;
     for (let i = 0; i < n; i++) {
       const zc = n === 2 ? (i === 0 ? -1 : 1) * W * 0.33 : (i / (n - 1) - 0.5) * W * 0.8;
+      const legs = f.has('crab-legs');
+      const fz = legs ? (i < 2 ? -1 : 1) * (i % 3 === 0 ? W * 0.33 : W * 0.19) : zc;
+      const fx = bp ? frontXAt(bp, fz) : hx + d.chassis.wedgeLength;
+      if (legs) {
+        // crab legs: long black blades angled down from the front edge to the floor
+        const leg = box(0.28, 0.035, 0.03, forkMat);
+        leg.position.set(fx + 0.1, -hy - clearance * 0.5 + 0.05, fz);
+        leg.rotation.z = -0.42;
+        body.add(leg);
+        continue;
+      }
       const fork = box(0.22, 0.012, n > 3 ? W * 0.12 : 0.07, forkMat);
-      fork.position.set(hx + d.chassis.wedgeLength + 0.05, -hy - clearance + 0.012, zc);
+      fork.position.set(fx + 0.05, -hy - clearance + 0.012, zc);
       fork.rotation.z = -0.08;
       body.add(fork);
     }
@@ -266,7 +278,7 @@ export function buildBot(d: BotDesign): BotMesh {
     pivot.add(spin);
     rotor = spin;
     rotorAxis = isVertical(w.style) ? 'z' : 'y';
-    const barMat = d.id === 'tombstone' ? std(look.accent, 0.7, 0.35, { clearcoat: 0.3 }) : d.id === 'huge' ? std('#24406b', 0.7, 0.35) : toolSteel;
+    const barMat = d.id === 'tombstone' ? std(look.accent, 0.7, 0.35, { clearcoat: 0.3 }) : d.id === 'huge' ? std('#24406b', 0.7, 0.35) : f.has('black-rotor') ? std('#161616', 0.6, 0.5) : toolSteel;
     const toothMat = f.has('green-teeth') ? std('#3ddc3a', 0.4, 0.35) : f.has('gold-plow') || f.has('gold-stripe') ? std('#c9a332', 0.8, 0.38) : std('#b4b8bd', 0.8, 0.36);
     const tw = w.width;
     switch (w.style) {
@@ -311,6 +323,25 @@ export function buildBot(d: BotDesign): BotMesh {
       }
       case 'horizontal-disk':
       case 'undercutter': {
+        if (w.teeth === 1) {
+          // single-tooth disk: a crescent, the cut-out window balancing the tooth
+          const sh = new THREE.Shape();
+          sh.absarc(0, 0, R * 0.92, 0, Math.PI * 2, false);
+          const hole = new THREE.Path();
+          hole.absarc(-R * 0.3, 0, R * 0.55, 0, Math.PI * 2, true);
+          sh.holes.push(hole);
+          const g = new THREE.ExtrudeGeometry(sh, { depth: tw, bevelEnabled: false, curveSegments: 40 });
+          g.rotateX(Math.PI / 2);
+          g.translate(0, tw / 2, 0);
+          const crescent = new THREE.Mesh(g, barMat);
+          crescent.castShadow = true;
+          spin.add(crescent);
+          const tooth = box(R * 0.28, tw * 1.3, 0.09, toothMat);
+          tooth.position.set(R * 0.9, 0, 0);
+          spin.add(tooth);
+          spin.add(cyl(R * 0.16, tw * 1.6, steel(), 20));
+          break;
+        }
         const disk = cyl(R * 0.9, tw, barMat, 40);
         spin.add(disk);
         for (let i = 0; i < w.teeth; i++) {

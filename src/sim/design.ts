@@ -82,7 +82,7 @@ export interface BotLook {
   primary: string;
   secondary: string;
   accent: string;
-  pattern?: 'solid' | 'stripes' | 'flames' | 'checker' | 'split' | 'tiger' | 'rivets' | 'carbon';
+  pattern?: 'solid' | 'stripes' | 'flames' | 'checker' | 'split' | 'tiger' | 'rivets' | 'carbon' | 'jagged';
   /** free-form feature tags the mesh builder knows how to draw */
   features?: string[];
   logo?: string;
