@@ -1,9 +1,11 @@
 {
   // KILLSAWS: static game + online room relay (Durable Object).
   "name": "killsaws",
+  "account_id": "ab1da25c524f59bc61f776304bd88558",
   "main": "src/worker/index.ts",
   "compatibility_date": "2026-09-30",
   "workers_dev": true,
+  "routes": [{ "pattern": "killsaws.redleg.dev", "custom_domain": true }],
   "assets": {
     "directory": "./dist/client",
     "not_found_handling": "single-page-application",
