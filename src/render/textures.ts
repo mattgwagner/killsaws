@@ -246,6 +246,20 @@ export function paintTexture(primary: string, secondary: string, accent: string,
         g.closePath(); g.fill();
       }
       break;
+    case 'marble':
+      // hand-painted red/blue marbling: wandering thick strokes of the secondary colour
+      for (let k = 0; k < 26; k++) {
+        g.strokeStyle = k % 3 === 2 ? accent : secondary;
+        g.globalAlpha = 0.55 + R() * 0.4;
+        g.lineWidth = 8 + R() * 30;
+        g.beginPath();
+        let x = R() * 512, y = R() * 512;
+        g.moveTo(x, y);
+        for (let j = 0; j < 6; j++) { const nx = x + (R() - 0.5) * 260, ny = y + (R() - 0.5) * 260; g.quadraticCurveTo(x + (R() - 0.5) * 200, y + (R() - 0.5) * 200, nx, ny); x = nx; y = ny; }
+        g.stroke();
+      }
+      g.globalAlpha = 1;
+      break;
     case 'rivets':
       g.fillStyle = secondary;
       for (let x = 24; x < 512; x += 64) for (let y = 24; y < 512; y += 64) { g.beginPath(); g.arc(x, y, 7, 0, Math.PI * 2); g.fill(); }

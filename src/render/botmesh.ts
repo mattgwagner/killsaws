@@ -8,7 +8,7 @@ import { BotDesign, isVertical, wheelCenterY } from '../sim/design';
 import { chassisHull } from '../sim/bot';
 import { paintTexture, textTexture } from './textures';
 import { blueprintGeometry, deckPlate } from './blueprintMesh';
-import { frontXAt } from '../sim/blueprint';
+import { frameOf, frontXAt } from '../sim/blueprint';
 
 export interface BotMesh {
   root: THREE.Group;
@@ -93,7 +93,7 @@ export function buildBot(d: BotDesign): BotMesh {
     hullGeo = new ConvexGeometry(vecs);
     topUV(hullGeo, L, W);
   }
-  const hull = new THREE.Mesh(hullGeo, paint);
+  const hull = new THREE.Mesh(hullGeo, bp?.front?.color ? [paint, std(bp.front.color, 0.75, 0.5, { side: THREE.DoubleSide })] : paint);
   hull.castShadow = true; hull.receiveShadow = true;
   body.add(hull);
   // vertical spinners sit in a slot cut through the nose: draw the hull as a rear block + two cheeks
@@ -278,7 +278,7 @@ export function buildBot(d: BotDesign): BotMesh {
     pivot.add(spin);
     rotor = spin;
     rotorAxis = isVertical(w.style) ? 'z' : 'y';
-    const barMat = d.id === 'tombstone' ? std(look.accent, 0.7, 0.35, { clearcoat: 0.3 }) : d.id === 'huge' ? std('#24406b', 0.7, 0.35) : f.has('black-rotor') ? std('#161616', 0.6, 0.5) : toolSteel;
+    const barMat = d.id === 'tombstone' ? std(look.accent, 0.7, 0.35, { clearcoat: 0.3 }) : d.id === 'huge' ? std('#24406b', 0.7, 0.35) : f.has('black-rotor') ? std('#161616', 0.6, 0.5) : f.has('blue-rotor') ? std('#2f6fd0', 0.6, 0.45) : toolSteel;
     const toothMat = f.has('green-teeth') ? std('#3ddc3a', 0.4, 0.35) : f.has('gold-plow') || f.has('gold-stripe') ? std('#c9a332', 0.8, 0.38) : std('#b4b8bd', 0.8, 0.36);
     const tw = w.width;
     switch (w.style) {
@@ -657,6 +657,28 @@ export function buildBot(d: BotDesign): BotMesh {
       e.position.set(hx * 0.55, hy + 0.008, s * 0.05);
       body.add(e);
       glow.push(e);
+    }
+  }
+  if (f.has('cat-eyes') && bp) {
+    // Cheshire Cat eyes painted across the sloped front cheeks
+    const fr = frameOf(bp);
+    for (const sgn of [-1, 1]) {
+      const z = sgn * W * 0.3;
+      const x0 = frontXAt(bp, z) - 0.09, x1 = x0 + 0.02;
+      const y0 = fr.top(x0), slope = Math.atan2(fr.top(x1) - y0, 0.02);
+      const eye = new THREE.Group();
+      eye.position.set(x0, y0 + 0.004, z);
+      eye.rotation.z = slope;
+      const white = new THREE.Mesh(new THREE.CircleGeometry(0.075, 28), std('#58b7ff', 0.1, 0.35, { emissive: '#1d4f80', emissiveIntensity: 0.4 }));
+      white.scale.set(1.25, 0.8, 1);
+      white.rotation.x = -Math.PI / 2;
+      eye.add(white);
+      const pupil = new THREE.Mesh(new THREE.CircleGeometry(0.06, 20), std('#0a0a0a', 0, 0.6));
+      pupil.scale.set(0.22, 1, 1);
+      pupil.rotation.x = -Math.PI / 2;
+      pupil.position.y = 0.001;
+      eye.add(pupil);
+      body.add(eye);
     }
   }
   if (f.has('gold-stripe')) {

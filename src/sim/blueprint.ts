@@ -12,6 +12,8 @@ export interface Slope {
   lip: number;
   /** the belly drops to the floor too (a true wedge), instead of only the top sloping */
   floor?: boolean;
+  /** the sloped plate is a different material (e.g. a raw steel plow on a painted bot) */
+  color?: string;
 }
 
 export interface Blueprint {
@@ -31,6 +33,7 @@ export interface BlueprintFrame {
   floorY: number; // floor in body frame (m)
   minX: number; maxX: number; minZ: number; maxZ: number;
   creases: number[]; // x positions (m) where the top surface bends
+  frontAt: number; // x (m) where the nose slope starts
   top: (x: number) => number;
   bottom: (x: number) => number;
 }
@@ -63,7 +66,7 @@ export function frameOf(bp: Blueprint): BlueprintFrame {
     return -hy;
   };
   const creases = [...(bp.rear ? [rAt] : []), ...(bp.front ? [fAt] : [])];
-  return { pts, hy, floorY, minX, maxX, minZ: Math.min(...zs), maxZ: Math.max(...zs), creases, top, bottom };
+  return { pts, hy, floorY, minX, maxX, minZ: Math.min(...zs), maxZ: Math.max(...zs), creases, frontAt: fAt, top, bottom };
 }
 
 /** Outline with extra vertices wherever an edge crosses a crease line. */

@@ -15,22 +15,28 @@ function triangulate(poly: { x: number; z: number }[], y: (x: number) => number,
 
 export function blueprintGeometry(bp: Blueprint) {
   const f = frameOf(bp);
-  const pos: number[] = [];
+  // two vertex lists: the body, and the nose plate (only split out when the blueprint colours it)
+  const body: number[] = [], nose: number[] = [];
+  const split = !!bp.front?.color;
+  const inNose = (x: number) => split && x >= f.frontAt - 1e-6;
   const ring = withCreases(f);
   for (let i = 0; i < ring.length; i++) {
     const a = ring[i], b = ring[(i + 1) % ring.length];
     const ab = [a.x, f.bottom(a.x), a.z], bb = [b.x, f.bottom(b.x), b.z];
     const bt = [b.x, f.top(b.x), b.z], at = [a.x, f.top(a.x), a.z];
-    pos.push(...ab, ...bb, ...bt, ...ab, ...bt, ...at);
+    (inNose(a.x) && inNose(b.x) ? nose : body).push(...ab, ...bb, ...bt, ...ab, ...bt, ...at);
   }
   const cuts = [f.minX - 1, ...f.creases, f.maxX + 1];
   for (let k = 0; k < cuts.length - 1; k++) {
     const seg = clipX(f.pts, cuts[k], cuts[k + 1]);
-    triangulate(seg, f.top, false, pos);
-    triangulate(seg, f.bottom, true, pos);
+    const out = inNose((cuts[k] + Math.min(cuts[k + 1], f.maxX)) / 2) && cuts[k] >= f.frontAt - 1e-6 ? nose : body;
+    triangulate(seg, f.top, false, out);
+    triangulate(seg, f.bottom, true, out);
   }
   const g = new THREE.BufferGeometry();
-  g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  g.setAttribute('position', new THREE.Float32BufferAttribute([...body, ...nose], 3));
+  g.addGroup(0, body.length / 3, 0);
+  if (nose.length) g.addGroup(body.length / 3, nose.length / 3, 1);
   g.computeVertexNormals();
   return { geometry: g, frame: f };
 }

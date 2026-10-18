@@ -409,6 +409,34 @@ const SPECS: Spec[] = [
     look: { primary: '#e8641f', secondary: '#3aa6b9', accent: '#141414', logo: 'CALYPSO', pattern: 'jagged', features: ['crab-legs', 'black-rotor'], tireColor: '#1b1b1b' },
   },
   {
+    id: 'skorpios', name: 'Skorpios', team: 'Bot Bash Party Crew',
+    L: 35, W: 26.5, H: 8,
+    // 2WD with big rear wheels; wide plow wedge with serrated prongs; hammer-saw arm on top
+    bp: {
+      outline: [[-14, -11], [-12, -12], [8, -12], [11, -13], [21, -12.5], [18, -8], [20, -4.5], [16, -1], [16, 1], [20, 4.5], [18, 8], [21, 12.5], [11, 13], [8, 12], [-12, 12], [-14, 11]],
+      height: 8, clearance: 0.5, front: { at: 7, lip: 0.4, floor: true, color: '#1d1e20' },
+    },
+    armor: { front: P('ar500', 9.5), rear: P('ar500', 4.8), sides: P('ar500', 4.8), top: P('ar500', 4.8), bottom: P('al7075', 4) },
+    wheels: 2, wheelDia: 10, wheelWidth: 3.5, track: 28, axleX: -8, tire: 'pneumatic-foam', topMph: 15, driveMotor: 'bl80-150', flame: true, invertible: false,
+    // hammer saw: the 14 lb 'T-Rex' asymmetric blade on an articulating arm (reach and blade rpm estimated)
+    weapon: { type: 'hammer', style: 'saw-arm', headMass: 14 * LB, armLength: 28 * IN, energy: 1400, swingTime: 0.3, cooldown: 0.2, systemMass: 20, sawRpm: 3000 },
+    look: { primary: '#1fa8d8', secondary: '#111111', accent: '#1fa8d8', logo: 'SKORPIOS', features: [], tireColor: '#4a4d52' },
+  },
+  {
+    id: 'madcatter', name: 'MaDCatTer', team: 'Team Bad Kitty',
+    L: 31, W: 30, H: 10,
+    // wedged box, angled cheeks either side of the central disk slot (Cheshire Cat eyes painted across them)
+    bp: {
+      outline: [[-15, -14], [-13, -15], [10, -15], [16, -11], [16, -3], [6, -3], [6, 3], [16, 3], [16, 11], [10, 15], [-13, 15], [-15, 14]],
+      height: 10, clearance: 0.5, front: { at: 7, lip: 0.6, floor: true }, rear: { at: -12, lip: 6 },
+    },
+    armor: { front: P('ar500', 10), rear: P('al7075', 8), sides: P('ar500', 6), top: P('al7075', 6), bottom: P('al7075', 5) },
+    wheels: 6, wheelDia: 6, wheelWidth: 2.5, track: 28, wheelbase: 18, driveMotor: 'bl80-150', motorsPerSide: 3, topMph: 16, selfRighter: 'torque',
+    // 48 lb disk (WC VI figure); diameter and rpm unpublished (estimate)
+    weapon: spinner({ style: 'vertical-disk', lb: 48, dia: 18, width: 2, teeth: 2, tooth: 1.2, rpm: rpmAt(210, 18), motor: 'bl120-70', motors: 1, mountX: 12, mountY: 0 }),
+    look: { primary: '#d8262c', secondary: '#2f7fd8', accent: '#58b7ff', logo: 'MADCATTER', pattern: 'marble', features: ['cat-eyes', 'blue-rotor'] },
+  },
+  {
     id: 'gigabyte', name: 'Gigabyte', team: 'Robotic Death Company',
     L: 46, W: 46, H: 10, clear: 0.6, shape: 'ring',
     armor: { front: P('al7075', 3), rear: P('al7075', 3), sides: P('al7075', 3), top: P('al7075', 3), bottom: P('al7075', 3) },

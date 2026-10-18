@@ -1574,5 +1574,128 @@
   "sources": [
    "https://battlebots.fandom.com/wiki/Calypso"
   ]
+ },
+ {
+  "id": "skorpios",
+  "name": "Skorpios",
+  "team": "Bot Bash Party Crew",
+  "captain": "Zach Lytle and Diana Tarlson (co-captains)",
+  "hometown": "Moraga, CA",
+  "debut": "World Championship II (2016)",
+  "weaponType": "saw-arm",
+  "weapon": "Hammer saw: an articulating overhead arm swinging a spinning blade or disk down onto opponents, behind a plow-like front wedge with sharp serrated prongs that trap robots. Blade options include an 11 lb single-tooth AR400 disk, the 14 lb asymmetric 'T-Rex', the 7 lb 'Klondike Bar' and the 21 lb 'Big Bertha'. Overhead flamethrower from WC VII.",
+  "armor": [
+   "AR400 steel: 3/8 in front wedge, 3/16 in armor (WC V)"
+  ],
+  "giantNuts": [],
+  "runnerUp": [],
+  "awards": [
+   "Founder's Award (World Championship V)",
+   "Bounty winner, Icewave bracket (BattleBots: Bounty Hunters)",
+   "Sin City Slugfest winner (BattleBots: Champions I)"
+  ],
+  "records": [
+   "Competed in every season since World Championship II",
+   "Nine consecutive judges' decisions across WC IV, Bounty Hunters and WC V",
+   "Undefeated at BattleBots FaceOffs (2024), beating Calypso, Roundhouse and MadCatter"
+  ],
+  "fights": [
+   {
+    "opponent": "Tombstone",
+    "season": "World Championship V (2020)",
+    "summary": "Main Event win over the feared horizontal spinner on the way to a 2-1 Fight Night record and Skorpios' first tournament bracket.",
+    "result": "Won"
+   },
+   {
+    "opponent": "Icewave",
+    "season": "BattleBots: Bounty Hunters (2020)",
+    "summary": "After beating Black Widow, P1 and HyperShock, Skorpios beat Icewave in a rematch to claim the bracket's share of the $25,000 bounty.",
+    "result": "Won (Bounty)"
+   },
+   {
+    "opponent": "Bloodsport",
+    "season": "BattleBots: Champions I",
+    "summary": "Defended its bounty title in Sin City Slugfest by a very close split decision, the first bounty winner to retain its title.",
+    "result": "Won (split decision)"
+   },
+   {
+    "opponent": "Calypso",
+    "season": "BattleBots FaceOffs (2024)",
+    "summary": "Held Calypso against the wall and the screws and brought the hammer saw down on its front bulkhead and weapon shaft four times until Calypso's driver gave up control.",
+    "result": "Won"
+   }
+  ],
+  "trivia": "Zach and Diana also run Bot Bash Party, where kids build and drive combat robots at birthday parties, and Zach is a professional yo-yo champion nicknamed 'Magneto'.",
+  "selfRighting": "The hammer-saw arm swings over to right it",
+  "uncertain": [
+   "weaponSpecs.rpm",
+   "weaponSpecs.lengthOrDiameterIn",
+   "drive.topSpeedMph",
+   "appearance.primaryColorHex"
+  ],
+  "sources": [
+   "https://battlebots.fandom.com/wiki/Skorpios"
+  ]
+ },
+ {
+  "id": "madcatter",
+  "name": "MaDCatTer",
+  "team": "Team Bad Kitty",
+  "captain": "Martin Mason",
+  "hometown": "Pomona, CA",
+  "debut": "World Championship IV (2019)",
+  "weaponType": "vertical-disk",
+  "weapon": "Vertical spinning disk, central since the 2024 rebuild (the WC VI version carried a 48 lb disk offset to one side with a 15 kW weapon motor). Earlier versions also ran an electric axe and lifting arms.",
+  "armor": [
+   "Mostly welded chassis with aluminum drive rails (2024)"
+  ],
+  "giantNuts": [],
+  "runnerUp": [],
+  "awards": [
+   "Founder's Award (World Championship VII)"
+  ],
+  "records": [
+   "3-0 Fight Night record in World Championship V",
+   "Beat Triple Crown in 32 seconds, one of the fastest wins in BattleBots history",
+   "3-0 in its 2026 Pro League group, including a win over Tombstone"
+  ],
+  "fights": [
+   {
+    "opponent": "Whiplash",
+    "season": "World Championship VII (2022)",
+    "summary": "A dominant opening win by knockout over the 2020 runner-up.",
+    "result": "Won (KO)"
+   },
+   {
+    "opponent": "SawBlaze",
+    "season": "World Championship VI (2021)",
+    "summary": "MadCatter's first Main Event. SawBlaze disabled its lifter and caused visible damage throughout.",
+    "result": "Lost (KO)"
+   },
+   {
+    "opponent": "Tombstone",
+    "season": "BattleBots Pro League (2026)",
+    "summary": "Group stage win on the way to a 3-0 group and a quarter-final place.",
+    "result": "Won"
+   },
+   {
+    "opponent": "Witch Doctor",
+    "season": "BattleBots Pro League (2026)",
+    "summary": "Quarter-final; Witch Doctor ended the run.",
+    "result": "Lost"
+   }
+  ],
+  "trivia": "The Cheshire Cat artwork is hand-painted by Martin Mason's daughter, Katie Mason, and gets repainted several times during each competition. The name is a pun on the Mad Hatter.",
+  "selfRighting": null,
+  "uncertain": [
+   "weaponSpecs.lengthOrDiameterIn",
+   "weaponSpecs.rpm",
+   "drive.invertible",
+   "drive.selfRighting",
+   "drive.topSpeedMph"
+  ],
+  "sources": [
+   "https://battlebots.fandom.com/wiki/MadCatter"
+  ]
  }
 ]

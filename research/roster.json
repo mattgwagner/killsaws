@@ -2975,5 +2975,225 @@
   "sources": [
    "https://battlebots.fandom.com/wiki/Calypso"
   ]
+ },
+ {
+  "id": "skorpios",
+  "name": "Skorpios",
+  "team": "Bot Bash Party Crew",
+  "builders": {
+   "captain": "Zach Lytle and Diana Tarlson (co-captains)",
+   "others": [
+    "Ben Shafton",
+    "Robert Wisecarver",
+    "Daniel Granicher",
+    "Jesse Roberts",
+    "Ezra Pramono"
+   ]
+  },
+  "hometown": "Moraga, CA",
+  "debutSeason": {
+   "rebootDebut": "World Championship II (2016)",
+   "year": 2016,
+   "notes": "Built by Offbeat Robotics (Orion Beach), then sold to Zach Lytle and Diana Tarlson, who have run it since WC V. Has competed in every season since WC II, plus Proving Ground, FaceOffs and the 2026 Pro League."
+  },
+  "weaponType": "saw-arm",
+  "weaponDescription": "Hammer saw: an articulating overhead arm swinging a spinning blade or disk down onto opponents, behind a plow-like front wedge with sharp serrated prongs that trap robots. Blade options include an 11 lb single-tooth AR400 disk, the 14 lb asymmetric 'T-Rex', the 7 lb 'Klondike Bar' and the 21 lb 'Big Bertha'. Overhead flamethrower from WC VII.",
+  "weaponSpecs": {
+   "massLb": 14,
+   "lengthOrDiameterIn": null,
+   "rpm": null,
+   "tipSpeedMph": null,
+   "storedEnergy": null,
+   "teethOrImpactors": 1,
+   "spinUpTimeS": null,
+   "actuator": "electric arm",
+   "forceOrPressure": null,
+   "motor": null,
+   "notes": "massLb is the T-Rex blade; arm reach and blade rpm unpublished (game estimates)."
+  },
+  "drive": {
+   "wheelCount": 2,
+   "driveType": "2WD",
+   "invertible": false,
+   "topSpeedMph": null,
+   "selfRighting": "The hammer-saw arm swings over to right it",
+   "motors": "Magmotors with Whyachi gearboxes"
+  },
+  "armor": {
+   "materials": [
+    "AR400 steel: 3/8 in front wedge, 3/16 in armor (WC V)"
+   ],
+   "chassisShape": "Two-wheel drive body with big exposed rear wheels and a wide plow wedge with serrated prongs out front; the arm pivots on top.",
+   "dimensionsIn": null
+  },
+  "appearance": {
+   "primaryColorHex": "#1fa8d8",
+   "secondaryColorHex": "#111111",
+   "accentColorsHex": [
+    "#1fa8d8",
+    "#d0d0d0"
+   ],
+   "features": "Bright cyan body and hubs with a black serrated plow, black articulating arm with a cyan asymmetric blade, big grey tires at the rear."
+  },
+  "achievements": {
+   "giantNutWins": [],
+   "runnerUp": [],
+   "otherAwards": [
+    "Founder's Award (World Championship V)",
+    "Bounty winner, Icewave bracket (BattleBots: Bounty Hunters)",
+    "Sin City Slugfest winner (BattleBots: Champions I)"
+   ],
+   "notableRecords": [
+    "Competed in every season since World Championship II",
+    "Nine consecutive judges' decisions across WC IV, Bounty Hunters and WC V",
+    "Undefeated at BattleBots FaceOffs (2024), beating Calypso, Roundhouse and MadCatter"
+   ]
+  },
+  "famousFights": [
+   {
+    "opponent": "Tombstone",
+    "season": "World Championship V (2020)",
+    "summary": "Main Event win over the feared horizontal spinner on the way to a 2-1 Fight Night record and Skorpios' first tournament bracket.",
+    "result": "Won"
+   },
+   {
+    "opponent": "Icewave",
+    "season": "BattleBots: Bounty Hunters (2020)",
+    "summary": "After beating Black Widow, P1 and HyperShock, Skorpios beat Icewave in a rematch to claim the bracket's share of the $25,000 bounty.",
+    "result": "Won (Bounty)"
+   },
+   {
+    "opponent": "Bloodsport",
+    "season": "BattleBots: Champions I",
+    "summary": "Defended its bounty title in Sin City Slugfest by a very close split decision, the first bounty winner to retain its title.",
+    "result": "Won (split decision)"
+   },
+   {
+    "opponent": "Calypso",
+    "season": "BattleBots FaceOffs (2024)",
+    "summary": "Held Calypso against the wall and the screws and brought the hammer saw down on its front bulkhead and weapon shaft four times until Calypso's driver gave up control.",
+    "result": "Won"
+   }
+  ],
+  "trivia": "Zach and Diana also run Bot Bash Party, where kids build and drive combat robots at birthday parties, and Zach is a professional yo-yo champion nicknamed 'Magneto'.",
+  "uncertain": [
+   "weaponSpecs.rpm",
+   "weaponSpecs.lengthOrDiameterIn",
+   "drive.topSpeedMph",
+   "appearance.primaryColorHex"
+  ],
+  "sources": [
+   "https://battlebots.fandom.com/wiki/Skorpios"
+  ]
+ },
+ {
+  "id": "madcatter",
+  "name": "MaDCatTer",
+  "team": "Team Bad Kitty",
+  "builders": {
+   "captain": "Martin Mason",
+   "others": [
+    "Calvin Iba",
+    "Allen Phuong",
+    "Ryan Lau",
+    "Zack Jafery",
+    "Ralph Hanson",
+    "Coleman Christy (driver)"
+   ]
+  },
+  "hometown": "Pomona, CA",
+  "debutSeason": {
+   "rebootDebut": "World Championship IV (2019)",
+   "year": 2019,
+   "notes": "Built by college students mentored by Martin Mason. Rebuilt from the ground up for FaceOffs (2024), keeping only the weapon gearbox."
+  },
+  "weaponType": "vertical-disk",
+  "weaponDescription": "Vertical spinning disk, central since the 2024 rebuild (the WC VI version carried a 48 lb disk offset to one side with a 15 kW weapon motor). Earlier versions also ran an electric axe and lifting arms.",
+  "weaponSpecs": {
+   "massLb": 48,
+   "lengthOrDiameterIn": null,
+   "rpm": null,
+   "tipSpeedMph": null,
+   "storedEnergy": null,
+   "teethOrImpactors": 2,
+   "spinUpTimeS": null,
+   "actuator": null,
+   "forceOrPressure": null,
+   "motor": "15 kW brushless weapon motor (WC VI)",
+   "notes": "massLb is the WC VI disk; diameter and rpm unpublished (game estimates)."
+  },
+  "drive": {
+   "wheelCount": 6,
+   "driveType": "6WD",
+   "invertible": null,
+   "topSpeedMph": null,
+   "selfRighting": null,
+   "motors": "6x 9 kW brushless drive motors; vulcanized rubber wheels, the front pair slightly smaller (2024)"
+  },
+  "armor": {
+   "materials": [
+    "Mostly welded chassis with aluminum drive rails (2024)"
+   ],
+   "chassisShape": "Wide wedged box with angled cheeks either side of a central weapon slot.",
+   "dimensionsIn": null
+  },
+  "appearance": {
+   "primaryColorHex": "#d8262c",
+   "secondaryColorHex": "#2f7fd8",
+   "accentColorsHex": [
+    "#58b7ff",
+    "#111111"
+   ],
+   "features": "Hand-painted red and blue marbled finish with a Cheshire Cat theme: a giant pair of blue cat eyes with slit pupils painted across the two front cheeks, a blue disk in the central slot."
+  },
+  "achievements": {
+   "giantNutWins": [],
+   "runnerUp": [],
+   "otherAwards": [
+    "Founder's Award (World Championship VII)"
+   ],
+   "notableRecords": [
+    "3-0 Fight Night record in World Championship V",
+    "Beat Triple Crown in 32 seconds, one of the fastest wins in BattleBots history",
+    "3-0 in its 2026 Pro League group, including a win over Tombstone"
+   ]
+  },
+  "famousFights": [
+   {
+    "opponent": "Whiplash",
+    "season": "World Championship VII (2022)",
+    "summary": "A dominant opening win by knockout over the 2020 runner-up.",
+    "result": "Won (KO)"
+   },
+   {
+    "opponent": "SawBlaze",
+    "season": "World Championship VI (2021)",
+    "summary": "MadCatter's first Main Event. SawBlaze disabled its lifter and caused visible damage throughout.",
+    "result": "Lost (KO)"
+   },
+   {
+    "opponent": "Tombstone",
+    "season": "BattleBots Pro League (2026)",
+    "summary": "Group stage win on the way to a 3-0 group and a quarter-final place.",
+    "result": "Won"
+   },
+   {
+    "opponent": "Witch Doctor",
+    "season": "BattleBots Pro League (2026)",
+    "summary": "Quarter-final; Witch Doctor ended the run.",
+    "result": "Lost"
+   }
+  ],
+  "trivia": "The Cheshire Cat artwork is hand-painted by Martin Mason's daughter, Katie Mason, and gets repainted several times during each competition. The name is a pun on the Mad Hatter.",
+  "uncertain": [
+   "weaponSpecs.lengthOrDiameterIn",
+   "weaponSpecs.rpm",
+   "drive.invertible",
+   "drive.selfRighting",
+   "drive.topSpeedMph"
+  ],
+  "sources": [
+   "https://battlebots.fandom.com/wiki/MadCatter"
+  ]
  }
 ]
