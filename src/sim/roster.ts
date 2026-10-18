@@ -144,27 +144,42 @@ const SPECS: Spec[] = [
   },
   {
     id: 'hypershock', name: 'HyperShock', team: 'Team HyperShock',
-    L: 40, W: 26, H: 6, shape: 'wedge', wedge: 5,
+    L: 34, W: 19, H: 6,
+    // long, narrow race-car body, tapered nose with the disk between forks, four exposed race tires
+    bp: {
+      outline: [[-20, -8], [-18, -9.5], [8, -9.5], [14, -4.5], [14, -2], [9.5, -2], [9.5, 2], [14, 2], [14, 4.5], [8, 9.5], [-18, 9.5], [-20, 8]],
+      height: 6, clearance: 0.5, front: { at: 5, lip: 1.2, floor: true }, rear: { at: -16, lip: 3.5 },
+    },
     armor: { front: P('ar500', 8), rear: P('al7075', 6), sides: P('al7075', 6), top: P('al7075', 5), bottom: P('al7075', 4) },
-    wheels: 4, wheelDia: 7.5, wheelWidth: 3, track: 30, wheelbase: 26, tire: 'nhra', topMph: 28, invertible: true, forks: true,
-    weapon: spinner({ style: 'vertical-disk', lb: 40, dia: 17, width: 1.6, teeth: 2, rpm: 4200, motor: 'bl80100-130', motors: 1, mountX: 22, mountY: 0 }),
+    wheels: 4, wheelDia: 7.5, wheelWidth: 3, track: 26, wheelbase: 24, axleX: -4, tire: 'nhra', topMph: 28, invertible: true, forks: true,
+    weapon: spinner({ style: 'vertical-disk', lb: 40, dia: 17, width: 1.6, teeth: 2, rpm: 4200, motor: 'bl80100-130', motors: 1, mountX: 12.5, mountY: 0 }),
     look: { primary: '#fff01f', secondary: '#111111', accent: '#e0e0e0', logo: 'HYPERSHOCK', features: ['race-tires', 'horns', 'qr-belly'] },
   },
   {
     id: 'end-game', name: 'End Game', team: 'Team End Game',
-    L: 30, W: 28, H: 9, shape: 'box',
+    L: 30, W: 28, H: 9,
+    // boxy 4WD with chamfered front corners; disk in a centre slot, orange forks under it
+    bp: {
+      outline: [[-15, -12], [-13, -14], [11, -14], [15, -10], [15, -2], [9, -2], [9, 2], [15, 2], [15, 10], [11, 14], [-13, 14], [-15, 12]],
+      height: 9, clearance: 0.5, front: { at: 11, lip: 4.5 },
+    },
     armor: { front: P('hardox', 12), rear: P('al7075', 8), sides: P('titanium', 8), top: P('titanium', 6), bottom: P('al7075', 5) },
     wheels: 4, wheelDia: 6, topMph: 15, selfRighter: 'arm', forks: true,
-    weapon: spinner({ style: 'vertical-disk', lb: 55, dia: 14, width: 1.6, teeth: 1, tooth: 1.5, rpm: 6000, motor: 'bl120-70', motors: 2, mountX: 15, mountY: 0 }),
-    look: { primary: '#b5b8ba', secondary: '#9a9da0', accent: '#f28c28', logo: 'END GAME', features: ['fern', 'yellow-stripe', 'kill-count'] },
+    weapon: spinner({ style: 'vertical-disk', lb: 55, dia: 14, width: 1.6, teeth: 1, tooth: 1.5, rpm: 6000, motor: 'bl120-70', motors: 2, mountX: 13, mountY: 0 }),
+    look: { primary: '#b5b8ba', secondary: '#9a9da0', accent: '#f28c28', logo: 'END GAME', features: ['fern', 'yellow-stripe', 'kill-count', 'accent-forks'] },
   },
   {
     id: 'sawblaze', name: 'SawBlaze', team: 'Team SawBlaze',
-    L: 34, W: 28, H: 7, shape: 'wedge', wedge: 8,
+    L: 32, W: 28, H: 8,
+    // low black box with a full-width scoop taking the front third; big wheels at the back
+    bp: {
+      outline: [[-16, -13], [12, -14], [12, 14], [-16, 13]],
+      height: 8, clearance: 0.5, front: { at: -2, lip: 0.4, floor: true }, rear: { at: -14, lip: 5 },
+    },
     armor: { front: P('hardox', 12), rear: P('al7075', 8), sides: P('al7075', 8), top: P('al7075', 6), bottom: P('al7075', 5) },
-    wheels: 2, wheelDia: 8, wheelWidth: 3, axleX: -5, topMph: 14, driveMotor: 'bl80-150', forks: true, flame: true, invertible: false,
-    weapon: { type: 'hammer', style: 'saw-arm', headMass: 6, armLength: 26 * IN, energy: 900, swingTime: 0.35, cooldown: 0.2, systemMass: 15, sawRpm: 5000 },
-    look: { primary: '#1a1a1a', secondary: '#262626', accent: '#7cff00', logo: 'SAWBLAZE', features: ['three-forks', 'green-flame'] },
+    wheels: 2, wheelDia: 8, wheelWidth: 3, track: 31, axleX: -9, topMph: 14, driveMotor: 'bl80-150', forks: true, flame: true, invertible: false,
+    weapon: { type: 'hammer', style: 'saw-arm', headMass: 6, armLength: 27 * IN, energy: 900, swingTime: 0.35, cooldown: 0.2, systemMass: 15, sawRpm: 5000 },
+    look: { primary: '#1a1a1a', secondary: '#7cff00', accent: '#7cff00', logo: 'SAWBLAZE', features: ['three-forks', 'green-flame'] },
   },
   {
     id: 'whiplash', name: 'Whiplash', team: 'Team Fast Electric Robots',
@@ -217,10 +232,18 @@ const SPECS: Spec[] = [
   },
   {
     id: 'tantrum', name: 'Tantrum', team: 'Seems Reasonable Robotics',
-    L: 30, W: 30, H: 9, shape: 'wedge', wedge: 5,
+    L: 30, W: 30, H: 9,
+    // squat and wide; the front is split by a channel where the drum carriage slides, cheek pods either side
+    bp: {
+      outline: [
+        [-15, -14], [-9.5, -15], [-9.5, -13.5], [1.5, -13.5], [1.5, -15], [15, -15], [15, -5.5], [4, -5.5],
+        [4, 5.5], [15, 5.5], [15, 15], [1.5, 15], [1.5, 13.5], [-9.5, 13.5], [-9.5, 15], [-15, 14],
+      ],
+      height: 9, clearance: 0.5, front: { at: 7, lip: 1.5, floor: true },
+    },
     armor: { front: P('ar500', 10), rear: P('al7075', 8), sides: P('al7075', 8), top: P('al7075', 6), bottom: P('al7075', 5) },
-    wheels: 2, wheelDia: 9, wheelWidth: 3, axleX: -4, topMph: 15, driveMotor: 'bl80-150', selfRighter: 'arm',
-    weapon: spinner({ style: 'drum', lb: 18, dia: 6.5, width: 9, teeth: 2, tooth: 0.7, rpm: 8500, motor: 'bl80100-130', motors: 1, mountX: 14, mountY: -0.5 }),
+    wheels: 2, wheelDia: 9, wheelWidth: 3, track: 27, axleX: -4, topMph: 15, driveMotor: 'bl80-150', selfRighter: 'arm',
+    weapon: spinner({ style: 'drum', lb: 18, dia: 6.5, width: 9, teeth: 2, tooth: 0.7, rpm: 8500, motor: 'bl80100-130', motors: 1, mountX: 11, mountY: -0.5 }),
     secondary: { type: 'slide', distance: 0.16, cycleTime: 0.18, systemMass: 10 },
     look: { primary: '#f26a1e', secondary: '#1a1a1a', accent: '#ffffff', logo: 'TANTRUM', features: ['angry-eyes', 'fists', 'outline-stripes'] },
   },

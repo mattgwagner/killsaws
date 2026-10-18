@@ -182,7 +182,7 @@ export function buildBot(d: BotDesign): BotMesh {
 
   // forks / wedgelets
   if (d.chassis.forks) {
-    const forkMat = f.has('green-forks') || f.has('three-forks') ? accent : f.has('piano-keys') ? second : steel();
+    const forkMat = f.has('green-forks') || f.has('three-forks') || f.has('accent-forks') ? accent : f.has('piano-keys') ? second : steel();
     const n = f.has('piano-keys') ? 6 : f.has('three-forks') ? 3 : 2;
     for (let i = 0; i < n; i++) {
       const zc = n === 2 ? (i === 0 ? -1 : 1) * W * 0.33 : (i / (n - 1) - 0.5) * W * 0.8;
