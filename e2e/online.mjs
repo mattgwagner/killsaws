@@ -1,0 +1,35 @@
+// Two browsers: host opens a room, guest joins by link, host starts; the guest must see the live match.
+import { chromium } from 'playwright';
+const url = process.argv[2] ?? 'http://localhost:5180';
+const out = process.argv[3] ?? 'online.png';
+const browser = await chromium.launch({ executablePath: '/usr/bin/chromium', args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader'] });
+const errs = [];
+const mk = async (tag) => { const p = await browser.newPage({ viewport: { width: 960, height: 600 } }); p.on('console', (m) => process.env.DBG && console.log(tag, m.type(), m.text().slice(0, 160))); p.on('pageerror', (e) => errs.push(`${tag}: ${e.message}`)); p.on('console', (m) => m.type() === 'error' && errs.push(`${tag}: ${m.text()}`)); return p; };
+const host = await mk('host');
+await host.goto(url); await host.waitForTimeout(2000);
+await host.click('text=Fight Online'); await host.click('text=Open a room');
+await host.waitForSelector('text=/ROOM [A-Z0-9]{5}/');
+const code = (await host.locator('text=/ROOM [A-Z0-9]{5}/').textContent()).slice(-5);
+console.log('room', code);
+const guest = await mk('guest');
+await guest.goto(`${url}/?join=${code}`); await guest.waitForSelector('input[placeholder=Colton]', { timeout: 60000 });
+await guest.fill('input[placeholder=Colton]', 'Tester');
+await guest.click('button:has-text("Join")');
+await guest.waitForTimeout(1500);
+await guest.locator('.card', { hasText: 'Minotaur' }).click();
+await host.waitForSelector('text=/picked/', { timeout: 15000 });
+console.log('host sees:', await host.locator('text=/picked/').first().textContent());
+await host.click('button:has-text("FIGHT!")');
+await host.waitForTimeout(1500);
+await host.keyboard.press('Enter'); // skip intro
+await guest.keyboard.down('KeyW');
+await guest.waitForTimeout(9000);
+await guest.keyboard.up('KeyW');
+const clock = await guest.locator('.clock').textContent().catch(() => 'no clock');
+const names = await guest.locator('.nameplate .n').allTextContents().catch(() => []);
+console.log('guest clock', clock, 'names', names);
+const hostView = await host.evaluate(() => { const m = window.killsaws.session.match; return { t: m.time.toFixed(1), blue: m.bots[1].design.name, bluePos: [m.bots[1].pos.x.toFixed(2), m.bots[1].pos.z.toFixed(2)], blueThrottleSeen: m.bots[1].input.throttle }; });
+console.log('host', JSON.stringify(hostView));
+await guest.screenshot({ path: out });
+console.log(errs.join('\n') || 'no errors');
+await browser.close();

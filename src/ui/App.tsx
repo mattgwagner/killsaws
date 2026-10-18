@@ -15,7 +15,7 @@ import { Tournament, TournamentState } from './Tournament';
 import { Online } from './Online';
 import { Files } from './Files';
 import { Settings, SettingsState, loadSettings, saveSettings } from './Settings';
-import { NetHost, NetGuest } from '../net/net';
+import { NetHost, NetGuest, BotSummary, summarize } from '../net/net';
 
 export type Screen = 'title' | 'select' | 'intro' | 'fight' | 'results' | 'garage' | 'tournament' | 'online' | 'files' | 'settings';
 
@@ -27,10 +27,11 @@ export interface FightContext {
 
 export default function App() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [screen, setScreen] = useState<Screen>('title');
+  const [screen, setScreen] = useState<Screen>(() => (new URLSearchParams(location.search).get('join') ? 'online' : 'title'));
   const [frame, setFrame] = useState<FrameInfo | null>(null);
   const [callouts, setCallouts] = useState<HitCallout[]>([]);
   const [result, setResult] = useState<MatchResult | null>(null);
+  const [summary, setSummary] = useState<BotSummary[]>([]);
   const [fight, setFight] = useState<FightContext | null>(null);
   const [introStep, setIntroStep] = useState(0);
   const [paused, setPaused] = useState(false);
@@ -89,7 +90,8 @@ export default function App() {
   useEffect(() => {
     if (screen !== 'fight' || !frame?.view.result || result) return;
     const r = frame.view.result;
-    const t = setTimeout(() => { setResult(r); setScreen('results'); }, r.method === 'KO' ? 2600 : 1800);
+    if (fight?.from === 'online' && !sessionRef.current?.match) return; // guest: result arrives over the wire
+    const t = setTimeout(() => { setSummary(summarize(sessionRef.current!)); setResult(r); setScreen('results'); }, r.method === 'KO' ? 2600 : 1800);
     return () => clearTimeout(t);
   }, [frame?.view.result, screen, result]);
 
@@ -212,7 +214,7 @@ export default function App() {
         <Results
           result={result}
           designs={fight.designs}
-          bots={sessionRef.current!.match.bots}
+          stats={summary}
           from={fight.from}
           onRematch={() => beginFight(fight)}
           onMenu={toMenu}
@@ -247,8 +249,8 @@ export default function App() {
             setResult(null);
             setScreen('fight');
           }}
-          onGuestFrame={(f) => setFrame(f)}
-          onGuestResult={(r) => { setResult(r); setScreen('results'); }}
+          onGuestFrame={(f) => { if (++frameTick.current % 3 === 0) setFrame(f); }}
+          onGuestResult={(r, s) => { setTimeout(() => { setSummary(s); setResult(r); setScreen('results'); }, 2200); }}
         />
       )}
       {screen === 'files' && <Files onBack={() => setScreen('title')} />}

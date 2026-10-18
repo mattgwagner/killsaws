@@ -33,6 +33,8 @@ export class GameSession {
   onFrame: (f: FrameInfo) => void = () => {};
   onCallout: (c: HitCallout) => void = () => {};
   onEvents: (e: SimEvent[]) => void = () => {};
+  /** per rendered frame, after the sim advanced (online host streams from here) */
+  onTick?: (view: MatchView, dt: number) => void;
   /** online guests feed remote input here */
   remoteInput: BotInput = { ...NO_INPUT };
   private inputs: BotInput[] = [{ ...NO_INPUT }, { ...NO_INPUT }];
@@ -58,6 +60,7 @@ export class GameSession {
     this.raf = 0;
     this.audio.stopMatch();
     this.match?.dispose();
+    this.match = undefined as unknown as Match;
   }
 
   private loop = () => {
@@ -103,6 +106,7 @@ export class GameSession {
     this.audio.update(view, m.bots, dt * scale);
     this.onEvents(events);
     this.view.frame(dt, m.bots.map((b) => b.flameOn));
+    this.onTick?.(view, dt);
     this.onFrame({ view, inputs: this.inputs, slowmo: this.slow > 0 });
   };
 }

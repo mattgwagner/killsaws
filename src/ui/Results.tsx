@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { BotDesign } from '../sim/design';
 import { MatchResult } from '../sim/match';
-import { BotRuntime } from '../sim/bot';
+import { BotSummary } from '../net/net';
 
-export function Results({ result, designs, bots, from, onRematch, onMenu, onNew, onTournament }: {
-  result: MatchResult; designs: BotDesign[]; bots: BotRuntime[]; from: string;
+export function Results({ result, designs, stats: bots, from, onRematch, onMenu, onNew, onTournament }: {
+  result: MatchResult; designs: BotDesign[]; stats: BotSummary[]; from: string;
   onRematch: () => void; onMenu: () => void; onNew: () => void; onTournament: () => void;
 }) {
   const [shown, setShown] = useState(result.method === 'Judges' ? 0 : 99);
@@ -66,7 +66,7 @@ export function Results({ result, designs, bots, from, onRematch, onMenu, onNew,
               <tr><td>Hazard damage caused</td><td>{(bots[0].hazardDamageDealt / 1000).toFixed(0)} kJ</td><td>{(bots[1].hazardDamageDealt / 1000).toFixed(0)} kJ</td></tr>
               <tr><td>Aggression time</td><td>{bots[0].aggression.toFixed(0)} s</td><td>{bots[1].aggression.toFixed(0)} s</td></tr>
               <tr><td>Battery used</td><td>{bots[0].whUsed.toFixed(0)} Wh</td><td>{bots[1].whUsed.toFixed(0)} Wh</td></tr>
-              <tr><td>Armor left</td><td>{armor(bots[0])}%</td><td>{armor(bots[1])}%</td></tr>
+              <tr><td>Armor left</td><td>{bots[0].armor}%</td><td>{bots[1].armor}%</td></tr>
             </tbody>
           </table>
         )}
@@ -88,7 +88,6 @@ export function Results({ result, designs, bots, from, onRematch, onMenu, onNew,
   );
 }
 
-const armor = (b: BotRuntime) => Math.round((Object.values(b.panels).reduce((s, p) => s + p.integrity, 0) / 6) * 100);
 
 function Split({ a, b }: { a: number; b: number }) {
   return <><span style={{ color: '#ff6b73' }}>{a}</span>–<span style={{ color: '#6aa8ff' }}>{b}</span></>;

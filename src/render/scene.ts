@@ -33,7 +33,7 @@ export class GameView {
   private scars: FloorScars;
   mode: CameraMode = 'broadcast';
   focus = 0; // chase cam target
-  private camPos = new THREE.Vector3(0, 9, 13);
+  private camPos = new THREE.Vector3(0, 3.6, 6.5);
   private camLook = new THREE.Vector3();
   private lastView: MatchView | null = null;
   private dents: THREE.Mesh[] = [];
