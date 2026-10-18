@@ -1,0 +1,121 @@
+{
+  "weightClass": {
+    "name": "Heavyweight",
+    "limitLb": 250.0,
+    "detail": "250.0 lb ready to fight, with no minimum. The reboot runs this single class only; the classic-era heavyweight limit was 220 lb.",
+    "multiBot": "All segments together must weigh no more than 250 lb. A MiniBot weighs at most 20 lb and needs no weapon. From 2022, MiniBots may not use LiPo batteries.",
+    "flybots": "Max 10 lb each (2018 Design Rules)",
+    "decorationAllowanceLb": { "value": 10, "detail": "Up to 10 lb of non-protective, non-weapon decoration may go over 250 lb, but the robot without it must make weight. Opponents can demand its removal (2018 Design Rules)." },
+    "voltage": "2018: 220 V absolute max, and anything above 48 V nominal needs approval. 2022: weapon and drive systems are capped at 60 V nominal, with auxiliary systems up to 240 V.",
+    "mobilityGuideline": "Should move at least ~4 mph 'fast walking pace', preferably much faster (2018 Design Rules).",
+    "weaponRequirement": "Must have at least one independently powered weapon. Entering without a functional weapon forfeits the match."
+  },
+  "match": {
+    "lengthSeconds": 180,
+    "detail": "3 minutes of fighting time. Timeouts are excluded from the clock.",
+    "start": "Starting lights go red to green after both teams press ready buttons. More than two faults (early movement) in one match can mean a forfeit.",
+    "tapOut": { "allowed": false, "detail": "Tap-outs are not allowed. A match ends early only by Forfeit, Disqualification or Incapacitation (KO). This differs from Robot Wars-style tap-outs." },
+    "hazardTiming": "2015-2016: killsaws and ramrods active only after 60 s. 2018 onward: the killsaws' active period is the final minute."
+  },
+  "knockout": {
+    "responsiveDefinition": "A robot must show controlled translational movement along the floor. Spinning in place or uncontrolled random movement is not responsive.",
+    "countProcedure": "A referee can ask a team at any time to show movement. Under the 2021 Tournament Rules the referee then counts down from 20, calling only the last 10 aloud. A robot that hasn't shown controlled movement by zero is Incapacitated, a KnockOut win for the opponent. On TV this looks like the familiar 10-second count.",
+    "countSecondsOnAir": 10,
+    "countSecondsRulebookTotal": 20,
+    "uncertainNote": "Wikipedia simplifies this to '10 seconds immobile'. The 20-count with 10 called aloud is from the 2021 rulebook. Earlier seasons may have used a plain 10-count.",
+    "uncertain": true,
+    "stuck": "A robot stuck on a hazard (screws, killsaw slots), high-centred on the rails, or stuck on the Shelf counts as Incapacitated. If a robot is stuck on the arena floor and can't free itself in 20 s, refs may call a Timeout. From 2022, unsticks happen only when robots are stuck to each other. In the first two minutes crew make a reasonable effort to separate them; in the final minute the fight goes straight to the judges.",
+    "shelf": "If referees judge a robot has stayed on the Upper Deck (The Shelf) excessively, they start a 10-count to leave it or be Incapacitated.",
+    "multipleIncapacitation": "If both robots are incapacitated at different times, the one incapacitated last wins (a Technical KO). If both go down within 5 s of the same action: after 60 s the judges decide; before 60 s there may be a rematch.",
+    "engagementAvoidance": "Refs can order a robot to engage. Refusing can be ruled a KO loss. From 2022, refs may call a double KO and send the fight to the judges when neither robot will or can engage.",
+    "controlledMovementChange2022": "After controversies in 2021, 'controlled movement' was no longer enforced from 2022. A count-out happens only if a robot is totally immobile; crab-walking or gyro-walking with the weapon counts as moving ('basically a duel to the death' - Greg Munson).",
+    "multiBot": "A Multi-Bot is Incapacitated when more than 60% of its weight is Incapacitated.",
+    "outOfTheArena": "Throwing a robot out of the arena (2015-2020 ring-out zones) is a KO. From 2021, deliberately putting a robot into a Door Buffer Zone is a loss for the robot that did it."
+  },
+  "restraintLimits": {
+    "pinning": "No winning by pinning. A pin is allowed for at most 10 counts (2021 rules), then the attacker must release.",
+    "lifting": "At most 10 counts in one place, or 30 counts if the lifter is actively moving around the arena.",
+    "grappling": "At most 30 counts, then release. A re-grab is allowed.",
+    "corralling": "Blocking a robot into a corner gets an instruction to move, then a warning, then a 10-count against the blocker.",
+    "note": "Wikipedia gives '30 seconds then release' for pins and grabs. The 2021 rulebook gives 10 counts for pins and 30 for grapples."
+  },
+  "judging": {
+    "judges": "At least 3 judges. A designated Head Judge breaks ties. Each judge scores separately and the majority of judges decides (e.g. 3-0 unanimous or 2-1 split).",
+    "totalPointsPerJudge": 11,
+    "criteria": [
+      {
+        "name": "Damage",
+        "points": 5,
+        "definition": "Reduction in effectiveness or loss of functionality, including self-inflicted damage such as driving over the killsaws. Visual sparks (e.g. titanium) and cosmetic damage count little. Damage that cripples mobility weighs more than weapon damage.",
+        "matrix": "Each robot's damage is rated Minimal / Moderate / Significant / Massive and the 5 points are split by the gap between them. Same level: 3-2 to whoever did more. One level apart: 3-2. Two levels: 4-1. Three levels: 5-0.",
+        "levels": {
+          "Minimal": "Doesn't reduce functionality or effectiveness",
+          "Moderate": "Reduces effectiveness of drive, defensibility or weapon",
+          "Significant": "Eliminates function of one system, or reduces effectiveness of two or more",
+          "Massive": "Eliminates function of at least two systems"
+        },
+        "possibleSplits": ["5-0", "4-1", "3-2"]
+      },
+      {
+        "name": "Aggression",
+        "points": 3,
+        "definition": "Frequency, severity and boldness of deliberate attacks. Using a powered weapon counts more than ramming with a wedge. Circling to find an attack angle counts as more aggressive than sitting still pointing a weapon (2022 clarification). Flamethrowers aren't weapons and earn no aggression.",
+        "levels": ["Minimal", "Moderate", "Significant"],
+        "possibleSplits": ["3-0", "2-1"],
+        "cap": "A robot with a functional weapon that never uses it can get at most 2."
+      },
+      {
+        "name": "Control",
+        "points": 3,
+        "definition": "Attacking weak points, using the weapon effectively, avoiding the opponent's weapon and the arena hazards, dictating the shoving match, and compensating for damage. Getting stuck through your own driving is poor control; sticking the opponent shows good control.",
+        "levels": ["Minimal", "Moderate", "Significant"],
+        "possibleSplits": ["3-0", "2-1"],
+        "cap": "A robot with a functional weapon that never uses it can get at most 2."
+      }
+    ],
+    "matrixSystemIntroduced": "2021 (WC VI)",
+    "postMatchFunctionalityCheck": "From 2022, a team may run a demo of at most 10 s after the match (if safe) to prove its weapon or drive still works before the decision.",
+    "appeals": "From WC VII (2022), a team may appeal a judges' decision through the Match Steward (Mike Jeffries). A lost appeal ends that team's appeals for the tournament; a won appeal keeps the right. First used successfully by Malice vs Valkyrie (WC VII Ep 9).",
+    "proLeague2026Change": "Pro League 2026 judges only two categories, Damage and Engagement (Control + Aggression merged). Their weighting has not been published.",
+    "rumbles": "In rumbles of 3+ robots, the last robot responsive wins by KO. If several are still responsive, each judge votes for one robot, with a BattleBots Executive Officer breaking ties. Rumbles are 5 minutes per Wikipedia (the length was not confirmed in the 2021 rulebook).",
+    "rumbleLengthUncertain": true
+  },
+  "tournamentFormat": [
+    { "seasons": "WC I-II (2015-2016, ABC)", "format": "Single-elimination bracket: 24 robots in WC I, ~55-56 in WC II. Losing robots could get Selection Committee wildcards into the Sweet 16 (WC I) / Top 32." },
+    { "seasons": "WC III-VII (2018-2022, Discovery)", "format": "'Fight Night' season: each robot fights several seeded/unseeded fights, and the Selection Committee picks a seeded Top 32 (later Top 16) single-elimination World Championship bracket ending with the Giant Nut final." },
+    { "seasons": "Pro League 2026 (YouTube)", "format": "24 robots in six groups of four, each fighting three times. Group winners plus 2 wildcards (voted on by competitors) make a Top 8 knockout." }
+  ],
+  "champions": [
+    { "event": "World Championship I", "season": "ABC Season 1", "year": 2015, "filmed": "May 21-23, 2015, Vallejo CA", "champion": "Bite Force", "team": "Aptyx Designs (Paul Ventimiglia)", "runnerUp": "Tombstone", "finalResult": "Bite Force won by unanimous judges' decision. Tombstone's weapon had stopped due to overheated batteries." },
+    { "event": "World Championship II", "season": "ABC Season 2", "year": 2016, "filmed": "April 19-24, 2016, Vallejo CA", "champion": "Tombstone", "team": "Hardcore Robotics (Ray Billings)", "runnerUp": "Bombshell", "finalResult": "Tombstone won by KO; Bombshell was counted out." },
+    { "event": "World Championship III", "season": "Discovery Season 1 (2018 season)", "year": 2018, "filmed": "April 3-15, 2018, Long Beach CA", "champion": "Bite Force", "team": "Aptyx Designs (Paul Ventimiglia)", "runnerUp": "Minotaur", "finalResult": "Bite Force won by KO (Minotaur counted out at 2:05)." },
+    { "event": "World Championship IV", "season": "2019 season", "year": 2019, "filmed": "April 12-22, 2019, Long Beach CA", "champion": "Bite Force", "team": "Aptyx Designs (Paul Ventimiglia)", "runnerUp": "Witch Doctor", "finalResult": "Bite Force won by KO; Witch Doctor could not self-right. This was Bite Force's 3rd Giant Nut and made it the only three-time reboot champion." },
+    { "event": "World Championship V", "season": "2020 season (aired Dec 2020-2021)", "year": 2020, "filmed": "October 10-21, 2020, Long Beach CA (postponed from April due to COVID-19)", "champion": "End Game", "team": "Team End Game (Jack Barker, New Zealand)", "runnerUp": "Whiplash", "finalResult": "End Game won by KO; Whiplash was counted out. It was the first international champion of the reboot era." },
+    { "event": "World Championship VI", "season": "2021 season (aired from Jan 6, 2022)", "year": 2021, "filmed": "August 25-September 5, 2021, Las Vegas NV", "champion": "Tantrum", "team": "Seems Reasonable Robotics (co-captains Alex Grant and Ginger Schmidt; driver Dillon Carey)", "runnerUp": "Witch Doctor", "finalResult": "Tantrum won by KO; Witch Doctor was counted out." },
+    { "event": "World Championship VII", "season": "2022 season (aired from Jan 5, 2023)", "year": 2022, "filmed": "October 18-30, 2022, Las Vegas NV", "champion": "SawBlaze", "team": "Team SawBlaze (Jamison Go)", "runnerUp": "HUGE", "finalResult": "SawBlaze won by unanimous judges' decision. It was the first Giant Nut in four seasons not won by a 4WD vertical spinner." }
+  ],
+  "championsNote": "Airing years differ from filming years for WC VI and WC VII. Wikipedia lists them as 2022 and 2023 by air date. Use 'World Championship N' as the canonical label. No World Championship VIII has been held as of Oct 2026. Discovery dropped the show after WC VII and BattleBots: Champions II, and later events were untelevised: Destruct-A-Thon live shows (2023+), Proving Ground (Dec 2023+), FaceOffs (2024-25), and Pro League 2026 on YouTube (20 episodes, premiered July 2, 2026). The Pro League champion was still TBD on the wiki's anti-spoiler page at time of research. SawBlaze is the reigning Giant Nut holder and did not enter Pro League 2026.",
+  "otherTitles": [
+    { "event": "BattleBots: Bounty Hunters", "year": 2021, "platform": "Discovery+", "winners": ["Rotator", "Skorpios", "Tombstone", "Lock-Jaw", "Witch Doctor", "Gigabyte"], "note": "Six episodes, each with one bounty winner and a $25,000 prize. There was no overall champion." },
+    { "event": "BattleBots: Champions I", "year": 2021, "trophy": "Golden Bolt", "champion": "End Game", "runnerUp": "Witch Doctor", "note": "End Game beat Ribbot, Tantrum and Witch Doctor." },
+    { "event": "BattleBots: Champions II", "year": 2022, "trophy": "Golden Bolt", "champion": "End Game", "runnerUp": "SawBlaze", "note": "End Game beat Free Shipping, JackPot and then reigning Giant Nut holder SawBlaze." },
+    { "event": "re:MARS all:STARS", "year": 2019, "champion": "Witch Doctor" },
+    { "event": "re:MARS all:STARS", "year": 2022, "champion": "HyperShock" },
+    { "event": "Pro League 'Average League' (consolation bracket)", "year": 2026, "champion": "End Game", "trophy": "Chris Rose Average Wrench (unofficial)", "runnerUp": "Ribbot", "note": "End Game beat Bloodsport, then Ribbot in the final." }
+  ],
+  "trophies": {
+    "giantNut": "Solid aluminum nut, 27.7 lb and 10 in across, engraved with the BattleBots logo and (in the reboot) the World Championship number. Made by Bob McGee's Machining Company (Berkeley CA) until 2023. It was displayed during the season on Axis, a rotating five-fingered robot built by Mark Setrakian.",
+    "goldenBolt": "BattleBots: Champions trophy, designed so a Giant Nut threads onto it."
+  },
+  "sources": [
+    "https://battlebots.com/wp-content/uploads/2021/07/BattleBots-Tournament-Rules.Rev_.2021.0.pdf",
+    "https://battlebots.com/wp-content/uploads/2022/09/Judges-Guide.2022.0.pdf",
+    "https://battlebots.com/wp-content/uploads/2015/12/BattleBots-Design-Rules.Rev-2018.0.pdf",
+    "https://battlebots.fandom.com/wiki/Giant_Nut",
+    "https://battlebots.fandom.com/wiki/Golden_Bolt",
+    "https://battlebots.fandom.com/wiki/World_Championship_I",
+    "https://battlebots.fandom.com/wiki/World_Championship_VII",
+    "https://battlebots.fandom.com/wiki/BattleBots_Pro_League_(2026)",
+    "https://en.wikipedia.org/wiki/BattleBots"
+  ]
+}

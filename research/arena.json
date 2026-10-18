@@ -1,0 +1,170 @@
+{
+  "name": "BattleBox",
+  "era": "Reboot (World Championship I 2015 through World Championship VII 2022, plus later FaceOffs/Pro League use)",
+  "dimensions": {
+    "floorFt": { "length": 48, "width": 48, "shape": "square", "note": "Official rules call it 'a fully enclosed 48 foot by 48 foot rectangle raised 2 feet off the ground'." },
+    "floorRaisedFt": 2,
+    "floorToLightingRigFt": { "value": 16, "note": "Quoted by Kenny Florian in WC III (2018) Episode 10 intro." },
+    "floorPanelsFt": "4 x 4 steel floor panels; Lexan walls also built in 4 x 4 ft panels",
+    "startingSquares": "Red square and blue square on opposite sides (marked on floor). A third 'green square' starting position is used for 3-way rumbles, marked by green spotlights or a mat rather than paint. From 2020 a white painted square joins the red and blue squares and runs through the killsaw sets."
+  },
+  "floor": {
+    "material": "Mild steel plate",
+    "history": [
+      { "season": "WC II (2016)", "detail": "Three layers of 1/8 in mild steel (3/8 in total) with a thick rubber coating on top. The coating made electromagnets (e.g. Chomp's) largely ineffective.", "source": "Zoe Stephenson (Chomp team) via BattleBots wiki" },
+      { "season": "WC V (2020) onward", "detail": "Floor rebuilt as a thicker 1/2 in mild steel floor on a redesigned superstructure, funded largely by co-founder Trey Roski, after spinners damaged the old floor." },
+      { "season": "Dec 2023 onward (Proving Ground, FaceOffs, Pro League)", "detail": "Floor panels welded together so robots stop catching on seams." }
+    ],
+    "surface": "Painted steel, not guaranteed flat or smooth. Seams and killsaw slots can snag low forks and wedges.",
+    "centerLogo": "Twin BattleBots logos facing the red and blue squares (2015-2018). One long logo running square to square (2019). The current BattleBots logo in the center (2020+). The old center Hellraiser panels were removed in 2020."
+  },
+  "walls": {
+    "enclosure": "Fully enclosed box with a steel frame and roof truss, paneled with thick bulletproof polycarbonate (Lexan). Drivers stand outside in driver booths.",
+    "lexanCost": "Trey Roski estimates the custom bulletproof Lexan cost over $1,000,000, and about 25% of it is replaced every year.",
+    "innerPerimeter": "Yellow spiked guard rails / spiked bumper running around the floor perimeter, topped by a lower inner Lexan wall. A robot pushed against the rails can get high-centred, which counts as 'stuck'.",
+    "outOfTheArena": {
+      "description": "In 2015-2020 the low corner walls and 'toaster slots' between the inner rails and outer walls allowed out-of-the-arena (OOTA) knockouts. Bronco won 4 fights this way (Witch Doctor and Stinger in WC I; Bombshell and Duck! in WC III).",
+      "changes": [
+        "The 'toaster slots' were first blocked with 'sneeze guard' panels after OOTAs such as Duck! vs Bronco (WC III).",
+        "2021 (WC VI): 'Door Buffer Zones' added between the entry/exit doors and the inset floor spike strips. Deliberately putting a robot (yourself or the opponent) into one is a loss. Sloped Lexan 'slap guards' were added between inner and outer walls on the sides.",
+        "2022 (WC VII): tall Lexan gates were added above the low walls Tantrum had used for OOTA wins over ROTATOR and Cobalt in 2021. No robot won by OOTA in WC VII.",
+        "2026 (Pro League): sloped Lexan-walled metalwork was built atop the driver booths so robots can't get stuck on the old flat surface."
+      ]
+    },
+    "doors": "Teams enter through doors that are sealed once all humans have left. The entry/exit doors sit on the side opposite the Upper Deck."
+  },
+  "startProcedure": "Starting lights visible to drivers. Each team presses a ready button, and the match starts when the lights turn from red to green. On TV the start is preceded by Faruq Tauheed's 'Robots ready... FIGHT!' intros. Killsaw lights also flash in the start sequence from 2020.",
+  "hazards": [
+    {
+      "id": "killsaws",
+      "name": "Killsaws",
+      "type": "damaging, floor-mounted",
+      "seasons": "Every reboot season (2015-present); they also date back to 1999.",
+      "description": "Rows of rotating circular saw blades that rise from slits in the floor to cut the underside of robots, which is usually the thinnest armor.",
+      "behaviour": [
+        "2015-2016: active only after 60 seconds, signalled by LED light rows around the arena perimeter that flash on activation.",
+        "2018 onward: the computer-controlled WOPR system fires them in a sequential pattern, and more often, during the final minute of each match (the final-minute rule carried into later seasons). Kenny Florian billed the new multi-layered silver blades at 1,800 rpm.",
+        "2021 onward: the slots were widened for spark displays before the Main Event. Lexan slot covers were added, but low forks and wedges now drop into or catch on the slots, which can immobilise a robot (Deep Six vs SMEEEEEEEEEEEEE; End Game vs RIPperoni; Tombstone vs Mammoth)."
+      ],
+      "bladeRpm": 1800,
+      "layout": {
+        "description": "Killsaw sets sit in the central band of the floor, between the red and blue squares. Up to 2020 there was an 'upper' set (just above the center logo) and a 'lower' set, with the white square painted through both. For 2021 (WC VI) the set just above the center BB logo was removed and replaced by two pairs of killsaws near the drivers' booths. Each set is a line of several blades in parallel slots, outlined in yellow (yellow outlines were re-added in 2018).",
+        "uncertain": true,
+        "uncertainNote": "No authoritative published diagram was found. The exact blade count per set and the exact coordinates are not documented. Model the positions from broadcast footage."
+      },
+      "notableUses": ["Petunia held ROTATOR over the killsaws and shredded a tire (WC III 2018)"],
+      "source": "https://battlebots.fandom.com/wiki/Killsaws"
+    },
+    {
+      "id": "screws",
+      "name": "The Screws",
+      "type": "damaging, edge-mounted",
+      "seasons": "Every reboot season; first introduced in Comedy Central Season 3.0.",
+      "description": "Large, continuously rotating serrated augers along the outer edges of the floor. They catch, lift and drag robots, chew undersides and wheels, and can trap low wedges.",
+      "behaviour": [
+        "2015: six individual screws across three sides of the BattleBox, made from 0.5 in titanium, each with its own motor under the floor.",
+        "2018 onward: reworked to be belt-driven and bidirectional, and described on the show as 1/2 in stainless steel. Jam sensors make them auto-reverse, so they can 'spit out' a robot rather than stall.",
+        "From 2018 sets sit behind both starting squares (the red and blue squares).",
+        "2021 onward: the screw housings are guarded by triangular spiked bumpers meant to funnel robots into the screws or the nearby Paddles.",
+        "July 2023: a brand-new set of screws was revealed."
+      ],
+      "materialConflict": { "note": "The wiki says titanium in 2015 and stainless steel per the 2018 on-air segment. They may simply be different builds.", "uncertain": true },
+      "source": "https://battlebots.fandom.com/wiki/Screws"
+    },
+    {
+      "id": "upper-deck",
+      "name": "Upper Deck (rulebook name: 'The Shelf')",
+      "type": "immobilisation platform",
+      "seasons": "WC VI (2021) onward",
+      "dimensionsFt": { "width": 16, "depth": 8, "heightIn": 6 },
+      "position": "Against the far wall of the arena, opposite the entry/exit doors.",
+      "description": "A raised platform with a Lexan floor (painted over: red, with red/blue decoration added in 2022; it was yellow during the dress rehearsal). The side facing the center has two screws identical to the side screws. The other two open sides are 6 in vertical step-ups or barriers.",
+      "behaviour": [
+        "With no robot on it, the screws rotate 'upward' (blade tops moving inward), which lifts any robot that hits them onto the platform.",
+        "When a robot is on the platform, the screws reverse (tops moving outward).",
+        "A robot even partly on the Shelf counts as on it. If referees judge it has stayed there an excessive time, they start a 10-count, and failing to leave means Incapacitated.",
+        "The screws count as a hazard, but the platform floor does not."
+      ],
+      "notableUses": [
+        "Whiplash flipped Bloodsport onto it and Bloodsport was counted out (WC VI).",
+        "Hydra flipped Blip onto it, breaking a wheel, and Blip was counted out (WC VI).",
+        "Gigabyte spun up on the deck, then dropped off it onto Tantrum and tore away a wheel (WC VI).",
+        "Whiplash fed Beta up via the screws, which cost Beta its power link (WC VII)."
+      ],
+      "source": "BattleBots 2021 Tournament Rules s.6.1.3, 7.5.3-7.5.4; https://battlebots.fandom.com/wiki/Upper_Deck"
+    },
+    {
+      "id": "pulverizers",
+      "name": "Pulverizers",
+      "type": "damaging, overhead hammer",
+      "seasons": "Every reboot season; first introduced in Comedy Central Season 1.0.",
+      "description": "Large pneumatic hammers housed in the arena corners that slam down on robots in their impact zone.",
+      "count": 2,
+      "control": "Team-operated in the reboot. One is controlled by the red-square team and the other by the blue-square team. From 2021 the impact-zone dots on the floor are coloured red and blue to show which team controls each.",
+      "specs": [
+        "2018: billed at 3,000 lb of force on air.",
+        "2020 onward: redesigned head, rhomboid or diamond shaped instead of the classic cylindrical mallet, weighing 100 lb."
+      ],
+      "position": "Corners of the BattleBox. Paddles along the side walls feed robots toward them.",
+      "positionUncertain": true,
+      "tactics": "Mostly used to score control/aggression points, pin an opponent briefly, or tee them up for a hit. Rarely decisive against modern armor. Notable uses: Witch Doctor kept Ultimo Destructo in the corner under the hammer until it split (WC III), and DeathRoll pinned Switchback under the hammer (WC VII).",
+      "futureConcept": "In Nov 2023 Trey Roski floated swappable Pulverizer heads with team-chosen weapons. This has not been implemented as of the 2026 Pro League.",
+      "source": "https://battlebots.fandom.com/wiki/Pulverizers"
+    },
+    {
+      "id": "paddles",
+      "name": "Paddles (Arena Bumpers / Flippers)",
+      "type": "passive or pneumatic wall hazard",
+      "seasons": "WC I (2015) onward",
+      "description": "Long, spiked, yellow strips of side wall that fire pneumatically like pinball flippers to swat robots off the walls, intended to feed them into the Pulverizers. They are rarely decisive. Robots can get high-centred on top of them or hooked behind them (Deep Six vs Minotaur, WC VI; DeathRoll vs Gigabyte, Champions II).",
+      "position": "Along the sides of the BattleBox, near the screws and corners.",
+      "source": "https://battlebots.fandom.com/wiki/Paddles"
+    },
+    {
+      "id": "ramrods",
+      "name": "Ramrods",
+      "type": "floor spikes",
+      "seasons": "WC I (2015) onward. Rarely seen.",
+      "description": "Individual spikes outlined in yellow and spaced across the floor. Some are blunt and some sharp, and they fire upward (often at random) to disrupt robots. In 2015-2016 they, like the killsaws, were only active after 60 seconds. Since 2020 extra upward-firing spikes rise from small unmarked holes in the area of the center logo.",
+      "source": "https://battlebots.fandom.com/wiki/Ramrods"
+    },
+    {
+      "id": "spike-rails",
+      "name": "Spiked perimeter rails / floor spike strips",
+      "type": "passive",
+      "description": "A yellow spiked bumper around the floor perimeter (it replaced the classic wall 'spikestrips' from 2005), plus floor spike strips inset in front of the doors. These mark the Door Buffer Zones from 2021."
+    },
+    {
+      "id": "hellraisers",
+      "name": "Hellraisers (retired)",
+      "type": "lifting floor panels",
+      "seasons": "Technically present in WC I-III but rarely used, and later welded shut. Removed in WC V (2020) when the floor was rebuilt.",
+      "description": "Center floor panels that tilt up to form ramps. In the reboot they were painted over with the BattleBots logo. They are worth including only as a retro or optional hazard."
+    }
+  ],
+  "hazardControl": "Most hazards run on the computer-controlled WOPR system. The exception is the Pulverizers, which the teams operate.",
+  "noFlameZone": "Robots may not use flames within 10 ft of the walls or within 8 ft of the bottom of the roof truss (2021 Tournament Rules s.6.1.2).",
+  "seasonSummary": [
+    { "season": "WC I 2015 (ABC, Vallejo CA)", "changes": "Reboot arena: 48x48 ft, red/blue squares, killsaws, screws (6, titanium), Pulverizers (team-controlled), Paddles, Ramrods, center Hellraisers. OOTA zones are possible." },
+    { "season": "WC II 2016 (ABC, Vallejo CA)", "changes": "Killsaws and Ramrods only active after 60 s, with LED warning lights. Rubber-coated floor." },
+    { "season": "WC III 2018 (Discovery, Long Beach CA)", "changes": "WOPR upgrade: killsaws fire more often in the final minute, screws belt-driven and bidirectional, Pulverizers billed at 3,000 lb, yellow killsaw outlines return." },
+    { "season": "WC IV 2019 (Long Beach CA)", "changes": "A single long center logo. Otherwise unchanged." },
+    { "season": "WC V 2020 (Long Beach CA, no audience due to COVID)", "changes": "New 1/2 in steel floor and superstructure. New center logo and white square. 100 lb diamond-shaped Pulverizers. Hellraisers removed and center spikes added." },
+    { "season": "WC VI 2021 (Las Vegas NV)", "changes": "Upper Deck added (16x8 ft, 6 in high, 2 screws). Killsaw set above the logo moved to two pairs near the driver booths. Widened killsaw slots. Door Buffer Zones. Slap guards. Spiked bumpers around the screw housings." },
+    { "season": "WC VII 2022 (Las Vegas NV)", "changes": "Red/blue decor on the Upper Deck. Exit areas painted red/blue. Tall Lexan gates over the low OOTA walls." },
+    { "season": "2023-2026 (Destruct-A-Thon, Proving Ground, FaceOffs, Pro League)", "changes": "New screws (Jul 2023). Floor seams welded (Dec 2023). Bright Data branding and sloped booth tops added (2026)." }
+  ],
+  "sources": [
+    "https://battlebots.fandom.com/wiki/BattleBox",
+    "https://battlebots.fandom.com/wiki/Killsaws",
+    "https://battlebots.fandom.com/wiki/Screws",
+    "https://battlebots.fandom.com/wiki/Pulverizers",
+    "https://battlebots.fandom.com/wiki/Paddles",
+    "https://battlebots.fandom.com/wiki/Ramrods",
+    "https://battlebots.fandom.com/wiki/Upper_Deck",
+    "https://battlebots.fandom.com/wiki/Hellraisers",
+    "https://battlebots.fandom.com/wiki/Out_of_the_Arena",
+    "https://battlebots.com/wp-content/uploads/2021/07/BattleBots-Tournament-Rules.Rev_.2021.0.pdf",
+    "https://en.wikipedia.org/wiki/BattleBots"
+  ]
+}

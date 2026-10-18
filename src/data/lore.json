@@ -1,0 +1,1514 @@
+[
+ {
+  "id": "tombstone",
+  "name": "Tombstone",
+  "team": "Hardcore Robotics",
+  "captain": "Ray Billings",
+  "hometown": "Placerville, CA",
+  "debut": "World Championship I (2015)",
+  "weaponType": "horizontal-bar",
+  "weapon": "Huge full-width horizontal bar spinner mounted at the front of a tubular weapon support, spinning just above the floor. Bar weighs 65-75 lb normally (its shortest/heaviest bar, used vs Brutus in 2016, was close to 80 lb). Ray brings an arsenal of interchangeable bars: silver, black and solid red bars in 2015; the red S7-steel bar repainted blue for the 2016 title run; a 2 in thick 71 lb bar in 2018; gray titanium bar with AR500 steel teeth, black S7 tool steel bar, red S7 bar (2019); H13 tool steel and I-shaped AR500 bars (2020); ten bars in total by 2020. Driven by an exposed chain from a big brushed motor, the chain being a known weak point (Bombshell targeted it in 2016 and it came off vs Bombshell in 2018). Rule change in 2018 capped tip speed at 250 mph, so Tombstone was tuned down to about 200 mph. For the 2026 Pro League the single brushed weapon motor was replaced by three brushless motors.",
+  "armor": [
+   "4130 chromoly tube frame",
+   "mild steel (motor mounts/rear)",
+   "titanium (top)",
+   "AR400 steel (weapon plates, 2019)",
+   "aluminum armor"
+  ],
+  "giantNuts": [
+   "World Championship II (2016)"
+  ],
+  "runnerUp": [
+   "World Championship I (2015)"
+  ],
+  "awards": [
+   "Most Destructive Robot Award (World Championship I, 2015)",
+   "Successful Bounty defense vs Gruff (BattleBots: Bounty Hunters)",
+   "2004 NPC Charity Open superheavyweight champion"
+  ],
+  "records": [
+   "Only BattleBots robot to win championships as both a superheavyweight and a heavyweight",
+   "Only #1 seed to win the Giant Nut without being the defending champion",
+   "Reached the first two reboot finals (2015, 2016)",
+   "Competitive record 33-17 (wiki, through 2026 Pro League)"
+  ],
+  "fights": [
+   {
+    "opponent": "Bombshell",
+    "season": "World Championship II (2016)",
+    "summary": "Championship final. Bombshell went for Tombstone's exposed weapon chain and missed. Tombstone's blue bar then ripped Bombshell's front tires off and knocked it out cold within seconds, and kept tearing into its frame until the count-out. Tombstone won its first Giant Nut.",
+    "result": "Won by KO"
+   },
+   {
+    "opponent": "Bite Force",
+    "season": "World Championship I (2015)",
+    "summary": "Championship final. Bite Force scooped and pinned Tombstone against the rails. Tombstone's batteries overheated and caught fire (white smoke) so its weapon lost speed. Both robots were struggling by the final buzzer.",
+    "result": "Lost by JD (unanimous)"
+   },
+   {
+    "opponent": "End Game",
+    "season": "World Championship V (2020)",
+    "summary": "Main Event. End Game hit Tombstone's right wheel, Tombstone's tire jammed against the screws, and End Game punted the former champ out of the arena.",
+    "result": "Lost by KO (0:39, out of the arena)"
+   }
+  ],
+  "trivia": "The name comes from the computer-networking term 'tombstoning': killing something so it stays dead.",
+  "selfRighting": "none (invertible)",
+  "uncertain": [
+   "weaponSpecs.massLb",
+   "weaponSpecs.tipSpeedMph",
+   "weaponSpecs.motor",
+   "appearance.primaryColorHex",
+   "appearance.secondaryColorHex"
+  ],
+  "sources": [
+   "https://battlebots.fandom.com/wiki/Tombstone",
+   "https://battlebots.fandom.com/wiki/Tombstone/HEXBUG",
+   "https://battlebots.com/robot/tombstone-2019/"
+  ]
+ },
+ {
+  "id": "bite-force",
+  "name": "Bite Force",
+  "team": "Aptyx Designs",
+  "captain": "Paul Ventimiglia",
+  "hometown": "Mountain View, CA",
+  "debut": "World Championship I (2015)",
+  "weaponType": "vertical-bar",
+  "weapon": "2015: a tracked grappler/lifter with lifting forks and a clamping upper jaw. The jaw could be swapped for a heavy steel plow (cobalt-blue or black) against spinners, and magnets on the tracks improved grip. 2016-2019: completely redesigned as a 4WD robot with an asymmetric vertical bar spinner centered at the front, powered by a Motenergy ME0909 in 2016. Midway through 2018 (after the End Game fight) it switched to four S28-150 Magmotors, running the whole robot at 24 V. Front configurations were swapped by opponent: four small hinged blue wedgelets as standard, a wide blue anti-spinner plow, or a heavy steel wedge. UHMW chain guards were added in 2018 after Chomp knocked off its weapon chain in 2016.",
+  "armor": [
+   "6061 aluminum (water-jet cut 1/4, 3/8 and 1/2 in plates, 2015)",
+   "aluminum chassis with interlocking welded joints (2016+)",
+   "steel wedges/plows",
+   "UHMW chain guards (2018+)"
+  ],
+  "giantNuts": [
+   "World Championship I (2015)",
+   "World Championship III (2018)",
+   "World Championship IV (2019)"
+  ],
+  "runnerUp": [],
+  "awards": [
+   "Won the 2016 exhibition rumble vs Witch Doctor and Wrecks"
+  ],
+  "records": [
+   "26-1 competitive record: best of the reboot era",
+   "Only loss: Chomp by JD (World Championship II, 2016)",
+   "Never knocked out",
+   "19-fight win streak, the longest in show history"
+  ],
+  "fights": [
+   {
+    "opponent": "Tombstone",
+    "season": "World Championship I (2015)",
+    "summary": "Final. Bite Force charged to keep Tombstone's bar from spinning up, scooped it and pinned it on the rails. Tombstone's batteries caught fire, and Bite Force pushed it around despite drive trouble of its own.",
+    "result": "Won by JD (unanimous)"
+   },
+   {
+    "opponent": "Minotaur",
+    "season": "World Championship III (2018)",
+    "summary": "Final. Minotaur launched Bite Force and knocked a wedgelet off, but its drum stopped for good after one exchange. Bite Force hit Minotaur's exposed wheel and pushed it to the screws for the count-out.",
+    "result": "Won by KO (2:05)"
+   },
+   {
+    "opponent": "Tombstone",
+    "season": "World Championship IV (2019)",
+    "summary": "Semi-final rematch. On the second hit Bite Force sheared off about a third of Tombstone's bar and tore off a wheel, leaving Tombstone shaking itself apart until it was counted out.",
+    "result": "Won by KO"
+   },
+   {
+    "opponent": "Chomp",
+    "season": "World Championship II (2016)",
+    "summary": "Chomp's first hammer swing knocked Bite Force's weapon chain off within five seconds. Bite Force fought on as a pusher but backed over its own chain and got stuck. This was its only career loss.",
+    "result": "Lost by JD"
+   }
+  ],
+  "trivia": "The name comes from the 'bite force quotient' scientists use to compare animal jaw strength.",
+  "selfRighting": null,
+  "uncertain": [
+   "appearance.primaryColorHex",
+   "appearance.secondaryColorHex",
+   "drive.invertible",
+   "drive.selfRighting"
+  ],
+  "sources": [
+   "https://battlebots.fandom.com/wiki/Bite_Force",
+   "https://battlebots.fandom.com/wiki/Bite_Force/HEXBUG",
+   "https://battlebots.fandom.com/wiki/Bite_Force/Push_Strike"
+  ]
+ },
+ {
+  "id": "witch-doctor",
+  "name": "Witch Doctor",
+  "team": "Team Witch Doctor (formerly Busted Nuts Robotics)",
+  "captain": "Andrea Gellatly and Mike Gellatly (co-captains)",
+  "hometown": "Miami, FL",
+  "debut": "World Championship I (2015)",
+  "weaponType": "vertical-disk",
+  "weapon": "Front vertical spinner. 2015: a single asymmetric disk. From 2016: a double-sided disk. 2018: a 47 lb two-tooth weapon at about 4000 rpm / 200 mph. Through the middle years it mostly ran the wider 'drisk' (a drum/disk hybrid). From 2021 it used twin weapon motors, belts outside the disks and AR500 steel. Late in 2021 it debuted a 45 lb single-tooth steel disk, which became its preferred weapon because it is lighter and spins up faster. 2022 build: brushless, about 25% faster, spinning at the 250 mph tip-speed maximum. Also carries a flamethrower. In the early seasons it ran with a 30 lb flame-throwing wedge minibot called Shaman, retired in 2018 to save weight. Front ends switch between small wedges/forks and a big steel anti-spinner plow.",
+  "armor": [
+   "AR500 steel (weapon)",
+   "steel front plow"
+  ],
+  "giantNuts": [],
+  "runnerUp": [
+   "World Championship IV (2019)",
+   "World Championship VI (2021)",
+   "BattleBots: Champions I Golden Bolt (runner-up) (2021)"
+  ],
+  "awards": [
+   "re:MARS all:STARS BattleBots Challenge 2019 winner",
+   "Successful Bounty defense vs SubZero (BattleBots: Bounty Hunters)",
+   "Sin City Slugfest winner (BattleBots: Champions I)",
+   "Giant Washer (BattleBots FaceOffs)"
+  ],
+  "records": [
+   "Only robot to qualify for all seven World Championship tournaments",
+   "Only reboot robot to finish runner-up twice",
+   "27-second KO of ROTATOR was the fastest win of World Championship II"
+  ],
+  "fights": [
+   {
+    "opponent": "Minotaur",
+    "season": "World Championship VI (2021)",
+    "summary": "Quarter-final, one of the most controversial fights in show history. Both robots got stuck or crippled near the Upper Deck. The referees ordered an unstick for Witch Doctor, then never started a count on the one-wheeled Minotaur, which kept gyro-dancing. Witch Doctor circled without engaging for most of the last 90 seconds. The crowd booed the decision, and BattleBots later said it would review its 'controlled movement' rules.",
+    "result": "Won by JD (unanimous, all three judges scored it 6-5)"
+   },
+   {
+    "opponent": "Bite Force",
+    "season": "World Championship IV (2019)",
+    "summary": "Final. Witch Doctor tore off Bite Force's wedgelets early, then its weapon died and one side of its drive failed. Bite Force flipped it upside down against the arena wall where the self-righter couldn't work.",
+    "result": "Lost by KO"
+   },
+   {
+    "opponent": "ROTATOR",
+    "season": "World Championship II (2016)",
+    "summary": "Qualifier. With Shaman left out to save weight, Witch Doctor penned ROTATOR in a corner, ripped a tire off and flipped it. This was the fastest win of the season.",
+    "result": "Won by KO (0:27)"
+   }
+  ],
+  "trivia": "Captain Andrea Gellatly wrote the BattleBots alphabet book 'B is for BattleBots'.",
+  "selfRighting": "Hinged 'ribcage' self-righting arm on top (from 2016; near-180 degree range from 2021). 'Bunny ears' added in 2021 let it drive and keep the weapon spinning while upside down.",
+  "uncertain": [
+   "appearance.primaryColorHex",
+   "appearance.secondaryColorHex",
+   "appearance.accentColorsHex",
+   "appearance.features",
+   "drive.invertible"
+  ],
+  "sources": [
+   "https://battlebots.fandom.com/wiki/Witch_Doctor",
+   "https://battlebots.fandom.com/wiki/Witch_Doctor/HEXBUG"
+  ]
+ },
+ {
+  "id": "minotaur",
+  "name": "Minotaur",
+  "team": "Team RioBotz",
+  "captain": "Marco Meggiolaro",
+  "hometown": "Rio de Janeiro, RJ, Brazil",
+  "debut": "World Championship II (2016)",
+  "weaponType": "drum",
+  "weapon": "Wide, heavy steel drum spinner across the full front, 60-70 lb depending on configuration and driven by two Scorpion outrunner motors. 12,000 rpm in 2016, cut to 11,000 rpm for the 250 mph limit (2018), 9,000 rpm with bigger teeth (2019), and about 8,000 rpm / 220 mph with a heavier drum (2021-2022). Interchangeable wedges, wedgelets ('scoops') and hinged forks feed opponents into the drum. The drum's gyroscopic force lets Minotaur 'gyro-dance' and flip itself back over.",
+  "armor": [
+   "6061-T6 aluminum chassis CNC-machined from an 8 in block",
+   "steel",
+   "titanium",
+   "AR450 steel forks (2021)"
+  ],
+  "giantNuts": [],
+  "runnerUp": [
+   "World Championship III (2018)"
+  ],
+  "awards": [
+   "Most Destructive Robot Award (World Championship II, 2016)",
+   "Giant Washer (BattleBots Proving Ground All Star Week, 2024)"
+  ],
+  "records": [
+   "Reached at least the quarter-finals in every World Championship it entered",
+   "No.1 seed for the World Championship VII (2022) bracket after going 4-0",
+   "Driver Daniel Freitas is widely rated by fans and builders as one of the best drivers in BattleBots"
+  ],
+  "fights": [
+   {
+    "opponent": "Warhead",
+    "season": "World Championship II (2016)",
+    "summary": "Round of 16. Minotaur's uppercut ripped off Warhead's spinning disk and dome and sent it bouncing across the BattleBox ('Warhead has been decapitated!'). It then stripped Warhead's side panels until it was counted out.",
+    "result": "Won by KO"
+   },
+   {
+    "opponent": "Bite Force",
+    "season": "World Championship III (2018)",
+    "summary": "Final. Minotaur launched Bite Force and knocked off a wedgelet, but lost a wheel guard and its drum would not power back up. Bite Force picked at its exposed wheel until it stopped moving.",
+    "result": "Lost by KO (2:05)"
+   },
+   {
+    "opponent": "End Game",
+    "season": "World Championship VI (2021)",
+    "summary": "Round of 16 vs the defending champion and No.1 seed. Minotaur flipped End Game, broke off both of its long forks and chewed its underside in the closing seconds, guaranteeing a brand-new Giant Nut winner.",
+    "result": "Won by JD"
+   }
+  ],
+  "trivia": "RioBotz's drum bots are bull-themed: 'Touro' is Portuguese for 'bull'.",
+  "selfRighting": "Gyroscopic self-righting with the spinning drum; it can also drive inverted (drum then spins the wrong way)",
+  "uncertain": [
+   "appearance.primaryColorHex",
+   "appearance.secondaryColorHex",
+   "appearance.features",
+   "weaponSpecs.tipSpeedMph"
+  ],
+  "sources": [
+   "https://battlebots.fandom.com/wiki/Minotaur",
+   "https://battlebots.fandom.com/wiki/Minotaur/HEXBUG",
+   "https://battlebots.fandom.com/wiki/Minotaur/VEX_Robotics"
+  ]
+ },
+ {
+  "id": "hypershock",
+  "name": "HyperShock",
+  "team": "Team HyperShock (formerly Shenanigans & Co.)",
+  "captain": "Will Bales",
+  "hometown": "Miami, FL",
+  "debut": "World Championship I (2015)",
+  "weaponType": "vertical-disk",
+  "weapon": "Front vertical spinner. 2015: a 'drisk' (drum sandwiched between two disks) plus two hydraulic clamping arms on a carbon-fiber frame. 2016: claws replaced by a feeder wedge and lifting arms with swappable attachments, including the famous $12 garden rake. 2018 onward: redesigned weapon with more bite. From 2021 there are single- and double-disk options on twin weapon motors with a chain drive and a magnesium hub. 2021 single disk: an S7 steel disk sandwiched between AR500 disks, 2 in thick in total; 2021 double disk: two 1-1/4 in S7 disks. 2022: a single 2.5 in thick S7 disk (39.7 lb), or dual disks at 40 lb (1 in) or 46 lb (1-1/4 in). 'Horns' above the weapon let it keep fighting upside down.",
+  "armor": [
+   "AR500 steel",
+   "titanium",
+   "aluminum",
+   "carbon fiber frame (2015-2016)",
+   "titanium underbelly"
+  ],
+  "giantNuts": [],
+  "runnerUp": [],
+  "awards": [
+   "Best Driver Award, Will Bales (World Championship II, 2016)",
+   "Most Destructive Robot Award (World Championship VI, 2021)",
+   "re:MARS all:STARS BattleBots Challenge 2022 winner (beat Tombstone, Blip, Hydra)",
+   "Sin City Slugfest I winner (BattleBots: Champions I)"
+  ],
+  "records": [
+   "Fastest KO in the reboot: threw Skorpios out of the arena in 24 seconds (BattleBots: Champions I)",
+   "Only robot to win Most Destructive and have its team win Best Driver",
+   "Career-best World Championship finish: Round of 16"
+  ],
+  "fights": [
+   {
+    "opponent": "Warrior Clan",
+    "season": "World Championship II (2016)",
+    "summary": "'The Rakening'. HyperShock bolted a $12 hardware-store rake to its self-righter, swatted Warrior Clan's flying drone (Warrior Dragon) out of the air, pinned it with the rake and smashed it, then knocked out the main robot too. Ranked No.1 on BattleBots: Most Outrageous Moments.",
+    "result": "Won by KO"
+   },
+   {
+    "opponent": "Skorpios",
+    "season": "BattleBots: Champions I (2021)",
+    "summary": "Golden Bolt quarter-final. Its forks got under Skorpios and three hits later it flew out of the arena: the fastest KO of the reboot.",
+    "result": "Won by KO (0:24, out of the arena)"
+   },
+   {
+    "opponent": "Lock-Jaw",
+    "season": "World Championship VI (2021)",
+    "summary": "Main Event. Went weapon-to-weapon, tore off Lock-Jaw's wheels, flipped it twice, then hit its rear plow and threw it clean over the arena wall.",
+    "result": "Won by KO (out of the arena)"
+   }
+  ],
+  "trivia": "The 2018 HyperShock was sold and repainted blue as 'Drift King' for Robot Ruckus 2021.",
+  "selfRighting": "Self-righter dropped in 2021 to save about 40 lb. Runs inverted using the horns above the disk and flips back over with the weapon's gyroscopic force.",
+  "uncertain": [
+   "appearance.secondaryColorHex",
+   "drive.motors"
+  ],
+  "sources": [
+   "https://battlebots.fandom.com/wiki/HyperShock",
+   "https://battlebots.fandom.com/wiki/HyperShock/HEXBUG",
+   "https://hypershock.tv/blogs/inside-the-bot/srimech"
+  ]
+ },
+ {
+  "id": "end-game",
+  "name": "End Game",
+  "team": "Team End Game (formerly OYES Robotics)",
+  "captain": "Jack Barker and Nick Mabey (co-captains)",
+  "hometown": "Auckland, New Zealand",
+  "debut": "World Championship III (2018)",
+  "weaponType": "vertical-disk",
+  "weapon": "Powerful vertical spinner centered in a boxy 4WD frame, reaching more than 6000 rpm in under five seconds. It started with a single-toothed disk, later interchangeable with an asymmetric bar and a teardrop-shaped disk. 2021: eight disks carried for the season. 2022: disks from 40 to 55 lb and a reversible weapon. The front end swaps between forks (including very long hinged and barbed forks), wedgelets and a 2022 'piano key' set of up to nine wedgelets, the first on a vertical spinner. Magnets (from 2021) counter gyroscopic forces and add traction.",
+  "armor": [
+   "7050 aluminum chassis (2018)",
+   "7075 aluminum (2019, too brittle)",
+   "billet aluminum frame",
+   "AR steel front wedges"
+  ],
+  "giantNuts": [
+   "World Championship V (2020)"
+  ],
+  "runnerUp": [],
+  "awards": [
+   "Golden Bolt (BattleBots: Champions I, 2021)",
+   "Golden Bolt (BattleBots: Champions II, 2022)",
+   "Chris Rose Average Wrench (BattleBots Pro League 2026)"
+  ],
+  "records": [
+   "First international team to win the Giant Nut in the reboot (New Zealand)",
+   "Only robot to beat three different World Champions (Tombstone, Tantrum, SawBlaze)",
+   "Won its Giant Nut final by throwing Whiplash out of the arena",
+   "29-second ring-out of SawBlaze (2021), one of the shortest fights in BattleBots history"
+  ],
+  "fights": [
+   {
+    "opponent": "Whiplash",
+    "season": "World Championship V (2020)",
+    "summary": "Final. End Game uppercut Whiplash's lifter, flipped it twice and bent the arm, then sent it over the wall and out of the BattleBox to become the first international reboot champion.",
+    "result": "Won by KO (out of the arena)"
+   },
+   {
+    "opponent": "Tombstone",
+    "season": "World Championship V (2020)",
+    "summary": "Main Event two years after End Game first called out Ray Billings. After a weapon-to-weapon clash Tombstone's tire stuck on the screws, and End Game launched it out of the arena.",
+    "result": "Won by KO (0:39, out of the arena)"
+   },
+   {
+    "opponent": "Witch Doctor",
+    "season": "BattleBots: Champions I (2021)",
+    "summary": "Golden Bolt final. End Game's forks got under Witch Doctor and tossed it into the short corner. It controlled Witch Doctor into the screws until it was no longer mobile, winning the first Golden Bolt.",
+    "result": "Won by KO"
+   }
+  ],
+  "trivia": "The space in 'End Game' was an accident on the application form; the team later linked it to the Taylor Swift song of the same name.",
+  "selfRighting": "Separate self-righting arm (2019 version styled like a pair of sunglasses over the weapon; later a single arm on the left of the weapon, fern-shaped by 2022). The weapon can also flip it back over.",
+  "uncertain": [
+   "appearance.primaryColorHex",
+   "weaponSpecs.rpm",
+   "weaponSpecs.spinUpTimeS",
+   "weaponSpecs.massLb"
+  ],
+  "sources": [
+   "https://battlebots.fandom.com/wiki/End_Game"
+  ]
+ },
+ {
+  "id": "sawblaze",
+  "name": "SawBlaze",
+  "team": "Team SawBlaze (formerly LiMITless Robotics)",
+  "captain": "Jamison Go",
+  "hometown": "Cambridge, MA",
+  "debut": "World Championship II (2016)",
+  "weaponType": "saw-arm",
+  "weapon": "Wedge/fork robot that slides under opponents, pins them, then swings a powered overhead arm down onto them with a spinning blade at its tip. WC II: thin circular cutting saw only (it bent and jammed vs Razorback). WC III: diamond-edged cutting disk, faster and stronger arm that doubles as the self-righter. WC IV on: interchangeable heavy asymmetric 'hammer saw' (spins downward, hits like a hammer) or a diamond abrasive cutting blade, picked per opponent. WC V: faster spin-up and spin-down. WC VI: new arm gearbox (designed with Jake Chesin) and a center fork split down the middle. WC VII: AR600 steel hammer-saw blade, Brazil wheels. Front-mounted flamethrower that burns green in later seasons (it barely worked in early fights).",
+  "armor": [
+   "hardened steel forks",
+   "UHMW-PE sliders and wheelguards (WC VII)",
+   "AR steel blades"
+  ],
+  "giantNuts": [
+   "World Championship VII (aired 2023) (2022)"
+  ],
+  "runnerUp": [
+   "BattleBots: Champions II Golden Bolt (lost the final to End Game by split JD) (2023)"
+  ],
+  "awards": [
+   "Founder's Award (World Championship VI)",
+   "Combat Robot Hall of Fame: honorable mention 2023, inducted 2025 (shared with Jamison Go's 30lb MegatRON)"
+  ],
+  "records": [
+   "Won the Giant Nut as the #8 seed, beating the #1 seed (Minotaur) on the way",
+   "First hammer-saw robot and first flamethrower robot to win the Giant Nut",
+   "10-2 across WC VII + Champions II, the most wins in one year",
+   "Matched or beat its previous finish every season: qualifiers → Top 16 → QF → QF → SF → champion"
+  ],
+  "fights": [
+   {
+    "opponent": "HUGE",
+    "season": "World Championship VII (2022)",
+    "summary": "In the Giant Nut final against the unbeaten HUGE, SawBlaze stayed low, kept pinning and pounding HUGE against the walls with the hammer saw, and handed HUGE its first loss of the season.",
+    "result": "Won by unanimous JD"
+   },
+   {
+    "opponent": "Minotaur",
+    "season": "World Championship VII (2022)",
+    "summary": "Quarter-final against the #1 seed. SawBlaze lost its weapon and took massive drum hits, but trapped Minotaur against the screws until RioBotz's bot sat immobile and on fire.",
+    "result": "Won by KO"
+   },
+   {
+    "opponent": "Whiplash",
+    "season": "World Championship V (2020)",
+    "summary": "The season's first fight. SawBlaze kept getting under Whiplash, shoved it into the screws and walls, then pinned it and hammered its top. Whiplash went on to finish runner-up that season.",
+    "result": "Won by KO (2:30)"
+   }
+  ],
+  "trivia": "Early builds filled the tires with pool noodles.",
+  "selfRighting": "overhead weapon arm swings over to push the robot upright",
+  "uncertain": [
+   "weaponSpecs.rpm",
+   "drive.invertible",
+   "appearance.primaryColorHex",
+   "appearance.secondaryColorHex",
+   "appearance.accentColorsHex",
+   "armor.dimensionsIn"
+  ],
+  "sources": [
+   "https://battlebots.fandom.com/wiki/SawBlaze",
+   "https://battlebots.com/robot/sawblaze-2019/",
+   "https://www.xometry.com/resources/case-studies/sawblaze/"
+  ]
+ },
+ {
+  "id": "whiplash",
+  "name": "Whiplash",
+  "team": "Team Fast Electric Robots",
+  "captain": "Matt Vasquez",
+  "hometown": "Thousand Oaks, CA",
+  "debut": "World Championship III (2018)",
+  "weaponType": "vertical-disk",
+  "weapon": "Rear-hinged lifting arm with a vertical spinning disk (about 22lb) at its front end. The arm swings 180 degrees, so it can lift, hit from overhead like a hammer saw, and self-right. Forks/wedgelets at the front can be swapped for hinged forks of different lengths. Against some opponents the disk is removed and replaced with an AR500 plate and extra armor; it ran disk-less for all of WC VI. WC IV: new, more destructive disk. WC V: new disk, bigger protected lifter gear, Brazil wheels. WC VII: all-brushless drive saved enough weight to run disk and armor together.",
+  "armor": [
+   "AR500 steel",
+   "interchangeable armor packages"
+  ],
+  "giantNuts": [],
+  "runnerUp": [
+   "World Championship V (2020)"
+  ],
+  "awards": [
+   "Best Driver Award, WC III (Twitter poll)",
+   "Sin City Slugfest II winner (BattleBots: Champions II)"
+  ],
+  "records": [
+   "Made at least the Round of 16 in every season",
+   "Record 10 Main Events",
+   "First robot to flip Hydra and make it self-right (WC V)",
+   "One of three robots (with Minotaur and Witch Doctor) to have fought all five World Champions"
+  ],
+  "fights": [
+   {
+    "opponent": "Hydra",
+    "season": "World Championship V (2020)",
+    "summary": "Quarter-final against the #1 seed. Whiplash flipped Hydra, the first robot ever to do so, and tore a panel off its rear in the final seconds while smoking itself.",
+    "result": "Won by split JD"
+   },
+   {
+    "opponent": "Bronco",
+    "season": "World Championship III (2018)",
+    "summary": "Rookie Whiplash out-drove the #2 seed, pushing and lifting Bronco and denying it room to flip. Bronco's drive electrics gave out.",
+    "result": "Won by KO"
+   },
+   {
+    "opponent": "End Game",
+    "season": "World Championship V (2020)",
+    "summary": "Giant Nut final. End Game flipped Whiplash twice, bending its arm so it wouldn't retract, then threw it over the wall and out of the BattleBox.",
+    "result": "Lost by KO (out of the arena)"
+   }
+  ],
+  "trivia": "When Tombstone ripped Whiplash in half in WC III, Chris Rose said it was in two parts: 'Whip and Lash'.",
+  "selfRighting": "lifter/weapon arm",
+  "uncertain": [
+   "drive.topSpeedMph",
+   "weaponSpecs.massLb",
+   "drive.invertible",
+   "appearance.accentColorsHex",
+   "armor.dimensionsIn"
+  ],
+  "sources": [
+   "https://battlebots.fandom.com/wiki/Whiplash",
+   "https://battlebots.com/robot/whiplash-2019/",
+   "https://www.goengineer.com/blog/vasquez-family-battles-to-top-at-battlebots-2018"
+  ]
+ },
+ {
+  "id": "lock-jaw",
+  "name": "Lock-Jaw",
+  "team": "Mutant Robots",
+  "captain": "Donald Hutson",
+  "hometown": "San Diego, CA",
+  "debut": "World Championship I (2015)",
+  "weaponType": "vertical-disk",
+  "weapon": "WC I-II: titanium grabbing jaws (280 degrees of rotation) plus downward-firing twin flamethrowers; WC II jaws could also act as a spring flipper, and it was rebuilt smaller on 4 wheels instead of 6. WC III on: modular robot with a vertical spinner (twin vertical bar, sometimes called a drum, about 120mph tip speed) between hinged forks/wedges. The old jaws stayed as an option but were rarely used. WC IV: heavier weapon, narrower forks, and the bar moved forward for better bite. WC V: optional 45lb single disk. WC VI-VII: invert wheels on the outside of the 'ears', name painted on the forks, Screw Job minibot (WC VI-VII) and Spitfire drone (WC VII).",
+  "armor": [
+   "titanium (WC I jaws)",
+   "polycarbonate top armor (Bounty Hunters vs Beta)"
+  ],
+  "giantNuts": [],
+  "runnerUp": [],
+  "awards": [
+   "Desperado Tournament winner (WC III, inaugural)",
+   "Bounty Hunters: Beta bracket winner and new Bounty holder"
+  ],
+  "records": [
+   "WC III semi-finalist",
+   "Only reboot robot to beat and lose to the same opponent (Overhaul) in one season",
+   "First to beat the same opponent twice in one reboot season (Bombshell, WC III); beat Bombshell three times overall",
+   "Wiki competitive record: 22-17"
+  ],
+  "fights": [
+   {
+    "opponent": "Bombshell",
+    "season": "World Championship III (2018)",
+    "summary": "Quarter-final rematch. The vertical spinner battered Bombshell until it caught fire, giving Hutson his first reboot semi-final.",
+    "result": "Won by KO"
+   },
+   {
+    "opponent": "Beta",
+    "season": "BattleBots: Bounty Hunters (discovery+, early 2021)",
+    "summary": "Bounty match after winning the Beta bracket (Axe Backwards, Fusion, Bloodsport). With extra polycarbonate top armor against Beta's hammer, Lock-Jaw left Beta upside down and unable to self-right.",
+    "result": "Won by KO (claimed the $25,000 bounty)"
+   },
+   {
+    "opponent": "Lucky",
+    "season": "World Championship III (2018)",
+    "summary": "Desperado Tournament final after KOs of Kraken and Valkyrie. Lock-Jaw kept hitting until Lucky couldn't move and won the Desperado trophy.",
+    "result": "Won by KO"
+   }
+  ],
+  "trivia": "Lock-Jaw, Bronco and Stinger starred in a BattleBots-themed Pizza Hut commercial in 2015.",
+  "selfRighting": "none (invertible: 'ears' with wheels let it drive upside down)",
+  "uncertain": [
+   "appearance.primaryColorHex",
+   "appearance.secondaryColorHex",
+   "appearance.accentColorsHex",
+   "weaponSpecs.teethOrImpactors",
+   "armor.materials",
+   "armor.dimensionsIn"
+  ],
+  "sources": [
+   "https://battlebots.fandom.com/wiki/Lock-Jaw",
+   "https://battlebots.com/robot/lock-jaw-2019/"
+  ]
+ },
+ {
+  "id": "hydra",
+  "name": "Hydra",
+  "team": "Team Whyachi",
+  "captain": "Jake Ewert",
+  "hometown": "Dorchester, WI",
+  "debut": "World Championship IV (2019)",
+  "weaponType": "flipper",
+  "weapon": "Front-mounted, rear-hinged flipping arm with a custom hydraulic system, the first hydraulic flipper in BattleBots. It builds up pressure in what Jake Ewert called 'pretty much a big spring'; releasing the spring pushes hydraulic fluid into the cylinder for a sudden throw, then the arm retracts. Test videos showed it launching a 450lb quad bike and a van. WC V: redesigned front end and internals; a 28lb steel 'Hydragate' corral attachment against HUGE. WC VI: rebuilt, with fluid filters and liquid cooling; full pressure in 4s (was 8s); cow-catcher dropped after a rule change. A vertical-spinner attachment was teased but never used. WC VII: 3/16in AR500 top plate added vs SawBlaze.",
+  "armor": [
+   "titanium (front plate and side armor)",
+   "AR500 steel (3/16in top layer, WC VII)"
+  ],
+  "giantNuts": [],
+  "runnerUp": [
+   "re:MARS all:STARS BattleBots Challenge (lost the final to HyperShock) (2022)"
+  ],
+  "awards": [
+   "Founder's Award (World Championship IV)"
+  ],
+  "records": [
+   "Only non-spinner to be the #1 seed (WC V)",
+   "Lowest seed ever to reach a World Championship semi-final (#31, WC VI)",
+   "Biggest upset in tournament history: #31 Hydra KO'd #2 Ribbot (WC VI)",
+   "Only heavyweight hydraulic flipper to make a televised Top 4"
+  ],
+  "fights": [
+   {
+    "opponent": "WAR Hawk",
+    "season": "World Championship IV (2019)",
+    "summary": "Hydra threw WAR Hawk around until both modular drive pods came off, leaving it in three pieces.",
+    "result": "Won by KO"
+   },
+   {
+    "opponent": "Ribbot",
+    "season": "World Championship VI (2021)",
+    "summary": "Round of 32: #31 seed against #2 seed. Ribbot's undercutter sliced off the flipper tip, but Hydra kept tossing Ribbot into the screws until it was counted out.",
+    "result": "Won by KO"
+   },
+   {
+    "opponent": "SawBlaze",
+    "season": "World Championship VII (2022)",
+    "summary": "Main Event. Hydra won the ground game and kept launching SawBlaze. With SawBlaze being counted out, Jake Ewert kept flipping it as the clock ran out, so the fight went the distance. It was the only loss of SawBlaze's title season.",
+    "result": "Won by unanimous JD"
+   }
+  ],
+  "trivia": "Team Whyachi planned to use steam to power the flipper if the hydraulics couldn't be made to work.",
+  "selfRighting": "flipper",
+  "uncertain": [
+   "hometown",
+   "drive.wheelCount",
+   "appearance.primaryColorHex",
+   "appearance.accentColorsHex",
+   "armor.dimensionsIn"
+  ],
+  "sources": [
+   "https://battlebots.fandom.com/wiki/Hydra",
+   "https://battlebots.com/robot/hydra-2019/"
+  ]
+ },
+ {
+  "id": "bronco",
+  "name": "Bronco",
+  "team": "Inertia Labs",
+  "captain": "Alexander Rose and Reason Bradley (co-captains)",
+  "hometown": "Sausalito, CA",
+  "debut": "World Championship I (2015)",
+  "weaponType": "flipper",
+  "weapon": "Big pneumatic rear-hinged flipping arm (launcher), said to have almost three times the power of Toro. WC I: original four-wheel box, elongated flipper option vs Tombstone. WC II: two builds; the new one was longer with six wheels, plus armor options (angled rear wedge vs horizontal spinners, top guards vs axes/hammers). WC III: back to 4WD, launcher about 30% stronger than 2016, interchangeable 'pwanger' side armor vs vertical spinners, extra top armor vs overhead weapons. WC IV: largely unchanged, new rubber wheels and front wedgelets.",
+  "armor": [
+   "unpainted metal box chassis",
+   "bolt-on 'pwanger' side armor",
+   "top armor panels",
+   "rear wheel guards"
+  ],
+  "giantNuts": [],
+  "runnerUp": [
+   "re:MARS all:STARS BattleBots Challenge (lost the final to Witch Doctor) (2019)"
+  ],
+  "awards": [],
+  "records": [
+   "First robot to throw an opponent out of the arena in a televised BattleBots competition (Stinger, WC I)",
+   "WC I semi-finalist; WC II and WC III quarter-finalist",
+   "Only robot in WC III with all four Fight Night matches as Main Events (went 4-0)",
+   "First robot to follow a 4-0 season with 0-4 (WC IV)"
+  ],
+  "fights": [
+   {
+    "opponent": "Stinger: The Killer Bee",
+    "season": "World Championship I (2015)",
+    "summary": "Quarter-final. Bronco drove Stinger back and launched it over the barrier, the first televised out-of-the-arena throw in BattleBots.",
+    "result": "Won by KO (out of the arena)"
+   },
+   {
+    "opponent": "Tombstone",
+    "season": "World Championship I (2015)",
+    "summary": "Semi-final against the #1 seed. Bronco flipped Tombstone with an elongated flipper, but Tombstone's bar crippled its left side, tore off a wheel guard and immobilized it. Bronco fired itself upright during the count, too late.",
+    "result": "Lost by KO"
+   },
+   {
+    "opponent": "Bombshell",
+    "season": "World Championship III (2018)",
+    "summary": "Main Event in the anti-spinner pwanger setup. After popping Bombshell into the air, Bronco's second big flip sent it out of the arena.",
+    "result": "Won by KO (out of the arena)"
+   }
+  ],
+  "trivia": "Bronco featured in a WC III cold open throwing Gamma 9 into a dumpster.",
+  "selfRighting": "flipper (fires to flip itself back over)",
+  "uncertain": [
+   "drive.wheelCount",
+   "appearance.accentColorsHex",
+   "armor.materials",
+   "armor.dimensionsIn"
+  ],
+  "sources": [
+   "https://battlebots.fandom.com/wiki/Bronco",
+   "https://battlebots.com/robot/bronco-2019/"
+  ]
+ },
+ {
+  "id": "blacksmith",
+  "name": "Blacksmith",
+  "team": "Team Half Fast Astronaut",
+  "captain": "Al Kindle",
+  "hometown": "Edison, NJ",
+  "debut": "World Championship II (2016)",
+  "weaponType": "hammer",
+  "weapon": "Overhead electric hammer with a propane flamethrower built into the hammerhead (the 'flamethrower hammer'); it doubles as the self-righter. Driven by an NPC Black Max motor, aimed at fast, repeated, reliable hits rather than one-shot KOs. WC III: 13lb hammerhead, arm and head cut from one piece of AR500, machined titanium shaft, full swing arc in about 3s, enough torque to lift 250lb at the tip. WC IV: bulkier rounded head with a radioactive-symbol cutout, hardest-hitting version; overheating solved; the flame could burn 2+ minutes. WC VI-Champions I: hammer replaced by a 'power hammer' (green asymmetric hammer-saw disk on a chain-driven arm), with the flamethrower still at the back of the weapon axle.",
+  "armor": [
+   "AR500 steel (welded chassis from WC III; 3/16in sides and rear)",
+   "titanium hammer shaft",
+   "HDPE (hammer-arm cover, dropped after the first WC III fight)"
+  ],
+  "giantNuts": [],
+  "runnerUp": [
+   "Sin City Slugfest IV final, BattleBots: Champions I (lost to Bloodsport by split JD) (2021)"
+  ],
+  "awards": [],
+  "records": [
+   "Best season WC IV: 3-2 Fight Night, made the Top 16 (#15 seed)",
+   "Went the full three minutes in all four WC III losses",
+   "Wiki record: 8-12"
+  ],
+  "fights": [
+   {
+    "opponent": "Minotaur",
+    "season": "World Championship II (2016)",
+    "summary": "Round of 32 after a wildcard. Minotaur's drum tore off Blacksmith's plow and front armor, flipped it twice and broke off the hammerhead. Blacksmith ended up in flames.",
+    "result": "Lost by KO"
+   },
+   {
+    "opponent": "Captain Shrederator",
+    "season": "World Championship IV (2019)",
+    "summary": "Blacksmith soaked up the full-body spinner's hits without serious damage, then drove Shrederator to the screws and flipped it over. Shrederator couldn't self-right.",
+    "result": "Won by KO"
+   },
+   {
+    "opponent": "Bloodsport",
+    "season": "BattleBots: Champions I (2021)",
+    "summary": "Sin City Slugfest IV final. Bloodsport sliced the plow and flipped Blacksmith, but its disk ended up on the floor and Blacksmith shoved it around to the end.",
+    "result": "Lost by split JD"
+   }
+  ],
+  "trivia": "battlebots.com fun fact: 'We all hate hammers and fire.'",
+  "selfRighting": "hammer arm",
+  "uncertain": [
+   "drive.invertible",
+   "appearance.secondaryColorHex",
+   "appearance.accentColorsHex",
+   "weaponSpecs.teethOrImpactors",
+   "armor.dimensionsIn"
+  ],
+  "sources": [
+   "https://battlebots.fandom.com/wiki/Blacksmith",
+   "https://battlebots.com/robot/blacksmith-2019/"
+  ]
+ },
+ {
+  "id": "huge",
+  "name": "HUGE",
+  "team": "Team HUGE",
+  "captain": "Jonathan Schultz",
+  "hometown": "South Windsor, CT",
+  "debut": "World Championship III (2018)",
+  "weaponType": "vertical-bar",
+  "weapon": "A big vertical spinning bar mounted high in the middle of the narrow body, so it hits opponents from above. The team brings several interchangeable bars: a longer bar for reach (used vs Bite Force in 2018), a shorter bar, a lighter I-shaped blade (WC VII final vs SawBlaze) and a heaviest blade (vs Minotaur, 2026). WC VI added two extra Maytech 4045 brushless motors so the bar reaches top speed faster, which had been a problem in earlier seasons. Driven by belts (in the WC VII final SawBlaze snapped two of them). When HUGE is upside down the bar spins downward instead of up.",
+  "armor": [
+   "AR400 steel body",
+   "UHMW wheels (hand-cut WC III-V, machined from WC VI)",
+   "Tegris composite wheels (optional, WC V on)",
+   "pocketed machined stabilizing legs (WC VI on)"
+  ],
+  "giantNuts": [],
+  "runnerUp": [
+   "World Championship VII (filmed 2022, aired 2023), lost the final to SawBlaze (2022)"
+  ],
+  "awards": [
+   "Best Design Award, World Championship III (2018), voted by fellow builders",
+   "Most Destructive Robot Award, World Championship VII",
+   "Inducted into the Combat Robot Hall of Fame, August 2023 (honorable mention 2019)"
+  ],
+  "records": [
+   "Perfect 4-0 Fight Night record in WC VII, then 8-0 going into the final: the most wins in a single season without winning the Giant Nut",
+   "Only reboot World Championship finalist never to fight Tombstone",
+   "Reboot competitive record per wiki: 20 wins, 14 losses (includes 2026 Pro League)"
+  ],
+  "fights": [
+   {
+    "opponent": "SawBlaze",
+    "season": "World Championship VII (2022)",
+    "summary": "Giant Nut final. HUGE (Tegris wheels, light I-shaped blade) flipped SawBlaze several times early, but SawBlaze's 'eyebrow' plow pinned it against the walls, hammer-saw hits snapped two weapon belts and crippled its right wheel. All three judges inspected both robots and gave it to SawBlaze unanimously. Jonathan Schultz refused to appeal, saying SawBlaze was the rightful winner.",
+    "result": "Lost by JD (unanimous)"
+   },
+   {
+    "opponent": "Copperhead",
+    "season": "World Championship VII (2022)",
+    "summary": "Semi-final. HUGE snapped Copperhead's right drive chain in the fourth weapon-on-weapon exchange, kept hitting it until the eggbeater smoked and stopped, then gyro-danced on one wheel while Copperhead was counted out and destroyed its snake minibot.",
+    "result": "Won by KO (time not given on wiki)"
+   },
+   {
+    "opponent": "Icewave",
+    "season": "World Championship III (2018)",
+    "summary": "Fight Night 4. Icewave's horizontal bar tore into one of HUGE's wheels, then a third hit ripped HUGE down the middle and it was counted out. The repairs gave way when HUGE split in two again in its Round of 16 loss to Bite Force.",
+    "result": "Lost by KO"
+   }
+  ],
+  "trivia": "Jonathan Schultz names Robot Wars' Gabriel as his main inspiration, and HUGE's 2020 fight with Kraken (won 3-0 JD) has over 63 million TikTok views.",
+  "selfRighting": "none (invertible; stabilizing legs and axle extensions past each wheel keep it from getting stuck on its side)",
+  "uncertain": [
+   "weaponSpecs.teethOrImpactors",
+   "weaponSpecs.massLb (WC VI figure; other bars differ)",
+   "appearance.accentColorsHex",
+   "armor.dimensionsIn"
+  ],
+  "sources": [
+   "https://battlebots.fandom.com/wiki/HUGE",
+   "https://battlebots.com/robot/huge-2021/",
+   "https://battlebots.com/robot/huge/"
+  ]
+ },
+ {
+  "id": "tantrum",
+  "name": "Tantrum",
+  "team": "Seems Reasonable Robotics (listed as 'Seems Reasonable' on battlebots.com)",
+  "captain": "Aren Hill (WC III-V); Alex Grant and Ginger Schmidt co-captains (WC VI on)",
+  "hometown": "Mountain View, CA (wiki and battlebots.com 2018; the 2021 battlebots.com page lists San Diego, CA and Cambridge, MA)",
+  "debut": "World Championship III (2018)",
+  "weaponType": "drum",
+  "weapon": "WC IV on: a 'puncher', a vertical spinning drum on a sliding mechanism that shoots forward to 'punch' opponents with the spinning drum. From WC V it was angled downward to reach lower; WC VI made the slide rails from S7 tool steel. The same S7 drum (first used on the team's King of Bots entry Boxing Champion) served 2019-2021 and was retired after the title. WC VII brought a new 18 lb S7 drum plus sensors for faster spin-up. WC III (2018) original: an electric spring-powered rear-hinged flipper ('choo-choo' mechanism) whose arm, made of three 10 mm titanium sheets, doubled as top armor.",
+  "armor": [
+   "AR400 steel 1/2 in (WC III)",
+   "titanium flipper/top armor (WC III)",
+   "S7 tool steel drum and rails",
+   "hinged front wedge or interchangeable forks"
+  ],
+  "giantNuts": [
+   "World Championship VI (filmed 2021, aired 2022), beat Witch Doctor in the final (2021)"
+  ],
+  "runnerUp": [],
+  "awards": [
+   "Combat Robot Hall of Fame Honorable Mention, August 2025"
+  ],
+  "records": [
+   "At #11, the lowest seed ever to win the Giant Nut",
+   "Ginger Schmidt became the first female captain to win the Giant Nut",
+   "Semi-finalist WC V (lost to End Game); Golden Bolt semi-finalist in Champions I (lost JD to End Game) and Champions II (lost split JD to SawBlaze)",
+   "Only defending champion to lose qualifying fights the next season (1-3 in WC VII Fight Nights)"
+  ],
+  "fights": [
+   {
+    "opponent": "Witch Doctor",
+    "season": "World Championship VI (2021)",
+    "summary": "Giant Nut final. An early fork contact peeled Witch Doctor's baseplate down and high-centered it. Dillon Carey shoved it into the screws, punched off pieces of its armor and chewed a wheel. Witch Doctor could only drive in arcs and was counted out with about 30 seconds left.",
+    "result": "Won by KO"
+   },
+   {
+    "opponent": "ROTATOR",
+    "season": "World Championship VI (2021)",
+    "summary": "Round of 16 comeback. Tantrum punched ROTATOR onto the Upper Deck, then got stuck when a snapped self-righter chain high-centered it and took heavy hits. It recovered, pinned ROTATOR with the drum spinning, peeled its front armor and finally rammed it out of the arena.",
+    "result": "Won by KO (out of the arena)"
+   },
+   {
+    "opponent": "Tombstone",
+    "season": "BattleBots: Champions I (2021)",
+    "summary": "Golden Bolt quarter-final, revenge for a 2018 exhibition loss. Tombstone's blade lost a chunk on Tantrum's plow. Tantrum pushed it into the short corner and under the pulverizer, Tombstone lost left-side drive and was counted out while Tantrum raised its fists.",
+    "result": "Won by KO"
+   }
+  ],
+  "trivia": "Tantrum's fists are its self-righting arms, and it raises them to celebrate after a win.",
+  "selfRighting": "dedicated rear self-righter from WC V: two arms tipped with fists (machined; 3D-printed TPU fists from WC VI), chain-driven",
+  "uncertain": [
+   "drive.wheelCount",
+   "drive.driveType",
+   "drive.invertible",
+   "hometown",
+   "appearance.accentColorsHex"
+  ],
+  "sources": [
+   "https://battlebots.fandom.com/wiki/Tantrum",
+   "https://battlebots.com/robot/tantrum-2021/",
+   "https://battlebots.com/robot/tantrum/"
+  ]
+ },
+ {
+  "id": "son-of-whyachi",
+  "name": "Son of Whyachi",
+  "team": "Team Whyachi",
+  "captain": "Terry Ewert and Luke Ewert (co-captains in the reboot; Luke drove; battlebots.com 2019 lists Luke Ewert as builder)",
+  "hometown": "Dorchester, WI",
+  "debut": "World Championship II (2016)",
+  "weaponType": "horizontal-bar",
+  "weapon": "The 'Cage of Death': a three-armed horizontal rotor (Terry Ewert calls it a 'cage spinner') whose arm tips are joined by red support tubes into a triangle, with heavy S7 tool steel hammers at each tip mounted low to the floor. It covers the whole robot and acts as its defense; the robot carries basically no armor. Classic Season 3.0: about 5 ft across, 120 lb rotor, three Etek motors, 390 rpm, 'over 70 mph' (Bill Nye). Reboot: mounted lower; toned down to 150 mph for WC III; WC IV got new 10 lb S7 hammers, faster spin-up and a 190 mph top speed, with the 120 lb rotor driven by eight Magmotors. Hammers were redesigned again for Bounty Hunters.",
+  "armor": [
+   "unarmored per the Official Guide (the spinning cage is the defense)",
+   "steel front wedge (reboot)",
+   "aluminum/steel flat chassis"
+  ],
+  "giantNuts": [
+   "Season 3.0 heavyweight championship (CLASSIC Comedy Central era, not the reboot). Beat BioHazard in the final. (2001)"
+  ],
+  "runnerUp": [],
+  "awards": [],
+  "records": [
+   "Classic era: first heavyweight champion of a televised BattleBots event with a horizontal spinner, first shufflebot champion, and one of only two bots (with Bite Force) to win a championship in their debut season",
+   "Only robot to go undefeated against BioHazard",
+   "Reboot best: Round of 16 in WC III (#8 seed) and WC IV (#10 seed). WC II: #6 seed, lost in Round of 32",
+   "All-time record per wiki: 18 wins, 10 losses"
+  ],
+  "fights": [
+   {
+    "opponent": "BioHazard",
+    "season": "Season 3.0 (2001, classic Comedy Central era)",
+    "summary": "Heavyweight Giant Nut final. The cage tore off BioHazard's skirts and threw it across the BattleBox. BioHazard pushed SOW into the pulverizer and nearly flipped it, but SOW then wrecked BioHazard's right-side drive. BioHazard was first counted out, but because it could still move on one side with 10 seconds left, the result was changed to a judges' decision, and the crowd booed.",
+    "result": "Won by JD (29-16)"
+   },
+   {
+    "opponent": "End Game",
+    "season": "World Championship III (2018)",
+    "summary": "Fight Night 4. A weapon clash with the future champion sent SOW flying into the Lexan and onto the screw mount, but End Game was left immobile and counted out. That earned SOW a Top 16 spot.",
+    "result": "Won by KO (0:43)"
+   },
+   {
+    "opponent": "HUGE",
+    "season": "World Championship IV (2019)",
+    "summary": "Fight Night 1. After a few even exchanges SOW tore part of HUGE's left wheel off, and a follow-up hit left HUGE unable to move and counted out.",
+    "result": "Won by KO"
+   }
+  ],
+  "trivia": "'Whyachi' is a word made up in the team's shop that means 'to bring someone down hard and inflict massive amounts of pain or damage'.",
+  "selfRighting": "none. Its known weakness, though it was only flipped four times in its career (Bounty Hunter, Brutus, Whiplash, Gigabyte)",
+  "uncertain": [
+   "drive.wheelCount",
+   "drive.driveType",
+   "weaponSpecs.lengthOrDiameterIn (classic-era figure)",
+   "weaponSpecs.rpm (classic-era figure)",
+   "appearance.accentColorsHex"
+  ],
+  "sources": [
+   "https://battlebots.fandom.com/wiki/Son_of_Whyachi",
+   "https://battlebots.fandom.com/wiki/Season_3.0",
+   "https://battlebots.com/robot/son-of-whyachi-2019/"
+  ]
+ },
+ {
+  "id": "copperhead",
+  "name": "Copperhead",
+  "team": "Caustic Creations (2019-2023; 'Team Copperhead' from the 2026 Pro League)",
+  "captain": "Zach Goff (designer/driver, WC IV-V); Robert Cowan (WC VI); Luke Quintal (WC VII)",
+  "hometown": "Denver, CO (wiki); battlebots.com lists Loveland, CO (2019) and Erie, CO (2021)",
+  "debut": "World Championship IV (2019)",
+  "weaponType": "drum",
+  "weapon": "A 50 lb S7 tool steel spinning drum (wiki calls it an eggbeater drum; battlebots.com lists 'Drum spinner'), mounted across the front between two fang-shaped forks/wedges. Originally 160-180 mph. WC V added faster-spin-up pulleys, a belt guard and black paint on the weapon, plus optional add-ons (magnets for downforce, an extra top section with hammers, a welded-in AR500 bar for horizontal spinners). WC VII ran 140 mph on purpose for more 'bite'. Flipping over doesn't stop it fighting because the drum works either way up.",
+  "armor": [
+   "AR500 steel top plate (WC V on)",
+   "S7 tool steel drum",
+   "5 in thick custom-molded rubber/polyurethane wheels (about 10 lb of polyurethane each)"
+  ],
+  "giantNuts": [],
+  "runnerUp": [],
+  "awards": [],
+  "records": [
+   "WC VII semi-finalist (#10 seed), beating ROTATOR, former champion End Game and #2 seed Riptide before losing to HUGE",
+   "Undefeated 3-0 in WC V Fight Nights, earning the #3 seed",
+   "Reached the Son of Whyachi bounty final in Bounty Hunters (lost to Gigabyte)",
+   "First team to bring a live snake to BattleBots: a red tail boa named Cuddles (WC VI)"
+  ],
+  "fights": [
+   {
+    "opponent": "Gigabyte",
+    "season": "World Championship V (2020)",
+    "summary": "Fight Night 1, with an AR500 bar welded on to fight spinners. The first hit knocked off Gigabyte's self-righting stick, and a later huge hit sent Gigabyte's shell up to the BattleBox ceiling, breaking a light, while Gigabyte landed upside down and was counted out.",
+    "result": "Won by KO"
+   },
+   {
+    "opponent": "End Game",
+    "season": "World Championship VII (2022)",
+    "summary": "Round of 16 against the Golden Bolt champion. End Game flipped Copperhead twice, but a head-on hit seized End Game's disk. Copperhead then chewed off almost all of End Game's 12 wedgelets and both forks.",
+    "result": "Won by JD"
+   },
+   {
+    "opponent": "Riptide",
+    "season": "World Championship VII (2022)",
+    "summary": "Quarter-final, eggbeater vs eggbeater against the unbeaten #2 seed (driven by stand-in Felix Jing). Copperhead split one end of Riptide's eggbeater and flipped it, then broke its own right axle late on. Team Break32 appealed, and judge Derek Young re-scored Aggression, which made the decision unanimous.",
+    "result": "Won by JD (split 2-1, changed to unanimous on appeal)"
+   }
+  ],
+  "trivia": "The name and look come from the copperhead snake because most of the team originally came from Texas, and in 2021 they brought a live red tail boa called Cuddles as a mascot.",
+  "selfRighting": "none (invertible)",
+  "uncertain": [
+   "hometown",
+   "builders.captain",
+   "weaponSpecs.teethOrImpactors",
+   "drive.motors (pre-2026 motor model from a 2026 note)",
+   "appearance.accentColorsHex"
+  ],
+  "sources": [
+   "https://battlebots.fandom.com/wiki/Copperhead",
+   "https://battlebots.com/robot/copperhead-2021/",
+   "https://battlebots.com/robot/copperhead/"
+  ]
+ },
+ {
+  "id": "icewave",
+  "name": "Icewave",
+  "team": "Team Icewave",
+  "captain": "Marc DeVidts",
+  "hometown": "Burlingame, CA (formerly Sunnyvale, CA)",
+  "debut": "World Championship I (2015)",
+  "weaponType": "horizontal-bar",
+  "weapon": "A 54 in, 47 lb steel horizontal bar spinning on top of the robot, mounted slightly forward of center, powered by a 15 hp internal combustion engine (the 'ICE' in Icewave) adapted from a Husqvarna concrete saw. The engine sits in a housing above the bar and runs on 100-octane fuel. Early tip speed was claimed at up to 300 mph, later limited by the 250 mph rule from WC III, and actually capped at 200 mph for safety in WC III. A shorter bar exists for stability (used vs Vanquish). The bar tips are painted to blend with the floor so opponents misjudge its reach. WC VI: new engine layout with key parts moved back, and a fully independent weapon system with its own 100Ah battery and controllers for the starter motor. The team brought five blades.",
+  "armor": [
+   "steel front plow (reinforced for WC VI)",
+   "metal flat chassis with clear polycarbonate top panels",
+   "steel bar"
+  ],
+  "giantNuts": [],
+  "runnerUp": [],
+  "awards": [
+   "BattleBots IQ 2005 120 lb College Division Champion (pre-reboot middleweight version)"
+  ],
+  "records": [
+   "#2 seed in WC I, the only top-4 seed that year not to reach the semi-finals",
+   "Split Vanquish in half (WC III) and tore HUGE down the middle (WC III)",
+   "Its 54 in bar was once the longest weapon in robot combat",
+   "One of only three robots (with Bronco and Son of Whyachi) to fight in Bounty Hunters only that year"
+  ],
+  "fights": [
+   {
+    "opponent": "Vanquish",
+    "season": "World Championship III (2018)",
+    "summary": "Fight Night 1, with the shorter bar for stability. Icewave shredded Vanquish's rear treads, then one huge strike to the side of the plow tore the frame in two, leaving the left drive and plow several feet from the rest of the robot.",
+    "result": "Won by KO"
+   },
+   {
+    "opponent": "HUGE",
+    "season": "World Championship III (2018)",
+    "summary": "Fight Night 4 with a Top 16 spot on the line. The first hit tore into a HUGE wheel, and the third ripped HUGE down the middle so it collapsed and was counted out.",
+    "result": "Won by KO"
+   },
+   {
+    "opponent": "Ghost Raptor",
+    "season": "World Championship I (2015)",
+    "summary": "Quarter-final, and what Chris Rose called the biggest upset of the tournament. Ghost Raptor gripped the engine housing with a special 'de-icer' attachment, Icewave's own hit on its plow flipped Icewave upside down, and Ghost Raptor pinned it against the screws until it was counted out.",
+    "result": "Lost by KO (under one minute)"
+   }
+  ],
+  "trivia": "Icewave's engine comes from a Husqvarna concrete saw and burns 100-octane fuel. Kenny Florian called it 'the '69 Camaro of bots'.",
+  "selfRighting": "one-shot self-righting mechanism on the left side of the engine cover added in WC II. Otherwise it relies on staying upright",
+  "uncertain": [
+   "drive.selfRighting (only WC II documented)",
+   "appearance.accentColorsHex",
+   "armor.materials"
+  ],
+  "sources": [
+   "https://battlebots.fandom.com/wiki/Icewave",
+   "https://battlebots.com/robot/icewave-2021/",
+   "https://battlebots.com/robot/icewave/"
+  ]
+ },
+ {
+  "id": "duck",
+  "name": "DUCK!",
+  "team": "Team Black and Blue",
+  "captain": "Hal Rucker (driver)",
+  "hometown": "Palo Alto, CA (battlebots.com 2021 and wiki; battlebots.com 2018 lists Hillsborough, CA)",
+  "debut": "World Championship III (2018)",
+  "weaponType": "lifter",
+  "weapon": "A steel lifting 'beak'/plow worked by Hannah Rucker. WC III: a wide white wedge plow in front of the front wheels with an orange chisel-shaped beak in the center to get under opponents. WC IV ('DUCK! 2.0'): new 50 lb, 3/4 in steel beak on support arms mounted between the wheels. It could rotate a full 360 degrees, protected the front wheels when lowered, and had a sharp black tip on top that doubled as an overhead axe. It had so much torque it could flip its own chassis. WC V design (not fought) and WC VI: internally mounted arms and a narrower, more traditional wedge-shaped lifter about a quarter of the bot's width. In WC VI the beak split down the middle to open like a real duck bill, with speakers that quack as it opens. Interchangeable wedges, hinged forks or a big defensive plow (the plow cost two drive motors to make weight). It does almost no damage, so it fights by control.",
+  "armor": [
+   "unibody milled from one 6061 aluminum billet (WC III, per battlebots.com 2018)",
+   "magnesium billet unibody (WC VI, per battlebots.com 2021)",
+   "steel lifting beak/plow"
+  ],
+  "giantNuts": [],
+  "runnerUp": [],
+  "awards": [],
+  "records": [
+   "Became a WC III fan favorite after winning its debut three-way rumble",
+   "Known for durability: survived almost three minutes against Tombstone, losing only after driving over the killsaws on its last wheel",
+   "Never made a World Championship tournament bracket",
+   "Competitive record per wiki: 5 wins, 8 losses"
+  ],
+  "fights": [
+   {
+    "opponent": "Tombstone",
+    "season": "World Championship III (2018)",
+    "summary": "The reigning champion took both sides of DUCK!'s plow and three of its wheels, but DUCK! kept coming, and Tombstone's bent frame slowed its own weapon until Tombstone froze. DUCK! looked like it would win, but its last wheel quit after driving over the killsaws, and it was counted out while Tombstone came back to life.",
+    "result": "Lost by KO"
+   },
+   {
+    "opponent": "Bombshell",
+    "season": "World Championship IV (2019)",
+    "summary": "Revenge for the controversial 2018 Last Chance Rumble. DUCK! got a lift near the barrier and flipped Bombshell over, and Bombshell couldn't self-right with its disk. Hal Rucker later said production wanted him to flip Bombshell back to make the fight last longer.",
+    "result": "Won by KO"
+   },
+   {
+    "opponent": "Free Shipping and Mecha Rampage (rumble)",
+    "season": "World Championship III (2018)",
+    "summary": "Debut three-way rumble. Mecha Rampage tore off a DUCK! wheel, but DUCK! pinned Mecha Rampage against the wall, lifted and overturned Free Shipping, and pushed it into the screws while Mecha Rampage burned.",
+    "result": "Won by JD"
+   }
+  ],
+  "trivia": "The WC VI beak splits open like a real duck's bill and plays a quack through built-in speakers. The original DUCK! was built in just 28 days.",
+  "selfRighting": "none (invertible; the 360-degree beak in WC IV could also right it)",
+  "uncertain": [
+   "armor.materials (wiki contradicts itself on WC III aluminum vs magnesium; battlebots.com says aluminum 2018, magnesium 2021)",
+   "appearance.accentColorsHex",
+   "drive.selfRighting"
+  ],
+  "sources": [
+   "https://battlebots.fandom.com/wiki/DUCK!",
+   "https://battlebots.com/robot/duck-2021/",
+   "https://battlebots.com/robot/duck/"
+  ]
+ },
+ {
+  "id": "bloodsport",
+  "name": "Bloodsport",
+  "team": "Bots 'n' Stuff Robotics",
+  "captain": "Justin Marple",
+  "hometown": "Cambridge, MA",
+  "debut": "World Championship IV (2019)",
+  "weaponType": "horizontal-bar",
+  "weapon": "Overhead horizontal spinner: the blade spins above the low chassis. WC IV: round black/red bot with a 47\" S7 tool steel bar with blood-spattered edges. WC V: new low box chassis inspired by the team's beetleweight Zero Traction, four hinged front wedgelets and five swappable weapons (Long Bar, The Disk, Tri-bar, THICC bar, the Key), 57-77 lb, made of AR500 and S7; the THICC bar beat End Game. WC VI: all-AR500 weapons (heaviest 72 lb) after S7 blades snapped, plus the 'Club Sandwich'. Champions I: 'Ferrous Wheel' disk. WC VII (v3): weapon electronics moved into a 'head' housing above the blade, new 75 lb 'Chonk Key' (1.25\" AR500), 68 lb twin-tooth 'Wheel of Misfortune' and the 72 lb 'Long Bar'.",
+  "armor": [
+   "6061 aluminum billet frame (v3)",
+   "7075 aluminum weapon module (v3)",
+   "AR500 steel",
+   "S7 tool steel (early blades)",
+   "3D-printed Nylon ESC box (WC VII)"
+  ],
+  "giantNuts": [],
+  "runnerUp": [],
+  "awards": [],
+  "records": [
+   "First bot to beat an eventual Giant Nut winner in the same season (KO of End Game, WC V 2020); End Game's only loss that year",
+   "Unbeaten 3-0 in WC V Fight Nights; No.2 seed for the 2020 tournament",
+   "First robot immobilized on the Upper Deck hazard"
+  ],
+  "fights": [
+   {
+    "opponent": "End Game",
+    "season": "World Championship V (2020)",
+    "summary": "Main Event. Running the THICC bar, Bloodsport lost its wedgelets early and was thrown into a corner, but End Game's drive failed and it lost its weapon belt while smoking. End Game was counted out; it was the champion's only defeat of the season.",
+    "result": "Won by KO (time not given)"
+   },
+   {
+    "opponent": "ROTATOR",
+    "season": "World Championship VII (2022)",
+    "summary": "Main Event. The 72 lb Long Bar sent ROTATOR into a 360-degree aerial spin and bent its wheelguard. Bloodsport got hung up on an Upper Deck screw, broke free, then wrecked ROTATOR's left drive and weapon.",
+    "result": "Won by KO (1:47)"
+   },
+   {
+    "opponent": "Lock-Jaw",
+    "season": "World Championship VII (2022)",
+    "summary": "Round of 32 revenge attempt. Bloodsport shredded Lock-Jaw's tires and tore off its right-front wheel, briefly catching fire in the process. Then it flipped itself on a big hit to Lock-Jaw's spinner and its weapon died, so it couldn't self-right. Marple blamed himself afterwards.",
+    "result": "Lost by KO"
+   }
+  ],
+  "trivia": "Its debut-season self-righting pole was borrowed from Gigabyte's team (Robotic Death Company).",
+  "selfRighting": "Curved pole on top of the weapon head: weapon torque rolls the bot over the pole. It cannot self-right without the weapon (this lost it fights to Lock-Jaw and MadCatter).",
+  "uncertain": [
+   "hometown",
+   "weaponSpecs.rpm",
+   "weaponSpecs.tipSpeedMph",
+   "weaponSpecs.motor",
+   "drive.topSpeedMph",
+   "drive.wheelCount",
+   "armor.dimensionsIn",
+   "appearance.primaryColorHex",
+   "appearance.secondaryColorHex"
+  ],
+  "sources": [
+   "https://battlebots.fandom.com/wiki/Bloodsport",
+   "https://battlebots.com/robot/bloodsport-2019/",
+   "https://www.protolabs.com/resources/blog/bloodsport-x-protolabs-ready-for-battlebots-action/"
+  ]
+ },
+ {
+  "id": "beta",
+  "name": "Beta",
+  "team": "Team Hurtz",
+  "captain": "John Reid",
+  "hometown": "Oxfordshire, UK",
+  "debut": "World Championship II (2016)",
+  "weaponType": "hammer",
+  "weapon": "Overhead hammer that strikes the top of opponents and doubles as the self-righter. WC II: electric hammer on a long, bent arm (bent so it can hit opponents mid-air). WC V: switched to a shorter, nitrogen-powered pneumatic hammer, which Reid says is lighter and about three times as powerful. WC VII: a new 16 lb bladed hammer made from 10 mm AR500, inspired by Jason Marston's robot Thor, alongside the classic hammer head (the 'skinny' blade weighs the same).",
+  "armor": [
+   "HARDOX 450 (5 mm, WC I build)",
+   "polycarbonate top (8 mm, WC I build)",
+   "anti-vertical-spinner armor option (WC VII)"
+  ],
+  "giantNuts": [],
+  "runnerUp": [],
+  "awards": [],
+  "records": [
+   "WC II quarter-finalist (2016)",
+   "Unbeaten 3-0 in WC V Fight Nights",
+   "Bounty boss in BattleBots: Bounty Hunters (lost its bounty to Lock-Jaw)",
+   "Team Hurtz were the only British team to attend all of the first seven televised seasons"
+  ],
+  "fights": [
+   {
+    "opponent": "Tombstone",
+    "season": "World Championship II (2016)",
+    "summary": "Quarter-final against the No.1 seed. Beta tanked Tombstone's hits with its plow, drove it into the wall so it landed upside-down, and pinned it. Tombstone eventually ripped Beta's hammer arm away from its housing. It was a back-and-forth fight that went the distance.",
+    "result": "Lost by JD (unanimous)"
+   },
+   {
+    "opponent": "ROTATOR",
+    "season": "World Championship V (2020)",
+    "summary": "Running a lighter hammer and thicker armor, Beta mostly pushed ROTATOR into the screws and lost its hammer head on ROTATOR's disk. A controversial win for a bot that barely used its weapon; it pushed the producers to update the judging guidelines.",
+    "result": "Won by JD (2-1 split)"
+   },
+   {
+    "opponent": "Bloodsport",
+    "season": "World Championship VII (2022)",
+    "summary": "Seeding decider between two 2-1 bots. Beta controlled the whole fight, repeatedly shoving Bloodsport into the screws and Upper Deck, and hammered its weapon head until the front casing was hacked apart.",
+    "result": "Won by JD (score not given)"
+   }
+  ],
+  "trivia": "Beta is pronounced 'bee-tah', British style.",
+  "selfRighting": "Hammer arm swings over to flip it back up",
+  "uncertain": [
+   "drive.wheelCount",
+   "drive.driveType",
+   "weaponSpecs.lengthOrDiameterIn",
+   "armor.materials",
+   "appearance.primaryColorHex",
+   "appearance.secondaryColorHex"
+  ],
+  "sources": [
+   "https://battlebots.fandom.com/wiki/Beta"
+  ]
+ },
+ {
+  "id": "quantum",
+  "name": "Quantum",
+  "team": "Team Robo Challenge",
+  "captain": "James Cooper and Grant Cooper (co-captains)",
+  "hometown": "Birmingham, UK",
+  "debut": "World Championship IV (2019)",
+  "weaponType": "crusher",
+  "weapon": "Hydraulic crushing beak/jaw with swappable teeth: a twin-fang head, or a single tooth for maximum crushing pressure against non-spinners. The hydraulic system snaps the jaw shut fast to grab, then changes pressure to crush. The WC VII head was much stronger and could crush harder than the 2019 one. A rear self-righting arm, like Witch Doctor's or HyperShock's, doubles as a victory salute.",
+  "armor": [
+   "titanium (3 mm to 3/16\")",
+   "HARDOX steel front wedge (4-6 mm, shock/rubber mounted)"
+  ],
+  "giantNuts": [],
+  "runnerUp": [],
+  "awards": [
+   "Best Design Award (World Championship IV, 2019)"
+  ],
+  "records": [
+   "First WC VII bot to finish 4-0 in Fight Nights; No.5 seed",
+   "One of the heaviest modern bots still under 250 lb; in 2019 a few coins would have put it overweight"
+  ],
+  "fights": [
+   {
+    "opponent": "Valkyrie",
+    "season": "World Championship IV (2019)",
+    "summary": "Play-in for the Top 16. Valkyrie flipped itself with its own gyroscopic forces. Quantum lost its single tooth but still grabbed Valkyrie, paraded it, and parked it in the gap behind the screws where it couldn't escape.",
+    "result": "Won by KO"
+   },
+   {
+    "opponent": "Captain Shrederator",
+    "season": "World Championship VII (2022)",
+    "summary": "Comeback fight after two seasons away. Quantum box-rushed the shell spinner and bit through its UHMW cover and frame again and again, carrying it to the pulverizer and the screws until fire erupted inside.",
+    "result": "Won by KO"
+   },
+   {
+    "opponent": "Ribbot",
+    "season": "World Championship VII (2022)",
+    "summary": "Round of 32 as the No.5 seed. Ribbot got stuck in the killsaw slots early and Quantum sportingly held back. Once free, Ribbot used its forks and disk to flip Quantum twice, separating the crusher head from its hydraulic ram. Quantum couldn't self-right.",
+    "result": "Lost by KO"
+   }
+  ],
+  "trivia": "Quantum is the only heavyweight to have competed with a name starting with Q.",
+  "selfRighting": "Rear self-righting arm (srimech)",
+  "uncertain": [
+   "drive.topSpeedMph",
+   "weaponSpecs.forceOrPressure",
+   "armor.dimensionsIn",
+   "appearance.primaryColorHex"
+  ],
+  "sources": [
+   "https://battlebots.fandom.com/wiki/Quantum"
+  ]
+ },
+ {
+  "id": "rotator",
+  "name": "ROTATOR",
+  "team": "Team Revolution",
+  "captain": "Victor Soto",
+  "hometown": "Miami, FL",
+  "debut": "World Championship II (2016)",
+  "weaponType": "undercutter",
+  "weapon": "WC II-IV: twin horizontal spinners, one above the chassis (overcutter) and one below (undercutter), so it looked the same when flipped, like its palindromic name. Each disk was 30 lb at 300 mph in 2016. WC III: option to drop one disk for a thicker titanium plow and wheelguards. WC IV: swappable 20 lb bars and hinged rear forks; 2019 was the last time the double-disk setup was used. WC V onward: a single low horizontal spinner (disk or bar, a 40 lb bar is mentioned), with a plow or wedgelets for defence.",
+  "armor": [
+   "titanium (plow and wheelguards option)"
+  ],
+  "giantNuts": [],
+  "runnerUp": [],
+  "awards": [
+   "Most Destructive Robot Award (World Championship III, 2018)",
+   "Bounty Hunters bounty winner: took Bronco's bounty (BattleBots: Bounty Hunters, 2021)"
+  ],
+  "records": [
+   "Only robot to go the distance with eventual champion End Game in 2020",
+   "First robot to have fought every World Champion (achieved by WC VI)",
+   "Until WC VII, lost to the eventual champion every time it made the tournament"
+  ],
+  "fights": [
+   {
+    "opponent": "Tombstone",
+    "season": "World Championship IV (2019)",
+    "summary": "Main Event upset. Fitted with the plow that beat Icewave, ROTATOR's first hit sent Tombstone flying and chipped its bar. Tombstone began smoking, its weapon spun down, and it eventually caught fire and stopped.",
+    "result": "Won by KO"
+   },
+   {
+    "opponent": "Icewave",
+    "season": "World Championship III (2018)",
+    "summary": "Round of 16 grudge match against the No.6 seed. ROTATOR tanked early hits until Icewave's combustion engine stalled, then tore the engine housing apart and took out the engine itself.",
+    "result": "Won by JD (unanimous)"
+   },
+   {
+    "opponent": "Bronco",
+    "season": "BattleBots: Bounty Hunters (2021)",
+    "summary": "Bounty match after beating Axolotl, Captain Shrederator and MadCatter. ROTATOR tore into Bronco's wedge, broke its flipper pin and ripped off a wheelguard, surviving several pulverizer hits.",
+    "result": "Won by JD; claimed the Bronco bounty ($25,000)"
+   }
+  ],
+  "trivia": "A 2016 video suggests ROTATOR was originally meant to have a flamethrower.",
+  "selfRighting": "none (invertible)",
+  "uncertain": [
+   "drive.invertible",
+   "drive.wheelCount",
+   "drive.topSpeedMph",
+   "weaponSpecs.teethOrImpactors",
+   "armor.materials",
+   "appearance.features"
+  ],
+  "sources": [
+   "https://battlebots.fandom.com/wiki/ROTATOR"
+  ]
+ },
+ {
+  "id": "valkyrie",
+  "name": "Valkyrie",
+  "team": "Team VALKYRIE (Team Questionable Designs, WC III-V)",
+  "captain": "Leanne Cushing (Lucy Du captained and drove in WC VII and Champions II)",
+  "hometown": "Somerville, MA",
+  "debut": "World Championship III (2018)",
+  "weaponType": "undercutter",
+  "weapon": "Low undercutting horizontal spinner on a two-wheel, V-shaped chassis. It has a big arsenal of named weapons. WC III: 'Dr. Tooth' (two-tooth disk), 'Sonic the Wedgehog' (six teeth) and the bar 'The Spirit of Boston'. WC IV: 65 lb, 1\" AR500 bow-tie bar 'Sweet Caroline'. WC V: 'Sour Caroline' (green-painted inside), the three-tooth 36\" disk 'Glory', and 'Mr. Cavity'; weapon motor around 40 hp. WC VI: 'Dr. Acula' with bolted-on teeth. WC VII: new 65 lb 'Artemis' (single-tooth disk in the hero shots), plus an optional long hinged fork.",
+  "armor": [
+   "UHMW front pieces (option)",
+   "steel armor (black paint over blue primer, WC IV-VI)"
+  ],
+  "giantNuts": [],
+  "runnerUp": [],
+  "awards": [
+   "Most Destructive Robot Award (World Championship V, 2020)"
+  ],
+  "records": [
+   "First Round of 16 run in WC V (2020)",
+   "Champions II Sin City Slugfest runner-up (lost the final to SHREDDIT BRO!)",
+   "On the losing end of the first televised Appeal in BattleBots history (vs Malice, WC VII)",
+   "Never lost an exhibition fight"
+  ],
+  "fights": [
+   {
+    "opponent": "ROTATOR",
+    "season": "World Championship V (2020)",
+    "summary": "Undercutter vs undercutter. With the three-tooth 'Glory' disk, Valkyrie sheared rubber off ROTATOR's tire and late on tore away its wedge and left wheelguard. Both weapons were dead at the end, and the judges inspected both robots.",
+    "result": "Won by JD (3-0)"
+   },
+   {
+    "opponent": "SubZero",
+    "season": "World Championship V (2020)",
+    "summary": "Round of 32 as the No.9 seed. After bouncing off the Lexan, Valkyrie ripped off SubZero's rear plow and front wedges and killed half its drive. Valkyrie's first win in the championship bracket.",
+    "result": "Won by KO"
+   },
+   {
+    "opponent": "Malice",
+    "season": "World Championship VII (2022)",
+    "summary": "Malice stripped the threads holding the 'Glory' disk, which flew off and flipped Valkyrie. Both bots then limped around with drive problems. Valkyrie first got a split decision, but Malice's Appeal (the first ever televised) had the judges rescore it.",
+    "result": "Lost by JD (unanimous on appeal; originally a split decision for Valkyrie)"
+   }
+  ],
+  "trivia": "Valkyrie is one of the few robots whose team and announcer Faruq Tauheed call it 'she'.",
+  "selfRighting": "none (invertible)",
+  "uncertain": [
+   "weaponSpecs.motor",
+   "armor.materials",
+   "drive.motors",
+   "appearance.secondaryColorHex",
+   "builders.captain"
+  ],
+  "sources": [
+   "https://battlebots.fandom.com/wiki/Valkyrie"
+  ]
+ },
+ {
+  "id": "cobalt",
+  "name": "Cobalt",
+  "team": "Robotic Death Company (WC VI onward; originally Team Carbide, WC II and WC IV)",
+  "captain": "John Mladenik (WC VII era); Matt Olson captain and driver from FaceOffs 2024",
+  "hometown": "Oceanside, CA (originally Bromsgrove, UK)",
+  "debut": "World Championship II (2016)",
+  "weaponType": "vertical-disk",
+  "weapon": "WC II (2016): invertible two-wheel bot with an asymmetrical horizontal bar spinner. WC IV onward: complete redesign into a four-wheel, steep-wedge bot with a toothed vertical spinning disk mounted at the front centre. Its WC IV wedge was too steep to get under opponents. WC VI: less steep wedge and a 36 lb disk decorated with gear patterns and a robot skull on the tooth, plus a 50 lb weapon option for vertical spinners. WC VII: 45 lb serrated disk 'Nasty' with bright green teeth (a 45 lb asymmetric disk was also used), usually with long hinged forks.",
+  "armor": [],
+  "giantNuts": [],
+  "runnerUp": [],
+  "awards": [
+   "Most Destructive Robot Award (World Championship IV, 2019)"
+  ],
+  "records": [
+   "WC VI quarter-finalist (2021), beating Yeti and Whiplash",
+   "Champions II Sin City Slugfest runner-up (lost to JackPot)",
+   "Has competed in every even-numbered reboot season, plus WC VII"
+  ],
+  "fights": [
+   {
+    "opponent": "Ghost Raptor",
+    "season": "World Championship VI (2021)",
+    "summary": "Cobalt shredded both of Ghost Raptor's front wheels and flipped it. Then it charged its upturned opponent across the BattleBox into the wall by the drivers, splitting Ghost Raptor apart in a shower of sparks. Remembered as one of the most visceral knockouts in the show's history.",
+    "result": "Won by KO"
+   },
+   {
+    "opponent": "Whiplash",
+    "season": "World Championship VI (2021)",
+    "summary": "Round of 16 against the No.3 seed. Whiplash lifted Cobalt several times, then got a fork stuck in the Upper Deck and Cobalt pounded it. Cobalt got stuck on the arena floor and debris jammed its switch, so the referee called a double KO. The show implied Cobalt's spinner couldn't be shut off; the team disputes this.",
+    "result": "Won by split JD after a double KO"
+   },
+   {
+    "opponent": "Tantrum",
+    "season": "World Championship VI (2021)",
+    "summary": "Quarter-final against the eventual champion. Tantrum peeled up Cobalt's forks, ground its drum on Cobalt's underside, and slammed it so hard that Cobalt, helped by its own disk, flew out of the arena.",
+    "result": "Lost by KO (out of the arena)"
+   }
+  ],
+  "trivia": "Even under the American Robotic Death Company, Cobalt sported the Union Jack in WC VI.",
+  "selfRighting": "No dedicated self-righter (WC IV build); relies on weapon/gyro forces. When it lost its weapon belt it couldn't self-right. Rear 'horns' added at FaceOffs 2024 let the disk partly spin while inverted.",
+  "uncertain": [
+   "builders.captain",
+   "drive.wheelCount",
+   "drive.driveType",
+   "drive.motors",
+   "drive.selfRighting",
+   "weaponSpecs.teethOrImpactors",
+   "armor.materials",
+   "hometown"
+  ],
+  "sources": [
+   "https://battlebots.fandom.com/wiki/Cobalt",
+   "https://battlebots.fandom.com/wiki/Gigabyte"
+  ]
+ },
+ {
+  "id": "gigabyte",
+  "name": "Gigabyte",
+  "team": "Robotic Death Company",
+  "captain": "John Mladenik (WC III-VI); Derek Tran and Camden Wallraff (WC VII)",
+  "hometown": "Oceanside, CA",
+  "debut": "World Championship III (2018)",
+  "weaponType": "shell/full-body",
+  "weapon": "Full-body spinning shell with steel teeth on the rim. A curved self-righting pole sticks up through the middle of the shell; it also shows the driver which way the bot is facing. WC III: rainbow shell, 110 lb, on a cast-aluminum mast that broke against Tombstone. WC IV: bi-directional teeth, a rounded self-righting staff, a Lexan cover over the electronics, and a 130 lb heaviest shell. WC V: black shell with flames; D2 minibots when it had spare weight. WC VI: improved weapon motor, a shell designed for fighting verticals, and spring-loaded front forks. WC VII: brushless drive, teeth with two catching points per side, and four shells (two 0.25\" AR500, one 0.1875\" AR500, one 0.41\" titanium with a flat lower edge).",
+  "armor": [
+   "AR500 steel shell (0.25\" and 0.1875\")",
+   "titanium shell (0.41\")",
+   "Lexan electronics cover (WC IV)"
+  ],
+  "giantNuts": [],
+  "runnerUp": [],
+  "awards": [
+   "Bounty Hunters bounty winner: took Son of Whyachi's bounty (BattleBots: Bounty Hunters, 2021)"
+  ],
+  "records": [
+   "First Round of 16 appearance in WC V (2020)",
+   "Champions II Sin City Slugfest runner-up (lost to Free Shipping)",
+   "Survived the full three minutes with No.1 seed Hydra in 2020"
+  ],
+  "fights": [
+   {
+    "opponent": "Tombstone",
+    "season": "World Championship III (2018)",
+    "summary": "Debut Main Event. Tombstone's third hit broke the shell retainer and its next blow tore the 110 lb shell clean off, leaving the electronics exposed. The team tried to tap out, but referee John Remar told them 'there's no tapping out', so they stopped driving to be counted out. The mast turned out to be cast aluminum instead of machined 6061.",
+    "result": "Lost by KO"
+   },
+   {
+    "opponent": "Minotaur",
+    "season": "World Championship IV (2019)",
+    "summary": "Using its heaviest shell, Gigabyte kept spinning up and stayed on top of Minotaur so its drum couldn't reach full speed, chipping its front while losing a tooth itself.",
+    "result": "Won by JD (3-0)"
+   },
+   {
+    "opponent": "Son of Whyachi",
+    "season": "BattleBots: Bounty Hunters (2021)",
+    "summary": "Bounty match after beating GRABOT, Big Dill and Copperhead. Huge spinner collisions sent both bots flying and cost Gigabyte its pole. Son of Whyachi landed on top and flipped Gigabyte, but Gigabyte kept hitting until the bounty holder was counted out.",
+    "result": "Won by KO; claimed the Son of Whyachi bounty"
+   }
+  ],
+  "trivia": "For China's TV rules the team had to call itself 'Robotic Destruction Company', because 'death' can't be said on air there.",
+  "selfRighting": "Curved pole sticking up through the centre of the shell",
+  "uncertain": [
+   "builders.captain",
+   "weaponSpecs.tipSpeedMph",
+   "weaponSpecs.massLb",
+   "weaponSpecs.teethOrImpactors",
+   "armor.dimensionsIn"
+  ],
+  "sources": [
+   "https://battlebots.fandom.com/wiki/Gigabyte"
+  ]
+ }
+]
