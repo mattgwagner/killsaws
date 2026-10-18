@@ -41,6 +41,10 @@ export class GameView {
   private dentGeo = new THREE.SphereGeometry(1, 8, 6);
   quality: 'high' | 'low' = 'high';
   private bloomPulse = 0;
+  private keyLight!: THREE.DirectionalLight;
+  private redWash!: THREE.SpotLight;
+  private keyFlick = 0;
+  private washLeft = 0;
   private pyroLeft = 0;
   private pyroVictory = false;
   private readonly up = new THREE.Vector3(0, 1, 0);
@@ -64,6 +68,7 @@ export class GameView {
     const hemi = new THREE.HemisphereLight('#c9d6ff', '#1a1410', 0.8);
     this.scene.add(hemi);
     const key = new THREE.DirectionalLight('#fff3e2', 2.5);
+    this.keyLight = key;
     key.position.set(4, 14, 3);
     key.castShadow = true;
     key.shadow.mapSize.set(2048, 2048);
@@ -77,6 +82,7 @@ export class GameView {
       sp.position.set(x * 1.1, 6, z);
       sp.target.position.set(x * 0.3, 0, z);
       this.scene.add(sp, sp.target);
+      if (c === '#ff3344') this.redWash = sp;
     }
     // (no overhead white spots: their specular on flat metal decks bloomed into blobs)
 
@@ -187,6 +193,10 @@ export class GameView {
         const p = new THREE.Vector3(e.pos.x, e.pos.y, e.pos.z);
         this.fx.sparksAt(p, new THREE.Vector3(0, 1, 0), 60, 8);
         this.fx.smoke(p, 10, 0.3, 0.3);
+      } else if (!replay && e.type === 'phase') {
+        this.fightStart();
+      } else if (!replay && e.type === 'hazards-live') {
+        this.hazardWash();
       } else if (e.type === 'actuate') {
         const p = new THREE.Vector3(e.pos.x, e.pos.y, e.pos.z);
         if (e.kind === 'flip') this.fx.smoke(p, 6, 0.85, 0.3); // pneumatic exhaust
@@ -269,6 +279,19 @@ export class GameView {
     if (this.bloomPulse > 0 && this.quality === 'high') this.bloom.strength = 0.55 + this.bloomPulse * 6;
     else this.bloom.strength = 0.55;
     this.bloomPulse = Math.max(0, this.bloomPulse - dt);
+    if (this.keyFlick > 0) {
+      this.keyLight.intensity = 2.5 + 6 * (this.keyFlick / 0.12);
+      this.keyFlick = Math.max(0, this.keyFlick - dt);
+    } else if (this.keyLight.intensity !== 2.5) this.keyLight.intensity = 2.5;
+    if (this.washLeft > 0) {
+      const s = 0.5 + 0.5 * Math.sin(performance.now() * 0.02);
+      this.redWash.intensity = 45 + s * 90;
+      this.washLeft -= dt;
+      if (this.arena) this.arena.siren = true;
+    } else {
+      if (this.redWash.intensity !== 45) this.redWash.intensity = 45;
+      if (this.arena) this.arena.siren = false;
+    }
     this.feedPyro(dt);
     this.fx.update(dt);
     this.scars.flush();
@@ -365,6 +388,18 @@ export class GameView {
   pulseBloom() {
     if (this.quality === 'low') return;
     this.bloomPulse = Math.max(this.bloomPulse, 0.14);
+  }
+
+  /** Fight horn: key-light flick and a flame burst from the corners. */
+  fightStart() {
+    this.keyFlick = 0.12;
+    this.pyroLeft = Math.max(this.pyroLeft, 0.65);
+    this.pyroVictory = false;
+  }
+
+  /** Red washes for the length of the hazards-live siren. */
+  hazardWash() {
+    this.washLeft = 2;
   }
 
   /** Fountain sparks and flame from the four corners. Judges' reveal and a KO. */
