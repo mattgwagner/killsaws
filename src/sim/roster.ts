@@ -100,18 +100,26 @@ const SPECS: Spec[] = [
   {
     id: 'tombstone', name: 'Tombstone', team: 'Hardcore Robotics',
     L: 30, W: 22, H: 7, clear: 2.5, shape: 'low-flat', noseTaper: 0.6,
+    bp: {
+      outline: [[-15, -11], [9, -11], [15, -4], [22, -2.5], [22, 2.5], [15, 4], [9, 11], [-15, 11]],
+      height: 7, clearance: 2.5, front: { at: 9, lip: 6.5 },
+    },
     armor: { front: P('ar500', 12), rear: P('ar500', 6), sides: P('ar500', 8), top: P('titanium', 5), bottom: P('al7075', 5) },
     wheels: 2, wheelDia: 10, wheelWidth: 3.5, track: 28, axleX: -9, tire: 'pneumatic-foam', topMph: 14, driveMotor: 'bl80-150',
     weapon: spinner({ style: 'horizontal-bar', lb: 72, dia: 42, width: 2, teeth: 2, tooth: 1.5, rpm: rpmAt(200, 42), motor: 'etek', mountX: 21, mountY: -4.6 }),
-    look: { primary: '#1b1b1d', secondary: '#2c2d30', accent: '#b01e1e', logo: 'TOMBSTONE', features: ['reaper', 'vents', 'boom'], tireColor: '#151515' },
+    look: { primary: '#1b1b1d', secondary: '#2c2d30', accent: '#b01e1e', logo: 'TOMBSTONE', features: ['reaper', 'vents'], tireColor: '#151515' },
   },
   {
     id: 'bite-force', name: 'Bite Force', team: 'Aptyx Designs',
     L: 30, W: 30, H: 7, shape: 'wedge', wedge: 7,
+    bp: {
+      outline: [[-15, -14], [-13, -15], [10, -15], [15, -13], [15, -2.2], [6, -2.2], [6, 2.2], [15, 2.2], [15, 13], [10, 15], [-13, 15], [-15, 14]],
+      height: 7, clearance: 0.5, front: { at: 4, lip: 0.4, floor: true },
+    },
     armor: { front: P('hardox', 12), rear: P('al7075', 8), sides: P('al7075', 10), top: P('al7075', 6), bottom: P('al7075', 5) },
     wheels: 4, wheelDia: 6, topMph: 17, forks: true,
-    weapon: spinner({ style: 'vertical-bar', lb: 40, dia: 20, width: 2.5, teeth: 1, tooth: 1.4, rpm: rpmAt(200, 20), motor: 'bl80100-130', motors: 1, mountX: 14, mountY: 0.5 }),
-    look: { primary: '#a7aaad', secondary: '#8f9396', accent: '#1f5fbf', logo: 'BITE FORCE', pattern: 'rivets', features: ['triangle-sides', 'sponsor-decals', 'battle-scars'] },
+    weapon: spinner({ style: 'vertical-bar', lb: 40, dia: 20, width: 2.5, teeth: 1, tooth: 1.4, rpm: rpmAt(200, 20), motor: 'bl80100-130', motors: 1, mountX: 12, mountY: 0.5 }),
+    look: { primary: '#a7aaad', secondary: '#8f9396', accent: '#1f5fbf', logo: 'BITE FORCE', pattern: 'rivets', features: ['triangle-sides', 'sponsor-decals', 'battle-scars', 'accent-forks'] },
   },
   {
     id: 'witch-doctor', name: 'Witch Doctor', team: 'Team Witch Doctor',
@@ -194,9 +202,13 @@ const SPECS: Spec[] = [
   {
     id: 'lock-jaw', name: 'Lock-Jaw', team: 'Mutant Robots',
     L: 28, W: 28, H: 7, shape: 'box',
+    bp: {
+      outline: [[-14, -14], [12, -14], [14, -12], [14, -2.5], [6, -2.5], [6, 2.5], [14, 2.5], [14, 12], [12, 14], [-14, 14]],
+      height: 7, clearance: 0.5, front: { at: 7, lip: 3 },
+    },
     armor: { front: P('ar500', 10), rear: P('al7075', 8), sides: P('al7075', 8), top: P('al7075', 5), bottom: P('al7075', 5) },
     wheels: 4, wheelDia: 6, topMph: 16, forks: true, invertible: true,
-    weapon: spinner({ style: 'vertical-bar', lb: 38, dia: 15, width: 3, teeth: 2, rpm: rpmAt(120, 15), motor: 'bl80100-130', motors: 1, mountX: 14, mountY: 0 }),
+    weapon: spinner({ style: 'vertical-bar', lb: 38, dia: 15, width: 3, teeth: 2, rpm: rpmAt(120, 15), motor: 'bl80100-130', motors: 1, mountX: 12, mountY: 0 }),
     look: { primary: '#7cfc00', secondary: '#6c0ba9', accent: '#1a1a1a', logo: 'LOCK-JAW', features: ['ears', 'fork-letters'] },
   },
   {
@@ -259,10 +271,14 @@ const SPECS: Spec[] = [
   {
     id: 'copperhead', name: 'Copperhead', team: 'Caustic Creations',
     L: 26, W: 30, H: 9, shape: 'box',
+    bp: {
+      outline: [[-12, -9], [5, -10], [14, -10], [18, -9], [14, -8.3], [8, -8.3], [8, 8.3], [14, 8.3], [18, 9], [14, 10], [5, 10], [-12, 9]],
+      height: 9, clearance: 0.5, front: { at: 8, lip: 5 }, rear: { at: -9, lip: 5 },
+    },
     armor: { front: P('ar500', 10), rear: P('titanium', 8), sides: P('titanium', 8), top: P('titanium', 6), bottom: P('al7075', 5) },
     wheels: 2, wheelDia: 11, wheelWidth: 6, track: 26, axleX: -4, topMph: 15, driveMotor: 'bl80-150', invertible: true,
-    weapon: spinner({ style: 'drum', lb: 50, dia: 10, width: 16, teeth: 1, tooth: 1.2, rpm: rpmAt(140, 10), motor: 'bl80100-130', motors: 1, mountX: 14, mountY: 0 }),
-    look: { primary: '#c41e2e', secondary: '#8a4a2b', accent: '#e3b53a', logo: 'COPPERHEAD', features: ['snake-scales', 'fangs', 'wide-wheels'] },
+    weapon: spinner({ style: 'drum', lb: 50, dia: 10, width: 16, teeth: 1, tooth: 1.2, rpm: rpmAt(140, 10), motor: 'bl80100-130', motors: 1, mountX: 13, mountY: 0 }),
+    look: { primary: '#c41e2e', secondary: '#8a4a2b', accent: '#e3b53a', logo: 'COPPERHEAD', features: ['snake-scales', 'wide-wheels'] },
   },
   {
     id: 'icewave', name: 'Icewave', team: 'Team Icewave',
@@ -323,9 +339,13 @@ const SPECS: Spec[] = [
   {
     id: 'cobalt', name: 'Cobalt', team: 'Robotic Death Company',
     L: 32, W: 30, H: 10, shape: 'wedge', wedge: 8,
+    bp: {
+      outline: [[-16, -15], [10, -15], [16, -12], [16, -2], [6, -2], [6, 2], [16, 2], [16, 12], [10, 15], [-16, 15]],
+      height: 10, clearance: 0.5, front: { at: 0, lip: 0.4, floor: true }, rear: { at: -11, lip: 2, floor: true },
+    },
     armor: { front: P('ar500', 10), rear: P('al7075', 8), sides: P('ar500', 8), top: P('al7075', 6), bottom: P('al7075', 5) },
     wheels: 4, wheelDia: 6, topMph: 14, forks: true, selfRighter: 'torque',
-    weapon: spinner({ style: 'vertical-disk', lb: 45, dia: 19, width: 1.75, teeth: 3, tooth: 1.2, rpm: rpmAt(225, 19), motor: 'bl80100-130', motors: 2, mountX: 16, mountY: 2 }),
+    weapon: spinner({ style: 'vertical-disk', lb: 45, dia: 19, width: 1.75, teeth: 3, tooth: 1.2, rpm: rpmAt(225, 19), motor: 'bl80100-130', motors: 2, mountX: 13, mountY: 2 }),
     look: { primary: '#0e0e0e', secondary: '#151515', accent: '#3ddc3a', logo: 'COBALT', features: ['green-teeth', 'green-forks', 'speed-lines'] },
   },
   {
