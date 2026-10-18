@@ -27,7 +27,7 @@ export function floorTextures(size = 2048, plates = 6) {
   const p = size / plates;
   for (let i = 0; i < plates; i++) {
     for (let j = 0; j < plates; j++) {
-      const shade = 78 + Math.floor(R() * 26);
+      const shade = 58 + Math.floor(R() * 18);
       g.fillStyle = `rgb(${shade},${shade + 3},${shade + 6})`;
       g.fillRect(i * p + 3, j * p + 3, p - 6, p - 6);
       // mill scale blotches
@@ -35,7 +35,7 @@ export function floorTextures(size = 2048, plates = 6) {
         const x = i * p + R() * p, y = j * p + R() * p, r = 10 + R() * 70;
         const gr = g.createRadialGradient(x, y, 0, x, y, r);
         const dark = R() < 0.5;
-        gr.addColorStop(0, dark ? 'rgba(30,30,32,0.22)' : 'rgba(150,150,155,0.12)');
+        gr.addColorStop(0, dark ? 'rgba(20,20,22,0.25)' : 'rgba(130,130,135,0.06)');
         gr.addColorStop(1, 'rgba(0,0,0,0)');
         g.fillStyle = gr;
         g.fillRect(x - r, y - r, r * 2, r * 2);

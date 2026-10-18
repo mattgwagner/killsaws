@@ -45,9 +45,9 @@ export class GameView {
     this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance', preserveDrawingBuffer: true });
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    this.renderer.toneMappingExposure = 1.0;
+    this.renderer.toneMappingExposure = 0.82;
     this.renderer.shadowMap.enabled = true;
-    this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    this.renderer.shadowMap.type = THREE.PCFShadowMap;
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
 
     const pmrem = new THREE.PMREMGenerator(this.renderer);
@@ -59,7 +59,7 @@ export class GameView {
     // lights: big overhead key with shadows, cool fill, red & blue corner washes
     const hemi = new THREE.HemisphereLight('#c9d6ff', '#1a1410', 0.55);
     this.scene.add(hemi);
-    const key = new THREE.DirectionalLight('#fff3e2', 2.6);
+    const key = new THREE.DirectionalLight('#fff3e2', 2.1);
     key.position.set(4, 14, 3);
     key.castShadow = true;
     key.shadow.mapSize.set(2048, 2048);
@@ -69,13 +69,13 @@ export class GameView {
     key.shadow.normalBias = 0.02;
     this.scene.add(key);
     for (const [x, z, c] of [[-HALF, 0, '#ff3344'], [HALF, 0, '#3388ff']] as const) {
-      const sp = new THREE.SpotLight(c, 260, 30, 0.7, 0.6, 1.6);
+      const sp = new THREE.SpotLight(c, 45, 30, 0.7, 0.7, 1.4);
       sp.position.set(x * 1.1, 6, z);
       sp.target.position.set(x * 0.3, 0, z);
       this.scene.add(sp, sp.target);
     }
     for (const [x, z] of [[-6, -6], [6, 6], [-6, 6], [6, -6]]) {
-      const sp = new THREE.SpotLight('#fff6e8', 160, 20, 0.6, 0.5, 1.4);
+      const sp = new THREE.SpotLight('#fff6e8', 30, 20, 0.6, 0.6, 1.3);
       sp.position.set(x, 4.8, z);
       sp.target.position.set(x * 0.4, 0, z * 0.4);
       this.scene.add(sp, sp.target);
@@ -83,7 +83,7 @@ export class GameView {
 
     this.composer = new EffectComposer(this.renderer);
     this.composer.addPass(new RenderPass(this.scene, this.camera));
-    this.bloom = new UnrealBloomPass(new THREE.Vector2(512, 512), 0.75, 0.5, 0.88);
+    this.bloom = new UnrealBloomPass(new THREE.Vector2(512, 512), 0.5, 0.45, 0.97);
     this.composer.addPass(this.bloom);
     this.composer.addPass(new OutputPass());
 
@@ -305,15 +305,11 @@ export class GameView {
         look = me.position.clone().addScaledVector(toOther, 1.5);
       } else { pos = this.camPos; look = mid; }
     } else {
-      // broadcast: a high corner camera that slides along the side and zooms to fit both robots
-      const side = mid.clone().normalize();
-      const angle = Math.atan2(mid.z, mid.x) * 0.25;
-      const dist = 6.5 + sep * 0.95;
-      pos = new THREE.Vector3(Math.sin(angle) * dist * 0.4, 3.4 + sep * 0.42, Math.cos(angle) * dist + 1.5);
-      pos.add(new THREE.Vector3(mid.x * 0.7, 0, mid.z * 0.45));
-      void side;
-      pos.z = Math.min(pos.z, HALF + 5);
-      look = mid;
+      // broadcast: the camera rides a rail behind the Lexan on the door side, below the truss,
+      // tracking the midpoint and pulling back to keep both robots in frame
+      const dist = 4.2 + sep * 0.75;
+      pos = new THREE.Vector3(mid.x * 0.75, Math.min(4.0, 1.8 + sep * 0.3), Math.min(HALF - 0.4, mid.z + dist));
+      look = mid.clone().add(new THREE.Vector3(0, 0, -0.4));
     }
     const k = 1 - Math.exp(-dt * 3.2);
     this.camPos.lerp(pos, k);

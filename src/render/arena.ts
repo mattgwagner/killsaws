@@ -80,7 +80,7 @@ export class ArenaView {
     const markTex = new THREE.CanvasTexture(marks);
     markTex.colorSpace = THREE.SRGBColorSpace;
     markTex.anisotropy = 8;
-    const markMesh = new THREE.Mesh(new THREE.PlaneGeometry(ARENA_SIZE, ARENA_SIZE), new THREE.MeshStandardMaterial({ map: markTex, transparent: true, depthWrite: false, roughness: 0.7, metalness: 0.2, polygonOffset: true, polygonOffsetFactor: -1 }));
+    const markMesh = new THREE.Mesh(new THREE.PlaneGeometry(ARENA_SIZE, ARENA_SIZE), new THREE.MeshStandardMaterial({ map: markTex, color: '#9a9a9a', transparent: true, depthWrite: false, roughness: 0.85, metalness: 0.1, polygonOffset: true, polygonOffsetFactor: -1 }));
     markMesh.rotation.x = -Math.PI / 2;
     markMesh.position.y = 0.001;
     markMesh.receiveShadow = true;
