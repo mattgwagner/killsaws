@@ -128,6 +128,8 @@ export interface BotDesign {
     ratio: number; // gear reduction
     wheelbase: number; // m between front and rear axle (0 for 2WD)
     track: number; // m between left and right wheel centers
+    /** steel stubs past each wheel hub (HUGE) so it can't lie flat on its side */
+    axleStubs?: number; // m of stub beyond the wheel
     axleX?: number; // m, wheel set x offset from chassis center
   };
   battery: BatterySpec;

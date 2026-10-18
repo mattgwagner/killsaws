@@ -240,6 +240,15 @@ export class BotRuntime {
       const front = ch.wedgeLength > 0 ? ch.length / 2 + ch.wedgeLength * 0.6 : ch.length / 2 - 0.02;
       this.skids.push(v3(front, belly, 0), v3(-ch.length / 2 + 0.02, belly, 0));
     }
+    if (d.axleStubs) {
+      for (const side of [-1, 1]) {
+        const sd = RAPIER.ColliderDesc.cylinder(d.axleStubs / 2, 0.02)
+          .setTranslation(ax, wy, side * (d.track / 2 + d.wheelWidth / 2 + d.axleStubs / 2))
+          .setRotation(qWheel).setDensity(0).setFriction(0.3).setCollisionGroups(COLLIDE.chassis);
+        const sc = world.createCollider(sd, this.body);
+        tags.set(sc.handle, { bot: this, part: 'chassis' });
+      }
+    }
     const n = this.wheels.length;
     this.k = (this.mass * 9.81) / (n * 0.006);
     this.c = 2 * 0.65 * Math.sqrt((this.k * this.mass) / n);
@@ -266,12 +275,13 @@ export class BotRuntime {
       const shapeRotLocal = vertical ? qWheel : { x: 0, y: 0, z: 0, w: 1 };
       const halfWidth = w.width / 2;
       const shape = new RAPIER.Cylinder(halfWidth + 0.01, w.radius);
+      const restLow = ch.clearance + ch.height / 2 + w.mountY - (vertical ? w.radius : halfWidth);
       const wcd = RAPIER.ColliderDesc.cylinder(halfWidth, w.radius * 0.97)
         .setTranslation(w.mountX, w.mountY, 0)
         .setRotation(shapeRotLocal)
         .setDensity(0).setFriction(0).setRestitution(0.1)
         .setFrictionCombineRule(RAPIER.CoefficientCombineRule.Min)
-        .setCollisionGroups(COLLIDE.weapon);
+        .setCollisionGroups(restLow < 0.03 ? COLLIDE.weapon : COLLIDE.weaponHigh);
       this.weaponCollider = world.createCollider(wcd, this.body);
       tags.set(this.weaponCollider.handle, { bot: this, part: 'weapon' });
       this.spinner = {
@@ -366,10 +376,12 @@ export class BotRuntime {
       w.normalForce = 0;
       if (!w.attached) continue;
       const center = add(pos, rotate(q, w.local));
-      if (Math.abs(axisW.y) > 0.7) continue; // wheel lying flat
+      if (Math.abs(axisW.y) > 0.92) continue; // wheel lying flat
       const ray = new RAPIER.Ray(center, { x: 0, y: -1, z: 0 });
+      // a leaning wheel touches down on its rim edge: center height is r·cos(lean)
+      const lean = Math.sqrt(Math.max(0, 1 - axisW.y * axisW.y));
       // ears / horns: upside down, an override-invertible bot rides on its outriggers
-      const rEff = this.inverted && d.chassis.invertibleOverride ? Math.max(w.r, d.chassis.height / 2 - w.local.y + d.chassis.clearance * 0.5 + 0.006) : w.r;
+      const rEff = this.inverted && d.chassis.invertibleOverride ? Math.max(w.r, d.chassis.height / 2 - w.local.y + d.chassis.clearance * 0.5 + 0.006) : w.r * lean;
       const hit = this.world.castRayAndGetNormal(ray, rEff + 0.02, true, undefined, COLLIDE.wheelRay, undefined, this.body);
       if (!hit) continue;
       const tag = ctx.tags.get(hit.collider.handle);
@@ -387,7 +399,8 @@ export class BotRuntime {
       const other = otherBody && otherBody.isDynamic() ? otherBody : null;
       if (other) vp = sub(vp, other.velocityAtPoint(p));
       const closing = -dot(vp, nrm);
-      const N = clamp(this.k * comp + this.c * closing, 0, this.mass * 9.81 * 8);
+      // rim contact grips less the further the wheel leans
+      const N = clamp(this.k * comp + this.c * closing, 0, this.mass * 9.81 * 8) * (0.35 + 0.65 * lean);
       if (N <= 0) continue;
       const f = norm(cross(nrm, axisW));
       const l = norm(sub(axisW, scale(nrm, dot(axisW, nrm))));

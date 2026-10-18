@@ -44,6 +44,7 @@ interface Spec {
   look: BotDesign['look'];
   /** real silhouette; overrides L/W/H/clear/shape/wedge */
   bp?: Blueprint;
+  axleStubs?: number; // in
 }
 
 function spinner(o: {
@@ -78,7 +79,7 @@ function build(s: Spec): BotDesign {
     drive: {
       wheels: s.wheels, wheelDiameter: s.wheelDia * IN, wheelWidth: ww * IN, tire: s.tire ?? 'colson', motor: dm,
       motorsPerSide: s.motorsPerSide ?? (s.wheels >= 4 ? 2 : 1), ratio: ratioFor(s.topMph, s.wheelDia * IN, dm, cells),
-      wheelbase: (s.wheelbase ?? (s.wheels === 2 ? 0 : s.L * 0.55)) * IN, track: (s.track ?? s.W - ww - 1) * IN, axleX: (s.axleX ?? 0) * IN,
+      wheelbase: (s.wheelbase ?? (s.wheels === 2 ? 0 : s.L * 0.55)) * IN, track: (s.track ?? s.W - ww - 1) * IN, axleX: (s.axleX ?? 0) * IN, axleStubs: s.axleStubs ? s.axleStubs * IN : undefined,
     },
     battery: { cellsS: cells, capacityAh: s.ah ?? 5, packs: s.packs ?? 2, cRating: 65 },
     weapon: s.weapon,
@@ -226,7 +227,7 @@ const SPECS: Spec[] = [
     id: 'huge', name: 'HUGE', team: 'Team HUGE',
     L: 8, W: 30, H: 5, clear: 17.5, shape: 'box',
     armor: { front: P('uhmw', 20), rear: P('uhmw', 20), sides: P('uhmw', 20), top: P('uhmw', 15), bottom: P('uhmw', 15) },
-    wheels: 2, wheelDia: 40, wheelWidth: 1.75, track: 33, tire: 'uhmw-disc', topMph: 15, driveMotor: 'bl80-150', invertible: true,
+    wheels: 2, wheelDia: 40, wheelWidth: 1.75, track: 33, axleStubs: 6, tire: 'uhmw-disc', topMph: 15, driveMotor: 'bl80-150', invertible: true,
     weapon: spinner({ style: 'vertical-bar', lb: 35, dia: 26, width: 3, teeth: 2, tooth: 1.5, rpm: rpmAt(180, 26), motor: 'bl80100-130', motors: 1, mountX: 0, mountY: 0 }),
     look: { primary: '#f2f2ee', secondary: '#e2e2de', accent: '#24406b', logo: 'HUGE', features: ['uhmw-wheels', 'axle-stubs'], tireColor: '#f2f2ee' },
   },
