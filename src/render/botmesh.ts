@@ -294,7 +294,7 @@ export function buildBot(d: BotDesign): BotMesh {
         if (f.has('cage-of-death')) {
           // Son of Whyachi: three black box arms, red tube triangle, hammers hanging low
           const armMat = std('#141414', 0.5, 0.3, { clearcoat: 0.8 });
-          const tubeMat = std('#d11f2b', 0.3, 0.3, { clearcoat: 0.8 });
+          const tubeMat = std('#c81e28', 0.3, 0.5, { clearcoat: 0.2 });
           const aw = (rs?.chord ?? 3.5) * IN, tubeR = ((rs?.tube ?? 1.4) * IN) / 2;
           for (let i = 0; i < 3; i++) {
             const a = (i / 3) * Math.PI * 2;
@@ -302,7 +302,8 @@ export function buildBot(d: BotDesign): BotMesh {
             armM.position.set(Math.cos(a) * R / 2, 0.05, -Math.sin(a) * R / 2);
             armM.rotation.y = a;
             spin.add(armM);
-            const hammer = box(aw * 1.3, 0.19, aw * 1.4, armMat);
+            // hammer heads the size of bricks hanging below the arm tips
+            const hammer = box(aw * 1.7, 0.2, aw * 1.5, armMat);
             hammer.position.set(Math.cos(a) * R * 0.95, -0.04, -Math.sin(a) * R * 0.95);
             hammer.rotation.y = a;
             spin.add(hammer);
@@ -314,10 +315,10 @@ export function buildBot(d: BotDesign): BotMesh {
             tube.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), p2.clone().sub(p1).normalize());
             spin.add(tube);
           }
-          const hub = cyl(((rs?.hub ?? 8) * IN) / 2, 0.13, std('#2a2a2a', 0.7, 0.4), 24);
+          const hub = cyl(((rs?.hub ?? 8) * IN) / 2, aw * 1.1, std('#2a2a2a', 0.7, 0.4), 32);
           hub.position.y = 0.05;
           spin.add(hub);
-          const cap = cyl(((rs?.hub ?? 8) * IN) / 4, 0.14, std('#d11f2b', 0.3, 0.35), 20);
+          const cap = cyl(((rs?.hub ?? 8) * IN) / 4, aw * 1.25, std('#d11f2b', 0.3, 0.35), 20);
           cap.position.y = 0.06;
           spin.add(cap);
         } else if (rs) {
@@ -325,25 +326,32 @@ export function buildBot(d: BotDesign): BotMesh {
           const chord = (rs.chord ?? 4) * IN;
           const bm = std(rs.color ?? '#8d939a', 0.65, 0.42);
           const tm = std(rs.tipColor ?? '#3a3d42', 0.75, 0.45);
-          const blade = box(R * 2 * 0.86, tw, chord, bm);
+          const bt = rs.depth ? rs.depth * IN : tw;
+          const blade = box(R * 2 * 0.86, bt, chord, bm);
           spin.add(blade);
           for (const s of [-1, 1]) {
             if (rs.tips === 'hooked') {
-              const hook = box(R * 0.22, tw * 1.1, chord * 1.35, bm);
+              const hook = box(R * 0.22, bt * 1.05, chord * 1.35, bm);
               hook.position.set(s * R * 0.9, 0, s * chord * 0.35);
               hook.rotation.y = s * 0.55;
               spin.add(hook);
-              const edge = box(R * 0.1, tw * 1.15, chord * 0.5, tm);
+              const edge = box(R * 0.12, bt * 1.15, chord * 0.7, tm);
               edge.position.set(s * R * 0.98, 0, s * chord * 0.75);
               spin.add(edge);
+              // bolted-on impactor: a row of bolt heads on top
+              for (let b = 0; b < 3; b++) {
+                const bolt = cyl(0.008, 0.008, steel(), 8);
+                bolt.position.set(s * R * (0.9 + b * 0.035), bt * 0.58 + 0.004, s * chord * 0.75);
+                spin.add(bolt);
+              }
             } else {
-              const tip = box(R * 0.16, tw * 1.7, chord * 1.15, tm);
+              const tip = box(R * 0.16, bt * 1.7, chord * 1.15, tm);
               tip.position.set(s * R * 0.9, 0, 0);
               spin.add(tip);
             }
           }
-          spin.add(cyl(((rs.hub ?? 5) * IN) / 2, tw * 1.8, std('#c41a1f', 0.4, 0.4), 28));
-          spin.add(cyl(((rs.hub ?? 5) * IN) / 5, tw * 2.4, steel(), 16));
+          spin.add(cyl(((rs.hub ?? 5) * IN) / 2, bt * 1.35, std('#c41a1f', 0.4, 0.4), 28));
+          spin.add(cyl(((rs.hub ?? 5) * IN) / 5, bt * 1.7, steel(), 16));
           if (rs.post) {
             // fixed post from the deck up to the hub (not part of the spinning group)
             const postH = Math.max(0.01, w.mountY - hy);

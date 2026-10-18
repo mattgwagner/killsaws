@@ -37,6 +37,8 @@ export interface ArmSpec {
 export interface RotorSpec {
   /** blade width across the direction of travel (in) */
   chord?: number;
+  /** blade depth, top to bottom (in); render only, the strike zone keeps the weapon's width */
+  depth?: number;
   hub?: number; // hub diameter (in)
   post?: number; // hub post height from the deck (in)
   tips?: 'weighted' | 'hooked';
