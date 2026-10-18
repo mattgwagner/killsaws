@@ -226,6 +226,10 @@ const SPECS: Spec[] = [
   {
     id: 'bronco', name: 'Bronco', team: 'Inertia Labs',
     L: 40, W: 32, H: 12, shape: 'wedge', wedge: 10,
+    bp: {
+      outline: [[-20, -16], [20, -16], [20, 16], [-20, 16]],
+      height: 12, clearance: 0.5, front: { at: 12, lip: 0.4, floor: true },
+    },
     armor: { front: P('al7075', 10), rear: P('al7075', 8), sides: P('al7075', 8), top: P('al7075', 8), bottom: P('al7075', 5) },
     wheels: 4, wheelDia: 8, topMph: 13, frame: 'al7075',
     weapon: { type: 'flipper', style: 'flipper', actuator: 'pneumatic', energy: 9500, plateLength: 0.8, plateWidth: 0.75, shots: 24, cooldown: 1.2, systemMass: 30 },
@@ -234,6 +238,10 @@ const SPECS: Spec[] = [
   {
     id: 'blacksmith', name: 'Blacksmith', team: 'Team Half Fast Astronaut',
     L: 32, W: 30, H: 12, shape: 'box',
+    bp: {
+      outline: [[-16, -14], [-14, -15], [14, -15], [16, -14], [16, 14], [14, 15], [-14, 15], [-16, 14]],
+      height: 12, clearance: 0.5, front: { at: 10, lip: 4 },
+    },
     armor: { front: P('ar500', 8), rear: P('al7075', 8), sides: P('al7075', 8), top: P('al7075', 6), bottom: P('al7075', 5) },
     wheels: 4, wheelDia: 7, topMph: 12, forks: true, flame: true,
     weapon: { type: 'hammer', style: 'hammer', headMass: 13 * LB, armLength: 30 * IN, energy: 3200, swingTime: 0.32, cooldown: 0.6, systemMass: 18 },
@@ -303,8 +311,12 @@ const SPECS: Spec[] = [
   {
     id: 'duck', name: 'DUCK!', team: 'Team Black and Blue',
     L: 34, W: 30, H: 7, shape: 'wedge', wedge: 7,
+    bp: {
+      outline: [[-17, -10.5], [-5, -10.5], [-5, -15], [5, -15], [5, -10.5], [14, -10.5], [14, -15], [19, -15], [19, 15], [14, 15], [14, 10.5], [5, 10.5], [5, 15], [-5, 15], [-5, 10.5], [-17, 10.5]],
+      height: 7, clearance: 0.5, front: { at: 14, lip: 0.4, floor: true },
+    },
     armor: { front: P('ar500', 14), rear: P('ar500', 8), sides: P('ar500', 10), top: P('ar500', 6), bottom: P('ar500', 5) },
-    wheels: 4, wheelDia: 7.5, wheelWidth: 3, topMph: 13, driveMotor: 'bl80-150', invertible: true,
+    track: 26, wheels: 4, wheelDia: 7.5, wheelWidth: 3, topMph: 13, driveMotor: 'bl80-150', invertible: true,
     weapon: { type: 'flipper', style: 'lifter', actuator: 'electric', energy: 4200, plateLength: 0.45, plateWidth: 0.35, shots: Infinity, cooldown: 0.7, systemMass: 16 },
     look: { primary: '#ececE8', secondary: '#d8d8d4', accent: '#f26b21', logo: 'DUCK!', features: ['beak', 'bolt-grid', 'duck-face'] },
   },
@@ -324,6 +336,10 @@ const SPECS: Spec[] = [
   {
     id: 'beta', name: 'Beta', team: 'Team Hurtz',
     L: 34, W: 32, H: 9, shape: 'wedge', wedge: 7,
+    bp: {
+      outline: [[-17, -13], [10, -17], [17, -14], [17, 14], [10, 17], [-17, 13]],
+      height: 9, clearance: 0.5, front: { at: 4, lip: 0.4, floor: true }, rear: { at: -14, lip: 5 },
+    },
     armor: { front: P('ar500', 10), rear: P('ar500', 6), sides: P('ar500', 8), top: P('polycarb', 6), bottom: P('al7075', 5) },
     wheels: 4, wheelDia: 6, topMph: 12,
     weapon: { type: 'hammer', style: 'hammer', headMass: 16 * LB, armLength: 34 * IN, energy: 7000, swingTime: 0.2, cooldown: 1.6, systemMass: 22 },
@@ -332,6 +348,10 @@ const SPECS: Spec[] = [
   {
     id: 'quantum', name: 'Quantum', team: 'Team Robo Challenge',
     L: 38, W: 30, H: 9, shape: 'wedge', wedge: 8,
+    bp: {
+      outline: [[-19, -13], [-14, -15], [8, -15], [19, -11], [19, 11], [8, 15], [-14, 15], [-19, 13]],
+      height: 9, clearance: 0.5, front: { at: 0, lip: 0.4, floor: true }, rear: { at: -15, lip: 5 },
+    },
     armor: { front: P('hardox', 10), rear: P('al7075', 6), sides: P('al7075', 8), top: P('titanium', 6), bottom: P('al7075', 5) },
     wheels: 4, wheelDia: 6, topMph: 12, selfRighter: 'arm',
     weapon: { type: 'crusher', force: 155000, reach: 0.42, cycleTime: 0.45, systemMass: 30 },
