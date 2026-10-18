@@ -1,11 +1,12 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { BotDesign } from '../sim/design';
 import { MatchResult } from '../sim/match';
 import { BotSummary } from '../net/net';
 
-export function Results({ result, designs, stats: bots, from, onRematch, onMenu, onNew, onTournament }: {
+export function Results({ result, designs, stats: bots, from, onRematch, onMenu, onNew, onTournament, onReveal }: {
   result: MatchResult; designs: BotDesign[]; stats: BotSummary[]; from: string;
   onRematch: () => void; onMenu: () => void; onNew: () => void; onTournament: () => void;
+  onReveal?: () => void;
 }) {
   const [shown, setShown] = useState(result.method === 'Judges' ? 0 : 99);
   useEffect(() => {
@@ -16,6 +17,13 @@ export function Results({ result, designs, stats: bots, from, onRematch, onMenu,
   const w = designs[result.winner];
   const mm = Math.floor(result.time / 60), ss = Math.floor(result.time % 60);
   const reveal = result.method !== 'Judges' || shown > (result.cards?.length ?? 0);
+  const revealed = useRef(false);
+  useEffect(() => {
+    if (result.method === 'Judges' && reveal && !revealed.current) {
+      revealed.current = true;
+      onReveal?.();
+    }
+  }, [reveal, result.method, onReveal]);
   const color = (i: number) => (i === 0 ? 'var(--red)' : 'var(--blue)');
   return (
     <div className="results">

@@ -74,6 +74,7 @@ export default function App() {
     const a = pool[Math.floor(Math.random() * pool.length)];
     let b = pool[Math.floor(Math.random() * pool.length)];
     if (b.id === a.id) b = pool[(pool.indexOf(a) + 3) % pool.length];
+    session.showcase = false;
     session.start([a, b], [{ kind: 'ai', ai: 'champion' }, { kind: 'ai', ai: 'champion' }], { seed: Math.floor(Math.random() * 1e6), matchSeconds: 180 }).then(() => {
       session.view.setMode('broadcast');
     });
@@ -91,9 +92,16 @@ export default function App() {
     if (screen !== 'fight' || !frame?.view.result || result) return;
     const r = frame.view.result;
     if (fight?.from === 'online' && !sessionRef.current?.match) return; // guest: result arrives over the wire
-    const t = setTimeout(() => { setSummary(summarize(sessionRef.current!)); setResult(r); setScreen('results'); }, r.method === 'KO' ? 2600 : 1800);
-    return () => clearTimeout(t);
-  }, [frame?.view.result, screen, result]);
+    // Online keeps the old pause-on-the-graphic. A local fight waits out the KO shot and the replay.
+    if (fight?.from === 'online') {
+      const t = setTimeout(() => { setSummary(summarize(sessionRef.current!)); setResult(r); setScreen('results'); }, r.method === 'KO' ? 2600 : 1800);
+      return () => clearTimeout(t);
+    }
+    if (frame.moment !== 'done') return;
+    setSummary(summarize(sessionRef.current!));
+    setResult(r);
+    setScreen('results');
+  }, [frame, screen, result, fight]);
 
   const beginFight = useCallback(async (ctx: FightContext, opts: { seed?: number } = {}) => {
     const s = sessionRef.current!;
@@ -103,6 +111,7 @@ export default function App() {
     setCallouts([]);
     setFight(ctx);
     setPaused(false);
+    s.showcase = ctx.from !== 'online';
     await s.start(ctx.designs, ctx.seats, {
       seed: opts.seed ?? Math.floor(Math.random() * 1e9), hazards: settings.hazards, koCount: settings.koCount, matchSeconds: settings.matchSeconds,
     });
@@ -198,7 +207,7 @@ export default function App() {
         />
       )}
       {(screen === 'intro' || screen === 'fight' || screen === 'results') && frame && fight && (
-        <Hud frame={frame} designs={fight.designs} callouts={callTimeout} intro={screen === 'intro' ? introStep : -1} cam={cam} seats={fight.seats} />
+        <Hud frame={frame} designs={fight.designs} callouts={callTimeout} intro={screen === 'intro' ? introStep : -1} cam={cam} seats={fight.seats} moment={frame.moment} />
       )}
       {paused && screen === 'fight' && (
         <div className="pausemenu">
@@ -219,6 +228,7 @@ export default function App() {
           onRematch={() => beginFight(fight)}
           onMenu={toMenu}
           onNew={() => setScreen('select')}
+          onReveal={() => { if (result.method === 'Judges') sessionRef.current?.view.victoryPyro(); }}
           onTournament={() => {
             if (tourney) setTourney({ ...tourney, pendingResult: { winner: fight.designs[result.winner].id, method: result.method, time: result.time } });
             setScreen('tournament');

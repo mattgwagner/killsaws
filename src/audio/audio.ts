@@ -27,6 +27,9 @@ export class Audio {
   muted = false;
   announcer = true;
   volume = 0.8;
+  /** Replay plays hit events only; the live weapon whine stays down. */
+  replay = false;
+  private fullCrowd = false;
   private lastCount = -1;
   private lastLight = -1;
   private lastDeck = -1;
@@ -69,6 +72,8 @@ export class Audio {
     this.designs = designs;
     this.lastCount = -1;
     this.lastLight = -1;
+    this.replay = false;
+    this.fullCrowd = false;
     const ctx = this.ctx;
     if (!ctx) return;
     this.stopMatch();
@@ -111,7 +116,16 @@ export class Audio {
     const ctx = this.ctx;
     if (!ctx) return;
     const t = ctx.currentTime;
+    if (this.replay) {
+      for (const v of this.voices) {
+        v.whineGain.gain.setTargetAtTime(0, t, 0.04);
+        v.driveGain.gain.setTargetAtTime(0, t, 0.04);
+        v.bladeGain.gain.setTargetAtTime(0, t, 0.04);
+        v.hum.gain.setTargetAtTime(0, t, 0.04);
+      }
+    }
     view.bots.forEach((bv, i) => {
+      if (this.replay) return;
       const v = this.voices[i];
       const b = bots[i];
       if (!v || !b) return;
@@ -136,9 +150,10 @@ export class Audio {
       v.drive.frequency.setTargetAtTime(Math.max(25, Math.min(1200, (wOm * 7) / (2 * Math.PI) / 6)), t, 0.03);
       v.driveGain.gain.setTargetAtTime(Math.min(0.035, Math.abs(b.ampsDrive) / 4000), t, 0.04);
     });
-    // crowd: excitement decays, swells with hits
-    this.excitement = Math.max(0.15, this.excitement - dt * 0.12);
-    this.crowd?.gain.setTargetAtTime(0.03 + this.excitement * 0.12, t, 0.3);
+    // crowd: excitement decays, swells with hits. A KO pins it at full.
+    if (this.fullCrowd) this.excitement = 1;
+    else this.excitement = Math.max(0.15, this.excitement - dt * 0.12);
+    this.crowd?.gain.setTargetAtTime(this.fullCrowd ? 0.2 : 0.03 + this.excitement * 0.12, t, this.fullCrowd ? 0.15 : 0.3);
     this.crowdFilter?.frequency.setTargetAtTime(700 + this.excitement * 900, t, 0.3);
 
     // start lights: a beep per second, high tone on green
@@ -302,6 +317,12 @@ export class Audio {
 
   countdownBeep(n: number) {
     this.beep(n === 0 ? 1320 : 660, n === 0 ? 0.4 : 0.15, 0.12);
+  }
+
+  /** The KO: the room comes up and stays there through the shot. */
+  crowdFull() {
+    this.fullCrowd = true;
+    this.excitement = 1;
   }
 
   say(text: string, o: { rate?: number; pitch?: number } = {}) {

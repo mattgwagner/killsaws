@@ -5,7 +5,7 @@ import { BotDesign } from './sim/design';
 import { BotAI, AILevel } from './sim/ai';
 import { BotInput, NO_INPUT } from './sim/bot';
 import { SimEvent } from './sim/combat';
-import { GameView } from './render/scene';
+import { CameraMode, GameView } from './render/scene';
 import { ControllerKind, HumanDriver } from './input';
 import { Audio } from './audio/audio';
 
@@ -46,6 +46,10 @@ export class GameSession {
   /** local exhibition / tournament: play the KO shot and the replay. Attract and online skip it. */
   showcase = false;
   moment: Moment = 'live';
+  private koLeft = 0;
+  private presented = false;
+  private winner: 0 | 1 = 0;
+  private camBefore: CameraMode = 'broadcast';
   paused = false;
   /** intro: render but don't advance the sim */
   hold = false;
@@ -72,7 +76,10 @@ export class GameSession {
     this.online = seats.some((s) => s.kind === 'net');
     this.hitStop = 0;
     this.slow = 0;
+    this.koLeft = 0;
+    this.presented = false;
     this.moment = 'live';
+    this.audio.replay = false;
     this.audio.startMatch(designs);
     this.acc = 0;
     this.last = performance.now();
@@ -107,8 +114,8 @@ export class GameSession {
       this.onFrame({ view: held, inputs: this.inputs, slowmo: false, moment: this.moment });
       return;
     }
-    const scale = this.slow > 0 ? 0.28 : 1;
-    this.slow = Math.max(0, this.slow - dt);
+    const scale = this.moment === 'ko' ? 0.2 : this.slow > 0 ? 0.28 : 1;
+    if (this.moment !== 'ko') this.slow = Math.max(0, this.slow - dt);
     this.acc += dt * scale;
     let steps = 0;
     const m = this.match;
@@ -144,6 +151,37 @@ export class GameSession {
     this.onEvents(events);
     this.view.frame(dt, m.bots.map((b) => b.flameOn));
     this.onTick?.(view, dt);
-    this.onFrame({ view, inputs: this.inputs, slowmo: this.slow > 0, moment: this.moment });
+    this.onFrame({ view, inputs: this.inputs, slowmo: this.slow > 0 && this.moment !== 'ko', moment: this.moment });
+    if (m.result) this.openFinale(m.result);
+    if (this.moment === 'ko') {
+      this.koLeft -= dt;
+      if (this.koLeft <= 0) this.finishShow();
+    }
   };
+
+  /** KO: 0.2× for 2.5 s on a low hero shot. Judges go straight on (replay lands before results). */
+  private openFinale(result: import('./sim/match').MatchResult) {
+    if (this.presented) return;
+    this.presented = true;
+    this.winner = result.winner;
+    if (!this.showcase || this.online || result.method !== 'KO') {
+      this.moment = 'done';
+      return;
+    }
+    const mode = this.view.mode;
+    this.camBefore = mode === 'intro' || mode === 'gallery' || mode === 'hero' ? 'broadcast' : mode;
+    this.moment = 'ko';
+    this.koLeft = 2.5;
+    this.view.focus = this.winner;
+    this.view.setMode('hero');
+    this.view.victoryPyro();
+    this.audio.crowdFull();
+  }
+
+  /** Hand the fight back to the UI. The replay commit takes this over. */
+  private finishShow() {
+    this.moment = 'done';
+    this.audio.replay = false;
+    if (this.view.mode === 'hero') this.view.setMode(this.camBefore);
+  }
 }

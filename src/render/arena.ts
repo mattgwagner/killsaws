@@ -18,6 +18,9 @@ export class ArenaView {
   private leds: THREE.MeshStandardMaterial;
   private startLights: THREE.MeshStandardMaterial[] = [];
   readonly screens: { canvas: HTMLCanvasElement; tex: THREE.CanvasTexture }[] = [];
+  /** Hazard siren: the red LED wash pulses harder for the siren's length. */
+  siren = false;
+  private cornerCache: THREE.Vector3[] | null = null;
 
   constructor(readonly layout: ArenaLayout) {
     const g = this.group;
@@ -362,12 +365,25 @@ export class ArenaView {
       this.ramrods.get(r.id)!.position.y = -0.12 + h.ramrods[i].rise * 0.2;
     });
     const t = performance.now() / 1000;
-    this.leds.emissiveIntensity = live ? 2 + Math.sin(t * 10) * 1.6 : 0.05;
+    this.leds.emissiveIntensity = this.siren ? 6 + Math.sin(t * 18) * 3 : live ? 2 + Math.sin(t * 10) * 1.6 : 0.05;
     const green = phase === 'fight';
     for (const m of this.startLights) {
       const c = green ? '#00ff44' : countdown > 0 ? '#ff0000' : '#ff0000';
       m.color.set(c); m.emissive.set(c);
       m.emissiveIntensity = green ? 3 : 2 + Math.sin(t * 8);
     }
+  }
+
+  /** Floor points just inside the four BattleBox corners, where the pyro lives. */
+  corners() {
+    if (this.cornerCache) return this.cornerCache;
+    const k = 0.92;
+    this.cornerCache = [
+      new THREE.Vector3(-HALF * k, 0.05, -HALF * k),
+      new THREE.Vector3(HALF * k, 0.05, -HALF * k),
+      new THREE.Vector3(-HALF * k, 0.05, HALF * k),
+      new THREE.Vector3(HALF * k, 0.05, HALF * k),
+    ];
+    return this.cornerCache;
   }
 }

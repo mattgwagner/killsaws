@@ -16,7 +16,7 @@ import { ArenaView } from './arena';
 import { BotMesh, buildBot, poseBot } from './botmesh';
 import { Effects, FloorScars } from './effects';
 
-export type CameraMode = 'broadcast' | 'chase' | 'overhead' | 'free' | 'intro' | 'gallery';
+export type CameraMode = 'broadcast' | 'chase' | 'overhead' | 'free' | 'intro' | 'gallery' | 'hero';
 
 export class GameView {
   readonly renderer: THREE.WebGLRenderer;
@@ -41,6 +41,9 @@ export class GameView {
   private dentGeo = new THREE.SphereGeometry(1, 8, 6);
   quality: 'high' | 'low' = 'high';
   private bloomPulse = 0;
+  private pyroLeft = 0;
+  private pyroVictory = false;
+  private readonly up = new THREE.Vector3(0, 1, 0);
 
   constructor(readonly canvas: HTMLCanvasElement) {
     this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance', preserveDrawingBuffer: true });
@@ -264,6 +267,7 @@ export class GameView {
     if (this.bloomPulse > 0 && this.quality === 'high') this.bloom.strength = 0.55 + this.bloomPulse * 6;
     else this.bloom.strength = 0.55;
     this.bloomPulse = Math.max(0, this.bloomPulse - dt);
+    this.feedPyro(dt);
     this.fx.update(dt);
     this.scars.flush();
     this.updateCamera(dt);
@@ -309,6 +313,25 @@ export class GameView {
       this.camera.lookAt(this.camLook);
       return;
     }
+    if (this.mode === 'hero') {
+      const me = this.bots[this.focus]?.root;
+      const c = me ? me.position : mid;
+      const fwd = new THREE.Vector3(1, 0, 0);
+      if (me) fwd.applyQuaternion(me.quaternion);
+      fwd.y = 0;
+      if (fwd.lengthSq() < 1e-4) fwd.set(0, 0, 1);
+      fwd.normalize();
+      pos = new THREE.Vector3(c.x + fwd.x * 2.5, 0.32, c.z + fwd.z * 2.5);
+      look = new THREE.Vector3(c.x, 0.4, c.z);
+      const k = 1 - Math.exp(-dt * 1.5);
+      this.camPos.lerp(pos, k);
+      this.camLook.lerp(look, 1 - Math.exp(-dt * 2));
+      this.camera.position.copy(this.camPos);
+      const sh = this.fx.shake;
+      if (sh > 0) this.camera.position.add(new THREE.Vector3((Math.random() - 0.5) * sh * 0.12, (Math.random() - 0.5) * sh * 0.08, (Math.random() - 0.5) * sh * 0.12));
+      this.camera.lookAt(this.camLook);
+      return;
+    }
     if (this.mode === 'overhead') {
       pos = new THREE.Vector3(mid.x * 0.6, 7 + sep * 0.55, mid.z * 0.6 + 0.01);
       look = mid;
@@ -340,6 +363,28 @@ export class GameView {
   pulseBloom() {
     if (this.quality === 'low') return;
     this.bloomPulse = Math.max(this.bloomPulse, 0.14);
+  }
+
+  /** Fountain sparks and flame from the four corners. Judges' reveal and a KO. */
+  victoryPyro() {
+    this.pyroLeft = Math.max(this.pyroLeft, 1.4);
+    this.pyroVictory = true;
+  }
+
+  private pyroScale() {
+    return this.quality === 'low' ? 0.3 : 1;
+  }
+
+  private feedPyro(dt: number) {
+    if (this.pyroLeft <= 0 || !this.arena) return;
+    const s = this.pyroScale() * Math.min(1, this.pyroLeft / 0.35);
+    const sparks = this.pyroVictory ? Math.max(1, Math.round(20 * s)) : 0;
+    const flames = Math.max(1, Math.round((this.pyroVictory ? 4 : 5) * s));
+    for (const c of this.arena.corners()) {
+      if (sparks) this.fx.sparksAt(c, this.up, sparks, 8, 1.2);
+      this.fx.fire(c, this.up, flames);
+    }
+    this.pyroLeft -= dt;
   }
 
   dispose() {

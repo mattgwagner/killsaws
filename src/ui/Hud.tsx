@@ -1,12 +1,12 @@
-import { FrameInfo, HitCallout, SeatConfig } from '../game';
+import { FrameInfo, HitCallout, Moment, SeatConfig } from '../game';
 import { BotDesign } from '../sim/design';
 import { BotView } from '../sim/match';
 import { CameraMode } from '../render/scene';
 import { KEY_LABELS } from '../input';
 import { loreFor, shortStats } from './data';
 
-export function Hud({ frame, designs, callouts, intro, cam, seats }: {
-  frame: FrameInfo; designs: BotDesign[]; callouts: HitCallout[]; intro: number; cam: CameraMode; seats: SeatConfig[];
+export function Hud({ frame, designs, callouts, intro, cam, seats, moment }: {
+  frame: FrameInfo; designs: BotDesign[]; callouts: HitCallout[]; intro: number; cam: CameraMode; seats: SeatConfig[]; moment: Moment;
 }) {
   const v = frame.view;
   const mm = Math.floor(v.clock / 60), ss = Math.floor(v.clock % 60);
@@ -65,12 +65,19 @@ export function Hud({ frame, designs, callouts, intro, cam, seats }: {
           <div className="lbl">UPPER DECK COUNT · {designs[v.deckCount.bot].name.toUpperCase()} · {v.deckCount.count}</div>
         </div>
       )}
-      {v.phase === 'over' && v.result && (
+      {v.phase === 'over' && v.result && moment !== 'ko' && moment !== 'replay' && (
         <div className="center-msg">
           <div className="huge" style={{ color: '#f2c400', fontSize: 'clamp(60px, 10vw, 140px)' }}>{v.result.method === 'KO' ? 'KNOCKOUT' : 'TIME!'}</div>
           {v.result.koReason && <div className="lbl" style={{ fontSize: 18, letterSpacing: '0.06em', color: '#fff' }}>{v.result.koReason}</div>}
         </div>
       )}
+      {moment === 'ko' && (
+        <div className="intro">
+          <div className="corner-lbl" style={{ background: 'var(--yellow)', color: '#1a1400' }}>KNOCKOUT</div>
+          <div className="bigname">IT'S OVER</div>
+        </div>
+      )}
+      {moment === 'replay' && <div className="replay-badge">REPLAY</div>}
       <div className="callouts">
         {callouts.map((c) => (
           <div key={c.id} className="callout" style={{ color: c.bot === 0 ? '#ff5a63' : '#6aa8ff' }}>
