@@ -319,6 +319,20 @@ export class Audio {
     this.beep(n === 0 ? 1320 : 660, n === 0 ? 0.4 : 0.15, 0.12);
   }
 
+  /** Drop the live weapon and drive voices so a replay can play the hits alone. */
+  duck() {
+    this.replay = true;
+    const ctx = this.ctx;
+    if (!ctx) return;
+    const t = ctx.currentTime;
+    for (const v of this.voices) {
+      v.whineGain.gain.setTargetAtTime(0, t, 0.04);
+      v.driveGain.gain.setTargetAtTime(0, t, 0.04);
+      v.bladeGain.gain.setTargetAtTime(0, t, 0.04);
+      v.hum.gain.setTargetAtTime(0, t, 0.04);
+    }
+  }
+
   /** The KO: the room comes up and stays there through the shot. */
   crowdFull() {
     this.fullCrowd = true;

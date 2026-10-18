@@ -157,8 +157,9 @@ export class GameView {
     this.arena.update(view.hazards, view.hazardsLive, view.phase, view.countdown);
   }
 
-  /** Turn sim events into visuals. Returns the biggest impact energy (J) for slow-mo / audio. */
-  events(evs: SimEvent[]) {
+  /** Turn sim events into visuals. Returns the biggest impact energy (J) for slow-mo / audio.
+   *  A replay feeds the same events back for sparks and flashes, and leaves scars and dents as they were. */
+  events(evs: SimEvent[], replay = false) {
     let biggest = 0;
     for (const e of evs) {
       if (e.type === 'hit') {
@@ -176,9 +177,9 @@ export class GameView {
         if (e.kind === 'spinner' || e.kind === 'clash' || e.kind === 'hammer' || e.kind === 'hazard') {
           this.fx.shake = Math.min(1.4, this.fx.shake + kj * 0.035);
         }
-        if (p.y < 0.12 && kj > 1) this.scars.gouge(p.x, p.z, dir.x, dir.z, 0.15 + kj * 0.01);
-        if (kj > 6) this.scars.scorch(p.x, p.z, 0.3 + kj * 0.01, 0.6);
-        if (e.target >= 0 && kj > 3) this.addDent(e.target, p, kj);
+        if (!replay && p.y < 0.12 && kj > 1) this.scars.gouge(p.x, p.z, dir.x, dir.z, 0.15 + kj * 0.01);
+        if (!replay && kj > 6) this.scars.scorch(p.x, p.z, 0.3 + kj * 0.01, 0.6);
+        if (!replay && e.target >= 0 && kj > 3) this.addDent(e.target, p, kj);
         biggest = Math.max(biggest, e.energy);
       } else if (e.type === 'debris') {
         this.spawnDebris(e.id, e.spec);
@@ -215,6 +216,7 @@ export class GameView {
   }
 
   private spawnDebris(id: number, spec: DebrisSpawn) {
+    if (this.debris.has(id)) return;
     let mesh: THREE.Object3D;
     const mat = new THREE.MeshStandardMaterial({ color: spec.kind === 'wheel' ? spec.color : spec.color, metalness: spec.kind === 'wheel' ? 0 : 0.7, roughness: 0.5 });
     if (spec.kind === 'wheel') {

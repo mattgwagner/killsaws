@@ -41,6 +41,8 @@ export default function App() {
   const [net, setNet] = useState<{ host?: NetHost; guest?: NetGuest } | null>(null);
   const [setup, setSetup] = useState<MatchSetup | null>(null);
   const sessionRef = useRef<GameSession | null>(null);
+  const padDown = useRef(false);
+  const lastMoment = useRef<FrameInfo['moment']>('live');
   const audioRef = useRef(new Audio());
   const frameTick = useRef(0);
 
@@ -55,8 +57,15 @@ export default function App() {
     const session = new GameSession(view, audioRef.current);
     sessionRef.current = session;
     session.onFrame = (f) => {
+      const pads = navigator.getGamepads?.() ?? [];
+      let down = false;
+      for (const p of pads) if (p?.buttons.some((b) => b.pressed)) down = true;
+      if (down && !padDown.current && f.moment === 'replay') session.skipClip();
+      padDown.current = down;
+      const momentChanged = f.moment !== lastMoment.current;
+      lastMoment.current = f.moment;
       // throttle React updates to ~20 Hz; the canvas runs at full rate
-      if (++frameTick.current % 3 === 0 || f.view.result) setFrame(f);
+      if (++frameTick.current % 3 === 0 || f.view.result || momentChanged) setFrame(f);
     };
     session.onCallout = (c) => setCallouts((cs) => [...cs.slice(-3), c]);
     startAttract(session);
@@ -151,6 +160,7 @@ export default function App() {
       const s = sessionRef.current;
       if (!s) return;
       if (screen === 'intro' && (e.code === 'Enter' || e.code === 'Escape')) { setIntroStep(2); return; }
+      if (screen === 'fight' && e.code === 'Enter' && s.moment === 'replay') { s.skipClip(); return; }
       if (screen !== 'fight') return;
       if (e.code === 'KeyC') {
         const order: CameraMode[] = ['broadcast', 'chase', 'overhead', 'free'];
