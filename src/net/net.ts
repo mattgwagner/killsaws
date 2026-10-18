@@ -241,7 +241,7 @@ export class NetGuest {
       if (!view.arena) return;
       view.apply(v.v, v.x);
       view.frame(dt, v.x.flame);
-      this.onFrame({ view: v.v, inputs: [NO_INPUT, inp], slowmo: false });
+      this.onFrame({ view: v.v, inputs: [NO_INPUT, inp], slowmo: false, moment: 'live' });
     };
     loop();
   }

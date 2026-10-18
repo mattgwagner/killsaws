@@ -40,6 +40,7 @@ export class GameView {
   private dentMat: THREE.MeshStandardMaterial;
   private dentGeo = new THREE.SphereGeometry(1, 8, 6);
   quality: 'high' | 'low' = 'high';
+  private bloomPulse = 0;
 
   constructor(readonly canvas: HTMLCanvasElement) {
     this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance', preserveDrawingBuffer: true });
@@ -167,6 +168,7 @@ export class GameView {
         if (n > 0) this.fx.sparksAt(p, dir, n, 6 + Math.min(18, kj * 0.9), mat?.id === 'titanium' ? 1.3 : 1);
         if (!sparkiness && kj > 2) this.fx.smoke(p, 3, 0.85, 0.12); // UHMW shavings
         if (kj > 4) this.fx.flash(p, kj);
+        if (kj > 15) this.pulseBloom();
         if (kj > 2 && e.kind !== 'saw') this.fx.smoke(p, Math.min(8, Math.floor(kj / 4)), 0.35, 0.25);
         if (e.kind === 'spinner' || e.kind === 'clash' || e.kind === 'hammer' || e.kind === 'hazard') {
           this.fx.shake = Math.min(1.4, this.fx.shake + kj * 0.035);
@@ -259,6 +261,9 @@ export class GameView {
         (d.material as THREE.MeshStandardMaterial).emissiveIntensity = Math.max(0, 2.2 - age * 0.9);
       }
     }
+    if (this.bloomPulse > 0 && this.quality === 'high') this.bloom.strength = 0.55 + this.bloomPulse * 6;
+    else this.bloom.strength = 0.55;
+    this.bloomPulse = Math.max(0, this.bloomPulse - dt);
     this.fx.update(dt);
     this.scars.flush();
     this.updateCamera(dt);
@@ -329,6 +334,12 @@ export class GameView {
     const sh = this.fx.shake;
     if (sh > 0) this.camera.position.add(new THREE.Vector3((Math.random() - 0.5) * sh * 0.12, (Math.random() - 0.5) * sh * 0.12, (Math.random() - 0.5) * sh * 0.12));
     this.camera.lookAt(this.camLook);
+  }
+
+  /** A short bloom kick on a big flash. Low quality leaves the pass alone. */
+  pulseBloom() {
+    if (this.quality === 'low') return;
+    this.bloomPulse = Math.max(this.bloomPulse, 0.14);
   }
 
   dispose() {

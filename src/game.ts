@@ -17,6 +17,20 @@ export interface FrameInfo {
   view: MatchView;
   inputs: BotInput[];
   slowmo: boolean;
+  /** live fight, the KO shot, an instant replay, or the show handed back to the UI */
+  moment: Moment;
+}
+
+export type Moment = 'live' | 'ko' | 'replay' | 'done';
+
+const STOP_KINDS = new Set(['spinner', 'clash', 'hammer', 'flip', 'hazard']);
+
+/** Freeze length for a hit. Wheel bumps and online matches stay at 0. 60–90 ms. */
+export function hitStopSeconds(kind: string, joules: number, online = false) {
+  if (online || !STOP_KINDS.has(kind)) return 0;
+  const kj = joules / 1000;
+  if (kj < 15) return 0;
+  return Math.min(0.09, 0.06 + (kj - 15) * 0.001);
 }
 
 export class GameSession {
@@ -26,6 +40,12 @@ export class GameSession {
   private raf = 0;
   private last = 0;
   private slow = 0;
+  /** wall-clock seconds left in a hit-stop. Shake keeps running; the sim does not. */
+  private hitStop = 0;
+  private online = false;
+  /** local exhibition / tournament: play the KO shot and the replay. Attract and online skip it. */
+  showcase = false;
+  moment: Moment = 'live';
   paused = false;
   /** intro: render but don't advance the sim */
   hold = false;
@@ -49,6 +69,10 @@ export class GameSession {
     this.view.setLayout(this.match.layout);
     this.view.setBots(designs);
     this.view.focus = seats[0].kind === 'ai' && seats[1].kind !== 'ai' ? 1 : 0;
+    this.online = seats.some((s) => s.kind === 'net');
+    this.hitStop = 0;
+    this.slow = 0;
+    this.moment = 'live';
     this.audio.startMatch(designs);
     this.acc = 0;
     this.last = performance.now();
@@ -71,6 +95,16 @@ export class GameSession {
     if (this.paused || this.hold) {
       if (this.match) this.view.apply(this.match.view());
       this.view.frame(this.paused ? 0 : dt);
+      return;
+    }
+    // Hit-stop: the frame that landed the blow already drew it. Hold the sim
+    // and keep rendering so the shake runs through the freeze.
+    if (this.hitStop > 0) {
+      this.hitStop = Math.max(0, this.hitStop - dt);
+      const held = this.match.view();
+      this.view.apply(held, { slide: this.match.bots.map((b) => b.slidePos), secondary: this.match.bots.map((b) => b.secondaryAct?.pos ?? 0) });
+      this.view.frame(dt, this.match.bots.map((b) => b.flameOn));
+      this.onFrame({ view: held, inputs: this.inputs, slowmo: false, moment: this.moment });
       return;
     }
     const scale = this.slow > 0 ? 0.28 : 1;
@@ -96,6 +130,9 @@ export class GameSession {
     const view = m.view();
     this.view.apply(view, { slide: m.bots.map((b) => b.slidePos), secondary: m.bots.map((b) => b.secondaryAct?.pos ?? 0) });
     const biggest = this.view.events(events);
+    let stop = 0;
+    for (const e of events) if (e.type === 'hit') stop = Math.max(stop, hitStopSeconds(e.kind, e.energy, this.online));
+    if (stop > 0) this.hitStop = Math.max(this.hitStop, stop);
     if (biggest > 30000 && this.slow <= 0) this.slow = 0.9;
     for (const e of events) {
       if (e.type === 'hit' && e.attacker >= 0 && e.energy > 2500 && (e.kind === 'spinner' || e.kind === 'clash' || e.kind === 'hammer' || e.kind === 'flip')) {
@@ -107,6 +144,6 @@ export class GameSession {
     this.onEvents(events);
     this.view.frame(dt, m.bots.map((b) => b.flameOn));
     this.onTick?.(view, dt);
-    this.onFrame({ view, inputs: this.inputs, slowmo: this.slow > 0 });
+    this.onFrame({ view, inputs: this.inputs, slowmo: this.slow > 0, moment: this.moment });
   };
 }
