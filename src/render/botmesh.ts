@@ -629,8 +629,8 @@ export function buildBot(d: BotDesign): BotMesh {
     }
   }
   if (f.has('gold-stripe')) {
-    const st = box(L * 0.9, 0.003, W * 0.18, std('#d4af37', 1, 0.15));
-    st.position.y = hy + 0.006;
+    const st = box(L * 0.9, 0.002, W * 0.18, std('#c9a332', 0.85, 0.3));
+    st.position.y = hy + 0.0045; // under the logo
     body.add(st);
   }
   if (f.has('pwangers')) {

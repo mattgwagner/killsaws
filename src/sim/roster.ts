@@ -193,8 +193,12 @@ const SPECS: Spec[] = [
   {
     id: 'whiplash', name: 'Whiplash', team: 'Team Fast Electric Robots',
     L: 32, W: 30, H: 7, shape: 'box',
+    bp: {
+      outline: [[-16, -11], [14, -11], [16, -9], [16, 9], [14, 11], [-16, 11]],
+      height: 7, clearance: 0.5, front: { at: 8, lip: 2.5 },
+    },
     armor: { front: P('ar500', 10), rear: P('al7075', 8), sides: P('al7075', 8), top: P('al7075', 5), bottom: P('al7075', 5) },
-    wheels: 4, wheelDia: 7, wheelWidth: 3, tire: 'urethane', topMph: 15, forks: true, selfRighter: 'arm',
+    track: 26, wheels: 4, wheelDia: 7, wheelWidth: 3, tire: 'urethane', topMph: 15, forks: true, selfRighter: 'arm',
     weapon: spinner({ style: 'vertical-disk', lb: 22, dia: 14, width: 1.25, teeth: 2, rpm: 6500, motor: 'bl80100-130', motors: 1, mountX: 18, mountY: 3 }),
     secondary: { type: 'lifter', energy: 2600, plateLength: 0.5, plateWidth: 0.4, cooldown: 0.9, systemMass: 9 },
     look: { primary: '#d0ff00', secondary: '#111111', accent: '#c8102e', logo: 'WHIPLASH', features: ['lifter-arm', 'exposed-wheels'] },
@@ -263,6 +267,10 @@ const SPECS: Spec[] = [
   {
     id: 'son-of-whyachi', name: 'Son of Whyachi', team: 'Team Whyachi',
     L: 32, W: 32, H: 7, shape: 'wedge', wedge: 4,
+    bp: {
+      outline: [[-16, -15], [-15, -16], [12, -16], [16, -16], [16, 16], [12, 16], [-15, 16], [-16, 15]],
+      height: 7, clearance: 0.5, front: { at: 11, lip: 0.4, floor: true },
+    },
     armor: { front: P('ar500', 8), rear: P('al7075', 6), sides: P('al7075', 6), top: P('al7075', 5), bottom: P('al7075', 5) },
     wheels: 4, wheelDia: 6, topMph: 8,
     weapon: spinner({ style: 'horizontal-bar', lb: 120, dia: 60, width: 9, teeth: 3, tooth: 2, rpm: rpmAt(150, 60), motor: 'bl120-70', motors: 2, mountX: 0, mountY: 2.5 }),
@@ -283,6 +291,10 @@ const SPECS: Spec[] = [
   {
     id: 'icewave', name: 'Icewave', team: 'Team Icewave',
     L: 34, W: 34, H: 6, shape: 'wedge', wedge: 7,
+    bp: {
+      outline: [[-17, -16], [-15, -17], [9, -17], [17, -17], [17, 17], [9, 17], [-15, 17], [-17, 16]],
+      height: 6, clearance: 0.5, front: { at: 9, lip: 0.4, floor: true },
+    },
     armor: { front: P('ar500', 8), rear: P('al7075', 6), sides: P('al7075', 6), top: P('polycarb', 6), bottom: P('al7075', 5) },
     wheels: 4, wheelDia: 5, topMph: 11,
     weapon: spinner({ style: 'horizontal-bar', lb: 47, dia: 54, width: 1.5, teeth: 2, tooth: 1.5, rpm: rpmAt(200, 54), motor: 'ice-engine', mountX: 2, mountY: 6.5 }),
@@ -299,10 +311,15 @@ const SPECS: Spec[] = [
   {
     id: 'bloodsport', name: 'Bloodsport', team: "Bots 'n' Stuff Robotics",
     L: 26, W: 26, H: 6, shape: 'box',
+    bp: {
+      outline: [[-13, -11], [-11, -13], [-10, -13], [-10, -10.5], [-4, -10.5], [-4, -13], [4, -13], [4, -10.5], [10, -10.5], [10, -13], [11, -13], [13, -11],
+        [13, 11], [11, 13], [10, 13], [10, 10.5], [4, 10.5], [4, 13], [-4, 13], [-4, 10.5], [-10, 10.5], [-10, 13], [-11, 13], [-13, 11]],
+      height: 6, clearance: 0.5,
+    },
     armor: { front: P('ar500', 10), rear: P('al7075', 8), sides: P('al7075', 8), top: P('ar500', 6), bottom: P('al7075', 5) },
-    wheels: 4, wheelDia: 5, topMph: 14, forks: true, selfRighter: 'torque',
+    track: 23, wheels: 4, wheelDia: 5, topMph: 14, forks: true, selfRighter: 'torque',
     weapon: spinner({ style: 'horizontal-bar', lb: 72, dia: 47, width: 2, teeth: 2, tooth: 1.5, rpm: rpmAt(250, 47), motor: 'bl120-70', motors: 2, mountX: 0, mountY: 7 }),
-    look: { primary: '#1a1a1a', secondary: '#141414', accent: '#d7191f', logo: 'BLOODSPORT', features: ['head-eyes', 'blood-splatter', 'righting-pole'], tireColor: '#a01418' },
+    look: { primary: '#1a1a1a', secondary: '#141414', accent: '#d7191f', logo: 'BLOODSPORT', features: ['head-eyes', 'blood-splatter', 'righting-pole', 'accent-forks'], tireColor: '#a01418' },
   },
   {
     id: 'beta', name: 'Beta', team: 'Team Hurtz',
@@ -323,17 +340,25 @@ const SPECS: Spec[] = [
   {
     id: 'rotator', name: 'ROTATOR', team: 'Team Revolution',
     L: 32, W: 30, H: 6, shape: 'wedge', wedge: 5,
+    bp: {
+      outline: [[-16, -12], [-3, -14], [12, -7], [16, -3], [16, 3], [12, 7], [-3, 14], [-16, 12]],
+      height: 6, clearance: 0.5, front: { at: 5, lip: 1.5, floor: true },
+    },
     armor: { front: P('ar500', 8), rear: P('al7075', 6), sides: P('al7075', 8), top: P('al7075', 5), bottom: P('al7075', 5) },
     wheels: 2, wheelDia: 10, wheelWidth: 3.5, track: 30, axleX: -8, tire: 'pneumatic-foam', topMph: 15, driveMotor: 'bl80-150', invertible: true,
-    weapon: spinner({ style: 'undercutter', lb: 30, dia: 30, width: 1.25, teeth: 2, tooth: 1.4, rpm: rpmAt(245, 30), motor: 'bl80100-130', motors: 1, mountX: 18, mountY: -2.2 }),
+    weapon: spinner({ style: 'undercutter', lb: 30, dia: 30, width: 1.25, teeth: 2, tooth: 1.4, rpm: rpmAt(245, 30), motor: 'bl80100-130', motors: 1, mountX: 10, mountY: -2.2 }),
     look: { primary: '#151515', secondary: '#1f1f1f', accent: '#d4af37', logo: 'ROTATOR', features: ['gold-stripe', 'gold-plow', 'orange-leds'] },
   },
   {
     id: 'valkyrie', name: 'Valkyrie', team: 'Team VALKYRIE',
     L: 30, W: 32, H: 6, shape: 'wedge', wedge: 6, noseTaper: 0.3,
+    bp: {
+      outline: [[16, 0], [-10, -16], [-14, -16], [-14, -10], [-7, -4], [-7, 4], [-14, 10], [-14, 16], [-10, 16]],
+      height: 6, clearance: 0.5, front: { at: -2, lip: 1, floor: true },
+    },
     armor: { front: P('ar500', 8), rear: P('al7075', 6), sides: P('al7075', 8), top: P('al7075', 5), bottom: P('al7075', 5) },
     wheels: 2, wheelDia: 9, wheelWidth: 3, track: 33, axleX: -9, topMph: 15, driveMotor: 'bl80-150', invertible: true,
-    weapon: spinner({ style: 'undercutter', lb: 65, dia: 36, width: 1, teeth: 1, tooth: 2, rpm: rpmAt(220, 36), motor: 'bl120-70', motors: 1, mountX: 18, mountY: -2.2 }),
+    weapon: spinner({ style: 'undercutter', lb: 65, dia: 36, width: 1, teeth: 1, tooth: 2, rpm: rpmAt(220, 36), motor: 'bl120-70', motors: 1, mountX: 8, mountY: -2.2 }),
     look: { primary: '#1e2a6e', secondary: '#141c4a', accent: '#e6e8ec', logo: 'VALKYRIE', features: ['chevron', 'blue-eyes', 'bolt-rows'] },
   },
   {
