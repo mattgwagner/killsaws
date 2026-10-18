@@ -10,13 +10,13 @@ for (const id of list) {
   await page.evaluate(async (id) => {
     const k = window.killsaws; const d = k.roster.find((b) => b.id === id);
     await k.session.start([d, k.roster[0]], [{ kind: 'ai' }, { kind: 'ai' }], { seed: 1 });
-    k.session.hold = true; k.view.focus = 0; k.view.setMode('intro');
+    k.session.hold = true; k.view.focus = 0; k.view.setMode('gallery');
     const m = k.session.match; const b = m.bots[0];
     b.body.setTranslation({ x: 0, y: b.pos.y, z: 0 }, true);
-    b.body.setRotation({ x: 0, y: Math.sin(-0.4), z: 0, w: Math.cos(-0.4) }, true);
+    b.body.setRotation({ x: 0, y: 0, z: 0, w: 1 }, true);
     m.bots[1].body.setTranslation({ x: 6, y: 0.3, z: 6 }, true);
   }, id);
-  await page.waitForTimeout(3500);
+  await page.waitForTimeout(2500);
   await page.screenshot({ path: `${dir}/${id}.png` });
 }
 await browser.close();

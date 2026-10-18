@@ -1,3 +1,4 @@
+import { Blueprint, outlineArea } from './blueprint';
 // A robot design: everything a builder chooses in the garage. Physical
 // properties (mass, inertia, top speed, stored energy, invertibility) are
 // derived from it, never typed in, so a design can't claim what its parts
@@ -109,6 +110,8 @@ export interface BotDesign {
     noseTaper?: number;
     /** ears / horns / outrigger wheels that let it drive inverted regardless of wheel size */
     invertibleOverride?: boolean;
+    /** real silhouette: outline + side profile. When set, length/width/height/clearance are its bounding box. */
+    blueprint?: Blueprint;
   };
   /** second actuator: Whiplash's lifting arm, Tantrum's sliding drum */
   secondary?: { type: 'lifter'; energy: number; plateLength: number; plateWidth: number; cooldown: number; systemMass: number }
@@ -199,13 +202,14 @@ export function computeInvertible(d: BotDesign) {
 
 export function panelAreas(d: BotDesign) {
   const { length: L, width: W, height: H, wedgeLength } = d.chassis;
+  const plan = d.chassis.blueprint ? outlineArea(d.chassis.blueprint) : L * W;
   const wedgeSlant = wedgeLength > 0 ? Math.hypot(wedgeLength, H) * W : 0;
   return {
     front: wedgeLength > 0 ? wedgeSlant : W * H,
     rear: d.chassis.shape === 'double-wedge' ? Math.hypot(Math.min(L * 0.35, 0.3), H) * W : W * H,
     sides: 2 * L * H + (wedgeLength > 0 ? wedgeLength * H : 0),
-    top: L * W,
-    bottom: L * W,
+    top: plan,
+    bottom: plan,
   };
 }
 

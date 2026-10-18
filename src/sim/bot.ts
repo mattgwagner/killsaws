@@ -4,6 +4,7 @@
 
 import type RAPIERNS from '@dimforge/rapier3d-compat';
 import { RAPIER, COLLIDE } from './physics';
+import { blueprintHull } from './blueprint';
 import {
   BotDesign, DerivedStats, computeStats, isVertical, panelAreas, rotorInertia, wheelCenterY,
 } from './design';
@@ -592,6 +593,7 @@ export interface StepContext {
 
 /** Convex hull points for the chassis, in body frame. */
 export function chassisHull(d: BotDesign): Float32Array {
+  if (d.chassis.blueprint) return blueprintHull(d.chassis.blueprint);
   const { length: L, width: W, height: H, wedgeLength: wl, clearance, shape } = d.chassis;
   const hx = L / 2, hy = H / 2, hz = W / 2;
   const pts: number[] = [];

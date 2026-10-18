@@ -16,7 +16,7 @@ import { ArenaView } from './arena';
 import { BotMesh, buildBot, poseBot } from './botmesh';
 import { Effects, FloorScars } from './effects';
 
-export type CameraMode = 'broadcast' | 'chase' | 'overhead' | 'free' | 'intro';
+export type CameraMode = 'broadcast' | 'chase' | 'overhead' | 'free' | 'intro' | 'gallery';
 
 export class GameView {
   readonly renderer: THREE.WebGLRenderer;
@@ -57,9 +57,9 @@ export class GameView {
     this.scene.fog = new THREE.Fog('#05060a', 22, 48);
 
     // lights: big overhead key with shadows, cool fill, red & blue corner washes
-    const hemi = new THREE.HemisphereLight('#c9d6ff', '#1a1410', 0.55);
+    const hemi = new THREE.HemisphereLight('#c9d6ff', '#1a1410', 0.8);
     this.scene.add(hemi);
-    const key = new THREE.DirectionalLight('#fff3e2', 2.1);
+    const key = new THREE.DirectionalLight('#fff3e2', 2.5);
     key.position.set(4, 14, 3);
     key.castShadow = true;
     key.shadow.mapSize.set(2048, 2048);
@@ -74,12 +74,7 @@ export class GameView {
       sp.target.position.set(x * 0.3, 0, z);
       this.scene.add(sp, sp.target);
     }
-    for (const [x, z] of [[-6, -6], [6, 6], [-6, 6], [6, -6]]) {
-      const sp = new THREE.SpotLight('#fff6e8', 30, 20, 0.6, 0.6, 1.3);
-      sp.position.set(x, 4.8, z);
-      sp.target.position.set(x * 0.4, 0, z * 0.4);
-      this.scene.add(sp, sp.target);
-    }
+    // (no overhead white spots: their specular on flat metal decks bloomed into blobs)
 
     this.composer = new EffectComposer(this.renderer);
     this.composer.addPass(new RenderPass(this.scene, this.camera));
@@ -281,6 +276,22 @@ export class GameView {
     const mid = new THREE.Vector3((a.x + b.x) / 2, 0.2, (a.z + b.z) / 2);
     const sep = Math.hypot(a.x - b.x, a.z - b.z);
     let pos: THREE.Vector3, look: THREE.Vector3;
+    if (this.mode === 'gallery') {
+      // fixed 3/4 front view, distance from the bounding sphere so HUGE and DUCK! frame the same
+      const me = this.bots[this.focus]?.root;
+      if (!me) return;
+      const box = new THREE.Box3().setFromObject(me);
+      const sphere = box.getBoundingSphere(new THREE.Sphere());
+      const fwd = new THREE.Vector3(1, 0, 0).applyQuaternion(me.quaternion).setY(0).normalize();
+      const left = new THREE.Vector3(fwd.z, 0, -fwd.x);
+      const dist = sphere.radius / Math.sin((this.camera.fov * Math.PI) / 360) * 1.05;
+      const dir = fwd.clone().multiplyScalar(0.72).addScaledVector(left, 0.55).add(new THREE.Vector3(0, 0.42, 0)).normalize();
+      this.camera.position.copy(sphere.center).addScaledVector(dir, dist);
+      this.camera.lookAt(sphere.center);
+      this.camPos.copy(this.camera.position);
+      this.camLook.copy(sphere.center);
+      return;
+    }
     if (this.mode === 'intro') {
       const me = this.bots[this.focus]?.root;
       const t = performance.now() / 1000;

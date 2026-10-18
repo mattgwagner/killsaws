@@ -7,6 +7,7 @@ import { ConvexGeometry } from 'three/examples/jsm/geometries/ConvexGeometry.js'
 import { BotDesign, isVertical, wheelCenterY } from '../sim/design';
 import { chassisHull } from '../sim/bot';
 import { paintTexture, textTexture } from './textures';
+import { blueprintGeometry, deckPlate } from './blueprintMesh';
 
 export interface BotMesh {
   root: THREE.Group;
@@ -29,8 +30,8 @@ export interface BotMesh {
 const std = (color: string | number, metal = 0.2, rough = 0.5, extra: Partial<THREE.MeshPhysicalMaterialParameters> = {}) =>
   new THREE.MeshPhysicalMaterial({ color, metalness: metal, roughness: rough, ...extra });
 
-const steel = () => std('#9aa0a6', 0.95, 0.32);
-const darkSteel = () => std('#3b3e43', 0.9, 0.45);
+const steel = () => std('#8f959b', 0.8, 0.45);
+const darkSteel = () => std('#3b3e43', 0.75, 0.55);
 const rubber = (c = '#1b1b1b') => std(c, 0, 0.85);
 
 function box(w: number, h: number, d: number, mat: THREE.Material) {
@@ -80,7 +81,12 @@ export function buildBot(d: BotDesign): BotMesh {
   const vecs: THREE.Vector3[] = [];
   for (let i = 0; i < pts.length; i += 3) vecs.push(new THREE.Vector3(pts[i], pts[i + 1], pts[i + 2]));
   let hullGeo: THREE.BufferGeometry;
-  if (d.chassis.shape === 'ring') {
+  const bp = d.chassis.blueprint;
+  if (bp) {
+    hullGeo = blueprintGeometry(bp).geometry;
+    topUV(hullGeo, L, W);
+    paint.side = THREE.DoubleSide;
+  } else if (d.chassis.shape === 'ring') {
     hullGeo = new THREE.CylinderGeometry(hx * 0.97, hx, H, 48);
   } else {
     hullGeo = new ConvexGeometry(vecs);
@@ -91,7 +97,7 @@ export function buildBot(d: BotDesign): BotMesh {
   body.add(hull);
   // vertical spinners sit in a slot cut through the nose: draw the hull as a rear block + two cheeks
   const wv = d.weapon;
-  if (wv.type === 'spinner' && isVertical(wv.style) && d.id !== 'huge' && d.chassis.shape !== 'ring') {
+  if (!bp && wv.type === 'spinner' && isVertical(wv.style) && d.id !== 'huge' && d.chassis.shape !== 'ring') {
     const slot = wv.width / 2 + 0.012;
     const xs = wv.mountX - wv.radius * 0.45;
     const maxX = Math.max(...vecs.map((v) => v.x));
@@ -117,7 +123,34 @@ export function buildBot(d: BotDesign): BotMesh {
   }
 
   // deck plate, bolts, logo
-  if (d.chassis.shape !== 'ring') {
+  let logoAt = new THREE.Vector3(-L * 0.08, hy, 0);
+  if (bp) {
+    const plate = deckPlate(bp);
+    if (plate) {
+      const m = new THREE.Mesh(plate.geometry, second);
+      second.side = THREE.DoubleSide;
+      m.receiveShadow = true;
+      body.add(m);
+      logoAt = plate.center;
+      // bolts around the deck plate edge
+      const boltGeo = new THREE.CylinderGeometry(0.007, 0.007, 0.006, 8);
+      const ring = plate.seg;
+      const bolts = new THREE.InstancedMesh(boltGeo, darkSteel(), 64);
+      let k = 0;
+      for (let i = 0; i < ring.length && k < 64; i++) {
+        const a = ring[i], b = ring[(i + 1) % ring.length];
+        const n = Math.max(1, Math.floor(Math.hypot(b.x - a.x, b.z - a.z) / 0.12));
+        for (let j = 0; j < n && k < 64; j++) {
+          const t = (j + 0.5) / n;
+          const x = a.x + (b.x - a.x) * t, z = a.z + (b.z - a.z) * t;
+          bolts.setMatrixAt(k++, new THREE.Matrix4().makeTranslation(logoAt.x + (x - logoAt.x) * 0.93, hy + 0.005, logoAt.z + (z - logoAt.z) * 0.93));
+        }
+      }
+      bolts.count = k;
+      body.add(bolts);
+    }
+  }
+  if (!bp && d.chassis.shape !== 'ring') {
     const deck = box(L * 0.82, 0.004, W * 0.78 * (d.chassis.noseTaper ?? 1) ** 0.3, second);
     deck.position.set(-L * 0.04, hy + 0.002, 0);
     body.add(deck);
@@ -142,7 +175,7 @@ export function buildBot(d: BotDesign): BotMesh {
     const logo = new THREE.Mesh(new THREE.PlaneGeometry(logoW, logoW * 0.25), new THREE.MeshBasicMaterial({ map: t, transparent: true, depthWrite: false }));
     logo.rotation.x = -Math.PI / 2;
     logo.rotation.z = Math.PI / 2;
-    logo.position.set(-L * 0.08, hy + 0.0065, 0);
+    logo.position.set(logoAt.x, hy + 0.0065, logoAt.z);
     if (d.chassis.shape === 'ring') logo.position.y = hy + 0.02;
     body.add(logo);
   }
@@ -224,7 +257,7 @@ export function buildBot(d: BotDesign): BotMesh {
   let slide: THREE.Object3D | null = null;
   let secondaryArm: THREE.Object3D | null = null;
   const w = d.weapon;
-  const toolSteel = std(f.has('gold-drum') ? '#b8923a' : '#8d939a', 0.95, 0.28);
+  const toolSteel = std(f.has('gold-drum') ? '#a8843a' : '#7d838a', 0.8, 0.42);
   if (w.type === 'spinner') {
     const R = w.radius;
     const pivot = new THREE.Group();
@@ -234,7 +267,7 @@ export function buildBot(d: BotDesign): BotMesh {
     rotor = spin;
     rotorAxis = isVertical(w.style) ? 'z' : 'y';
     const barMat = d.id === 'tombstone' ? std(look.accent, 0.7, 0.35, { clearcoat: 0.3 }) : d.id === 'huge' ? std('#24406b', 0.7, 0.35) : toolSteel;
-    const toothMat = f.has('green-teeth') ? std('#3ddc3a', 0.4, 0.35) : f.has('gold-plow') || f.has('gold-stripe') ? std('#d4af37', 0.95, 0.25) : std('#c9ccd0', 0.95, 0.22);
+    const toothMat = f.has('green-teeth') ? std('#3ddc3a', 0.4, 0.35) : f.has('gold-plow') || f.has('gold-stripe') ? std('#c9a332', 0.8, 0.38) : std('#b4b8bd', 0.8, 0.36);
     const tw = w.width;
     switch (w.style) {
       case 'horizontal-bar': {

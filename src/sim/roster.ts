@@ -7,6 +7,7 @@ import {
   BotDesign, Panel, SpinnerWeapon, fitToWeight, ratioFor, weaponRatioFor, SpinnerStyle,
 } from './design';
 import { IN, LB, MaterialId, MotorId, MPH } from './parts';
+import { Blueprint, blueprintBox } from './blueprint';
 
 const P = (material: MaterialId, thickness: number): Panel => ({ material, thickness });
 
@@ -41,6 +42,8 @@ interface Spec {
   secondary?: BotDesign['secondary'];
   flame?: boolean;
   look: BotDesign['look'];
+  /** real silhouette; overrides L/W/H/clear/shape/wedge */
+  bp?: Blueprint;
 }
 
 function spinner(o: {
@@ -58,6 +61,10 @@ function spinner(o: {
 const rpmAt = (mph: number, diaIn: number) => (mph * MPH * 60) / (Math.PI * diaIn * IN);
 
 function build(s: Spec): BotDesign {
+  if (s.bp) {
+    const b = blueprintBox(s.bp);
+    s = { ...s, L: b.length / IN, W: b.width / IN, H: s.bp.height, clear: s.bp.clearance, wedge: 0, shape: 'box', noseTaper: undefined };
+  }
   const cells = s.cells ?? 12;
   const dm = s.driveMotor ?? 'bl63-190';
   const ww = s.wheelWidth ?? 2;
@@ -66,7 +73,7 @@ function build(s: Spec): BotDesign {
     chassis: {
       shape: s.shape ?? 'box', length: s.L * IN, width: s.W * IN, height: s.H * IN, clearance: (s.clear ?? 0.5) * IN,
       wedgeLength: (s.wedge ?? 0) * IN, frame: s.frame ?? 'al7075', frameThickness: 6, armor: s.armor,
-      selfRighter: s.selfRighter, forks: s.forks, noseTaper: s.noseTaper, invertibleOverride: s.invertible,
+      selfRighter: s.selfRighter, forks: s.forks, noseTaper: s.noseTaper, invertibleOverride: s.invertible, blueprint: s.bp,
     },
     drive: {
       wheels: s.wheels, wheelDiameter: s.wheelDia * IN, wheelWidth: ww * IN, tire: s.tire ?? 'colson', motor: dm,
@@ -107,19 +114,33 @@ const SPECS: Spec[] = [
   },
   {
     id: 'witch-doctor', name: 'Witch Doctor', team: 'Team Witch Doctor',
-    L: 28, W: 28, H: 8, shape: 'wedge', wedge: 6,
+    L: 31, W: 29, H: 8,
+    // wedge plow split by the weapon slot, flaring out over the front wheels; sloped tail
+    bp: {
+      outline: [[-14, -13], [8, -14], [14, -14.5], [17, -9], [17, -2.5], [5, -2.5], [5, 2.5], [17, 2.5], [17, 9], [14, 14.5], [8, 14], [-14, 13]],
+      height: 8, clearance: 0.5, front: { at: 6, lip: 0.4, floor: true }, rear: { at: -11, lip: 5 },
+    },
     armor: { front: P('ar500', 10), rear: P('al7075', 8), sides: P('al7075', 10), top: P('al7075', 6), bottom: P('al7075', 5) },
-    wheels: 4, wheelDia: 6, topMph: 15, selfRighter: 'arm', flame: true,
-    weapon: spinner({ style: 'vertical-disk', lb: 47, dia: 17, width: 2, teeth: 2, tooth: 1.2, rpm: 4000, motor: 'bl80100-130', motors: 2, mountX: 12, mountY: 0.5, material: 'ar500' }),
+    wheels: 4, wheelDia: 6, track: 30, wheelbase: 17, topMph: 15, selfRighter: 'arm', flame: true,
+    // the 'drisk': two disks on one hub, 47 lb, 4,000 rpm
+    weapon: spinner({ style: 'vertical-disk', lb: 47, dia: 17, width: 3.5, teeth: 2, tooth: 1.2, rpm: 4000, motor: 'bl80100-130', motors: 2, mountX: 10, mountY: 0.5, material: 'ar500' }),
     look: { primary: '#5b2c8f', secondary: '#3d1d63', accent: '#7cfc00', logo: 'WITCH DOCTOR', features: ['ribcage', 'flame-nozzle'] },
   },
   {
     id: 'minotaur', name: 'Minotaur', team: 'Team RioBotz',
-    L: 26, W: 30, H: 9, shape: 'box', noseTaper: 1,
+    L: 29, W: 30, H: 9,
+    // short and wide: drum across the whole front between two mounting arms, wheels in angled side guards
+    bp: {
+      outline: [
+        [-13, -12], [-8.6, -12.7], [-8.6, -11], [2.6, -11], [2.6, -14], [6, -15], [16, -15], [16, -11.5], [9, -11.5],
+        [9, 11.5], [16, 11.5], [16, 15], [6, 15], [2.6, 14], [2.6, 11], [-8.6, 11], [-8.6, 12.7], [-13, 12],
+      ],
+      height: 9, clearance: 0.5, front: { at: 6, lip: 5 }, rear: { at: -9, lip: 4 },
+    },
     armor: { front: P('hardox', 10), rear: P('titanium', 8), sides: P('titanium', 10), top: P('titanium', 7), bottom: P('titanium', 4) },
-    wheels: 2, wheelDia: 10, wheelWidth: 3, track: 24, axleX: -3, topMph: 16, driveMotor: 'bl80-150', invertible: true,
-    weapon: spinner({ style: 'drum', lb: 70, dia: 9.3, width: 22, teeth: 2, tooth: 0.75, rpm: 8000, motor: 'bl120-70', motors: 2, mountX: 15, mountY: -1, reversible: true }),
-    look: { primary: '#1c1c1c', secondary: '#2b2b2b', accent: '#c9a227', logo: 'MINOTAUR', features: ['bull', 'gold-drum', 'wheel-guards'] },
+    wheels: 2, wheelDia: 10, wheelWidth: 3, track: 26, axleX: -3, topMph: 16, driveMotor: 'bl80-150', invertible: true,
+    weapon: spinner({ style: 'drum', lb: 70, dia: 9.3, width: 22, teeth: 2, tooth: 0.75, rpm: 8000, motor: 'bl120-70', motors: 2, mountX: 14, mountY: -1, reversible: true }),
+    look: { primary: '#1c1c1c', secondary: '#2b2b2b', accent: '#c9a227', logo: 'MINOTAUR', features: ['bull', 'gold-drum'] },
   },
   {
     id: 'hypershock', name: 'HyperShock', team: 'Team HyperShock',
