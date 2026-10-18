@@ -375,3 +375,62 @@ export function fitToWeight(d: BotDesign, targetKg = WEIGHT_LIMIT_KG - 0.35): Bo
   keys.forEach((k, j) => (out.chassis.armor[k].thickness = Math.round(Math.max(1.5, base[j] * lo) * 10) / 10));
   return out;
 }
+
+/** Rotor speed vs time from a standing start (for the garage chart). */
+export function spinUpCurve(w: SpinnerWeapon, V: number, battR: number, seconds = 12) {
+  const I = rotorInertia(w);
+  const m = MOTORS[w.motor];
+  const Kt = motorKt(m);
+  const pts: { t: number; rpm: number; amps: number }[] = [];
+  let om = 0;
+  const dt = 0.01;
+  const wMaxEngine = rpmToRad(ENGINE.maxRpm) / w.ratio;
+  for (let t = 0; t <= seconds; t += dt) {
+    let torque = 0, amps = 0;
+    if (m.id === 'ice-engine') {
+      torque = om < wMaxEngine ? Math.min(ENGINE.power / Math.max(om * w.ratio, 40) * w.ratio, 95) * 0.9 : 0;
+    } else {
+      const iRaw = (V - om * w.ratio * Kt) / (m.resistance + battR * w.motorCount);
+      const i = Math.min(m.maxCurrent, Math.max(0, iRaw));
+      amps = i * w.motorCount;
+      torque = w.motorCount * Kt * Math.max(0, i - m.noLoadCurrent) * w.ratio * 0.92;
+    }
+    const drag = 0.6 + 0.02 * om + 0.00004 * om * om * w.radius * w.radius * (w.width * 30);
+    om = Math.max(0, om + ((torque - drag) / I) * dt);
+    if (Math.round(t / dt) % 5 === 0) pts.push({ t, rpm: radToRpm(om), amps });
+  }
+  return pts;
+}
+
+/** Ground speed vs time from a standing start, both sides full throttle (for the garage chart). */
+export function accelCurve(d: BotDesign, seconds = 3) {
+  const s = computeStats(d);
+  const dm = MOTORS[d.drive.motor];
+  const Kt = motorKt(dm);
+  const r = d.drive.wheelDiameter / 2;
+  const V = s.nominalV;
+  const mu = TIRES[d.drive.tire].mu;
+  const pts: { t: number; mph: number; amps: number }[] = [];
+  let v = 0;
+  const dt = 0.005;
+  for (let t = 0; t <= seconds; t += dt) {
+    const om = (v / r) * d.drive.ratio;
+    const i = Math.min(dm.maxCurrent, Math.max(-dm.maxCurrent, (V - Kt * om) / (dm.resistance + s.batteryR)));
+    const F = Math.min(mu * s.mass * 9.81, (2 * d.drive.motorsPerSide * Kt * i * d.drive.ratio * 0.88) / r);
+    v = Math.max(0, v + ((F - 0.012 * s.mass * 9.81) / s.mass) * dt);
+    if (Math.round(t / dt) % 10 === 0) pts.push({ t, mph: v / MPH, amps: i * 2 * d.drive.motorsPerSide });
+  }
+  return pts;
+}
+
+/** Rough fight-time estimate: drive at 35% average power, weapon held at speed against windage + re-spins. */
+export function runtimeMinutes(d: BotDesign) {
+  const s = computeStats(d);
+  const dm = MOTORS[d.drive.motor];
+  const driveW = 2 * d.drive.motorsPerSide * dm.maxCurrent * s.nominalV * 0.12;
+  let weaponW = 0;
+  if (d.weapon.type === 'spinner' && s.weapon) weaponW = (s.weapon.energyKJ * 1000) / 12 + (d.weapon.motor === 'ice-engine' ? 0 : 400);
+  if (d.weapon.type === 'flipper' && d.weapon.actuator !== 'pneumatic') weaponW = 300;
+  if (d.weapon.type === 'hammer' || d.weapon.type === 'crusher') weaponW = 500;
+  return (s.batteryWh * 0.8) / (driveW + weaponW + 40) * 60;
+}

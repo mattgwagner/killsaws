@@ -162,7 +162,7 @@ export class Effects {
 
     for (const f of this.flashes) {
       f.life = Math.max(0, f.life - dt);
-      f.light.intensity = f.life > 0 ? (f.life / f.max) * (20 + f.power * 12) : 0;
+      f.light.intensity = f.life > 0 ? (f.life / f.max) * Math.min(60, 4 + f.power * 1.5) : 0;
     }
     this.shake = Math.max(0, this.shake - dt * 2.2);
   }
