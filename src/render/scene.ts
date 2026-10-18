@@ -13,7 +13,7 @@ import { MatchView } from '../sim/match';
 import { DebrisSpawn, SimEvent } from '../sim/combat';
 import { MATERIALS } from '../sim/parts';
 import { ArenaView } from './arena';
-import { BotMesh, buildBot, poseBot } from './botmesh';
+import { BotMesh, buildBot, hideBroken, poseBot } from './botmesh';
 import { Effects, FloorScars } from './effects';
 
 export type CameraMode = 'broadcast' | 'chase' | 'overhead' | 'free' | 'intro' | 'gallery' | 'hero';
@@ -48,6 +48,7 @@ export class GameView {
   private pyroLeft = 0;
   private pyroVictory = false;
   private readonly up = new THREE.Vector3(0, 1, 0);
+  private readonly smokeAt = new THREE.Vector3();
 
   constructor(readonly canvas: HTMLCanvasElement) {
     this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance', preserveDrawingBuffer: true });
@@ -193,6 +194,7 @@ export class GameView {
         const p = new THREE.Vector3(e.pos.x, e.pos.y, e.pos.z);
         this.fx.sparksAt(p, new THREE.Vector3(0, 1, 0), 60, 8);
         this.fx.smoke(p, 10, 0.3, 0.3);
+        if ((e.part === 'weapon' || e.part === 'tooth') && this.bots[e.bot]) hideBroken(this.bots[e.bot], e.part);
       } else if (!replay && e.type === 'phase') {
         this.fightStart();
       } else if (!replay && e.type === 'hazards-live') {
@@ -260,6 +262,12 @@ export class GameView {
           const p = m.root.position.clone().add(new THREE.Vector3(0, 0.15, 0));
           if (Math.random() < dt * 30) this.fx.smoke(p, 1, 0.82, 0.3); // LiPo smoke is white
           if (Math.random() < dt * 8) this.fx.sparksAt(p, new THREE.Vector3(0, 1, 0), 3, 2, 0.7);
+        }
+        const driveHurt = (bv.internals.driveL < 0.55 ? 1 : 0) + (bv.internals.driveR < 0.55 ? 1 : 0);
+        if (driveHurt && Math.random() < dt * 14 * driveHurt) {
+          this.smokeAt.copy(m.root.position);
+          this.smokeAt.y = 0.06;
+          this.fx.smoke(this.smokeAt, 1, 0.28, 0.16);
         }
         if (flameOn[i] && m.flameNozzle) {
           const p = m.flameNozzle.clone().applyMatrix4(m.body.matrixWorld);

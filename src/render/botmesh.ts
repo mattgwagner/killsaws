@@ -47,6 +47,11 @@ function box(w: number, h: number, d: number, mat: THREE.Material) {
   m.castShadow = true; m.receiveShadow = true;
   return m;
 }
+function toothBox(w: number, h: number, d: number, mat: THREE.Material) {
+  const m = box(w, h, d, mat);
+  m.userData.tooth = true;
+  return m;
+}
 function cyl(r: number, h: number, mat: THREE.Material, seg = 32, axis: 'x' | 'y' | 'z' = 'y') {
   const g = new THREE.CylinderGeometry(r, r, h, seg);
   if (axis === 'z') g.rotateX(Math.PI / 2);
@@ -365,7 +370,7 @@ export function buildBot(d: BotDesign): BotMesh {
           const bar = box(R * 2, tw, Math.max(0.07, R * 0.16), barMat);
           spin.add(bar);
           for (const s of [-1, 1]) {
-            const tooth = box(0.07, tw * 1.25, Math.max(0.09, R * 0.2), toothMat);
+            const tooth = toothBox(0.07, tw * 1.25, Math.max(0.09, R * 0.2), toothMat);
             tooth.position.set(s * (R - 0.035), 0, s * 0.02);
             spin.add(tooth);
           }
@@ -389,7 +394,7 @@ export function buildBot(d: BotDesign): BotMesh {
           const crescent = new THREE.Mesh(g, barMat);
           crescent.castShadow = true;
           spin.add(crescent);
-          const tooth = box(R * 0.28, tw * 1.3, 0.09, toothMat);
+          const tooth = toothBox(R * 0.28, tw * 1.3, 0.09, toothMat);
           tooth.position.set(R * 0.9, 0, 0);
           spin.add(tooth);
           spin.add(cyl(R * 0.16, tw * 1.6, steel(), 20));
@@ -399,7 +404,7 @@ export function buildBot(d: BotDesign): BotMesh {
         spin.add(disk);
         for (let i = 0; i < w.teeth; i++) {
           const a = (i / w.teeth) * Math.PI * 2;
-          const tooth = box(R * 0.25, tw * 1.2, 0.08, toothMat);
+          const tooth = toothBox(R * 0.25, tw * 1.2, 0.08, toothMat);
           tooth.position.set(Math.cos(a) * R * 0.9, 0, Math.sin(a) * R * 0.9);
           tooth.rotation.y = -a;
           spin.add(tooth);
@@ -420,7 +425,7 @@ export function buildBot(d: BotDesign): BotMesh {
           for (let i = 0; i < nT; i++) {
             const a = (i / nT) * Math.PI * 2;
             const big = !f.has('green-teeth');
-            const tooth = box(big ? R * 0.28 : R * 0.12, big ? 0.06 : 0.04, (disks === 1 ? tw : tw * 0.35) * 1.15, toothMat);
+            const tooth = toothBox(big ? R * 0.28 : R * 0.12, big ? 0.06 : 0.04, (disks === 1 ? tw : tw * 0.35) * 1.15, toothMat);
             tooth.position.set(Math.cos(a) * R * 0.9, Math.sin(a) * R * 0.9, z);
             tooth.rotation.z = a + Math.PI / 2;
             spin.add(tooth);
@@ -440,7 +445,7 @@ export function buildBot(d: BotDesign): BotMesh {
           spin.add(bar);
         }
         for (const s of [-1, 1]) {
-          const tooth = box(0.06, 0.09, tw * 1.1, toothMat);
+          const tooth = toothBox(0.06, 0.09, tw * 1.1, toothMat);
           tooth.position.set(s * (R - 0.03), s * 0.02, 0);
           spin.add(tooth);
         }
@@ -455,7 +460,7 @@ export function buildBot(d: BotDesign): BotMesh {
         for (let i = 0; i < w.teeth * 2; i++) {
           const a = (i / (w.teeth * 2)) * Math.PI * 2;
           for (let j = 0; j < rows; j++) {
-            const tooth = box(R * 0.28, R * 0.32, tw / rows * 0.55, toothMat);
+            const tooth = toothBox(R * 0.28, R * 0.32, tw / rows * 0.55, toothMat);
             tooth.position.set(Math.cos(a) * R * 0.85, Math.sin(a) * R * 0.85, (j / (rows - 1 || 1) - 0.5) * tw * 0.75);
             tooth.rotation.z = a;
             spin.add(tooth);
@@ -491,7 +496,7 @@ export function buildBot(d: BotDesign): BotMesh {
         name.position.y = H * 0.1;
         spin.add(name);
         for (const s of [0, Math.PI]) {
-          const tooth = box(0.12, H * 0.5, 0.1, toothMat);
+          const tooth = toothBox(0.12, H * 0.5, 0.1, toothMat);
           tooth.position.set(Math.cos(s) * R, -H * 0.12, Math.sin(s) * R);
           spin.add(tooth);
         }
@@ -663,7 +668,7 @@ export function buildBot(d: BotDesign): BotMesh {
       sawG.add(blade);
       for (let i = 0; i < 24; i++) {
         const a = (i / 24) * Math.PI * 2;
-        const tooth = box(0.025, 0.02, 0.014, std('#e0e0e0', 1, 0.2));
+        const tooth = toothBox(0.025, 0.02, 0.014, std('#e0e0e0', 1, 0.2));
         tooth.position.set(Math.cos(a) * 0.165, Math.sin(a) * 0.165, 0);
         tooth.rotation.z = a;
         sawG.add(tooth);
@@ -1023,4 +1028,21 @@ export function poseBot(m: BotMesh, d: BotDesign, v: { weaponAngle: number; actu
     }
   }
   if (m.saw) m.saw.rotation.z = -v.saw;
+}
+
+/** Hide a broken weapon, or the next tooth that's still on the bot. Idempotent. */
+export function hideBroken(m: BotMesh, part: 'weapon' | 'tooth') {
+  if (part === 'weapon') {
+    if (m.rotor) m.rotor.visible = false;
+    if (m.arm) m.arm.visible = false;
+    if (m.saw) m.saw.visible = false;
+    return;
+  }
+  const teeth: THREE.Object3D[] = [];
+  const grab = (o: THREE.Object3D | null) => {
+    o?.traverse((c) => { if (c.userData.tooth && c.visible) teeth.push(c); });
+  };
+  grab(m.rotor);
+  grab(m.saw);
+  if (teeth[0]) teeth[0].visible = false;
 }
