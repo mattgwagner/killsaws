@@ -155,6 +155,8 @@ export class BotRuntime {
   immobileTime = 0;
 
   private tags: TagMap;
+  /** belly skids (2WD bots ride on these, like the real ones' front skids) */
+  readonly skids: V3[] = [];
   private k: number;
   private c: number;
   private readonly world: World;
@@ -231,6 +233,12 @@ export class BotRuntime {
         });
       }
     }
+    if (d.wheels === 2) {
+      // two-wheelers rest on a skid at each end of the belly instead of nosing into the floor
+      const belly = -ch.height / 2 - ch.clearance + 0.0025;
+      const front = ch.wedgeLength > 0 ? ch.length / 2 + ch.wedgeLength * 0.6 : ch.length / 2 - 0.02;
+      this.skids.push(v3(front, belly, 0), v3(-ch.length / 2 + 0.02, belly, 0));
+    }
     const n = this.wheels.length;
     this.k = (this.mass * 9.81) / (n * 0.006);
     this.c = 2 * 0.65 * Math.sqrt((this.k * this.mass) / n);
@@ -260,7 +268,8 @@ export class BotRuntime {
       const wcd = RAPIER.ColliderDesc.cylinder(halfWidth, w.radius * 0.97)
         .setTranslation(w.mountX, w.mountY, 0)
         .setRotation(shapeRotLocal)
-        .setDensity(0).setFriction(0.2).setRestitution(0.3)
+        .setDensity(0).setFriction(0).setRestitution(0.1)
+        .setFrictionCombineRule(RAPIER.CoefficientCombineRule.Min)
         .setCollisionGroups(COLLIDE.weapon);
       this.weaponCollider = world.createCollider(wcd, this.body);
       tags.set(this.weaponCollider.handle, { bot: this, part: 'weapon' });
@@ -384,6 +393,24 @@ export class BotRuntime {
       w.contact = true;
       w.normalForce = N;
       contacts[w.side].push({ w, p, n: nrm, f, l, N, v: dot(vp, f), vl: dot(vp, l), other });
+    }
+
+    // skids: stiff, low-friction contact points that only carry load when the bot pitches onto them
+    for (const sk of this.skids) {
+      const p0 = add(pos, rotate(q, sk));
+      const probe = 0.04;
+      const ray = new RAPIER.Ray(madd(p0, v3(0, 1, 0), probe), { x: 0, y: -1, z: 0 });
+      const hit = this.world.castRayAndGetNormal(ray, probe + 0.01, true, undefined, COLLIDE.wheelRay, undefined, this.body);
+      if (!hit || ctx.tags.get(hit.collider.handle)?.bot === this) continue;
+      const comp = probe - hit.timeOfImpact;
+      if (comp <= 0) continue;
+      const p = madd(p0, v3(0, 1, 0), comp);
+      const vp = add(lin, cross(ang, sub(p, pos)));
+      const N = clamp(this.k * 1.5 * comp + this.c * -vp.y, 0, this.mass * 9.81 * 4);
+      const vh = v3(vp.x, 0, vp.z);
+      const sp = len(vh);
+      const Ff = sp > 1e-4 ? scale(vh, (-0.28 * N * Math.tanh(sp / 0.05)) / sp) : v3();
+      this.body.applyImpulseAtPoint(scale(add(v3(0, N, 0), Ff), dt), p, true);
     }
 
     for (const side of [0, 1] as const) {

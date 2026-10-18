@@ -178,6 +178,18 @@ export function spinnerStep(ctx: CombatContext, a: BotRuntime, dt: number) {
   const omega = Math.abs(sp.omega);
   if (omega < 8) return;
   const pose = a.weaponPoseWorld();
+  // rotor scraping the floor: a spray of sparks, nothing else
+  {
+    const ax = pose.axis;
+    const low = pose.pos.y - sp.radius * Math.sqrt(Math.max(0, 1 - ax.y * ax.y)) - Math.abs(ax.y) * sp.halfWidth;
+    if (low < 0.004 && omega > 40 && ctx.rand() < dt * 25) {
+      const down = norm(v3(-ax.x * ax.y, 1 - ax.y * ax.y, -ax.z * ax.y));
+      const p = sub(pose.pos, scale(down, sp.radius));
+      p.y = 0.005;
+      const tdir = norm(cross(ax, v3(0, -1, 0)));
+      ctx.emit({ type: 'hit', kind: 'wall', pos: p, dir: scale(tdir, Math.sign(sp.omega)), energy: 150, impulse: 0, attacker: a.index, target: -1, material: 'ar500' });
+    }
+  }
   tmpHits.length = 0;
   ctx.world.intersectionsWithShape(pose.pos, pose.rot, sp.shape, (col) => {
     const tag = ctx.tags.get(col.handle);

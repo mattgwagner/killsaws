@@ -89,6 +89,32 @@ export function buildBot(d: BotDesign): BotMesh {
   const hull = new THREE.Mesh(hullGeo, paint);
   hull.castShadow = true; hull.receiveShadow = true;
   body.add(hull);
+  // vertical spinners sit in a slot cut through the nose: draw the hull as a rear block + two cheeks
+  const wv = d.weapon;
+  if (wv.type === 'spinner' && isVertical(wv.style) && d.id !== 'huge' && d.chassis.shape !== 'ring') {
+    const slot = wv.width / 2 + 0.012;
+    const xs = wv.mountX - wv.radius * 0.45;
+    const maxX = Math.max(...vecs.map((v) => v.x));
+    if (xs < maxX - 0.01) {
+      const pieces: THREE.Vector3[][] = [vecs.map((v) => new THREE.Vector3(Math.min(v.x, xs), v.y, v.z))];
+      for (const sgn of [-1, 1]) {
+        const side = vecs.map((v) => new THREE.Vector3(Math.max(v.x, xs), v.y, sgn > 0 ? Math.max(v.z, slot) : Math.min(v.z, -slot)));
+        if (Math.max(...side.map((v) => Math.abs(v.z))) > slot + 0.015) pieces.push(side);
+      }
+      hull.visible = false;
+      for (const pc of pieces) {
+        const g = new ConvexGeometry(pc);
+        topUV(g, L, W);
+        const m = new THREE.Mesh(g, paint);
+        m.castShadow = true; m.receiveShadow = true;
+        body.add(m);
+      }
+      // dark slot floor so you see into it
+      const floorPlate = box(Math.max(0.02, maxX - xs), 0.006, slot * 2, std('#111214', 0.6, 0.6));
+      floorPlate.position.set((xs + maxX) / 2, -hy, 0);
+      body.add(floorPlate);
+    }
+  }
 
   // deck plate, bolts, logo
   if (d.chassis.shape !== 'ring') {
