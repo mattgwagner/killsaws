@@ -28,6 +28,7 @@ export class Audio {
   announcer = true;
   volume = 0.8;
   private lastCount = -1;
+  private lastLight = -1;
   private lastDeck = -1;
   private designs: BotDesign[] = [];
 
@@ -67,6 +68,7 @@ export class Audio {
   startMatch(designs: BotDesign[]) {
     this.designs = designs;
     this.lastCount = -1;
+    this.lastLight = -1;
     const ctx = this.ctx;
     if (!ctx) return;
     this.stopMatch();
@@ -138,6 +140,12 @@ export class Audio {
     this.excitement = Math.max(0.15, this.excitement - dt * 0.12);
     this.crowd?.gain.setTargetAtTime(0.03 + this.excitement * 0.12, t, 0.3);
     this.crowdFilter?.frequency.setTargetAtTime(700 + this.excitement * 900, t, 0.3);
+
+    // start lights: a beep per second, high tone on green
+    if (view.phase === 'countdown') {
+      const n = Math.ceil(view.countdown);
+      if (n !== this.lastLight && n > 0) { this.lastLight = n; this.countdownBeep(n); }
+    } else if (this.lastLight > 0 && view.phase === 'fight') { this.lastLight = 0; this.countdownBeep(0); }
 
     // referee count, called aloud for the last ten
     if (view.ko && !view.ko.silent && view.ko.count !== this.lastCount && view.phase === 'fight') {
