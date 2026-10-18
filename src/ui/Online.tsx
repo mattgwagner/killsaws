@@ -65,7 +65,7 @@ export function Online({ onBack, net, setNet, session, onHostFight, onGuestStart
           <div className="opts">
             <b style={{ fontFamily: 'var(--head)', fontSize: 24 }}>JOIN A FIGHT</b>
             <label>Room code <input type="text" value={join} maxLength={5} onChange={(e) => setJoin(e.target.value.toUpperCase())} placeholder="ABCDE" /></label>
-            <label>Your name <input type="text" value={name} maxLength={16} onChange={(e) => setName(e.target.value)} placeholder="Colton" /></label>
+            <label>Your name <input type="text" value={name} maxLength={16} onChange={(e) => setName(e.target.value)} placeholder="Nickname" /></label>
             <button className="btn primary" disabled={join.length !== 5} onClick={() => { session?.audio.unlock(); setNet({ guest: new NetGuest(join) }); }}>Join</button>
           </div>
         </div>
