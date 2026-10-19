@@ -29,7 +29,7 @@ let host = null, guest = null;
 guest = await mk('guest');
 await guest.p.goto(`${url}/?join=${code}`);
 await guest.p.waitForSelector('input[placeholder="Your name"], input[maxlength="16"]');
-await guest.p.locator('input[maxlength="16"]').fill('Colton');
+await guest.p.locator('input[maxlength="16"]').fill('Tester');
 await guest.p.click('button:has-text("Join")');
 await guest.p.locator('.card', { hasText: 'Minotaur' }).first().click();
 await guest.p.waitForSelector('text=/Waiting for the host/');
