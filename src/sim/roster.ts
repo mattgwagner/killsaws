@@ -214,7 +214,7 @@ const SPECS: Spec[] = [
       height: 7, clearance: 0.5, front: { at: 7, lip: 3 },
     },
     armor: { front: P('ar500', 10), rear: P('al7075', 8), sides: P('al7075', 8), top: P('al7075', 5), bottom: P('al7075', 5) },
-    wheels: 4, wheelDia: 6, topMph: 16, forks: true, invertible: true,
+    wheels: 4, wheelDia: 6, topMph: 16, forks: true, invertible: false, // rests on its bar upside down until the model can drive inverted (#12)
     weapon: spinner({ style: 'vertical-bar', lb: 38, dia: 15, width: 3, teeth: 2, rpm: rpmAt(120, 15), motor: 'bl80100-130', motors: 1, mountX: 12, mountY: 0 }),
     look: { primary: '#7cfc00', secondary: '#6c0ba9', accent: '#1a1a1a', logo: 'LOCK-JAW', features: ['ears', 'fork-letters'] },
   },

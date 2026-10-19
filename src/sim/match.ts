@@ -582,6 +582,17 @@ export class Match {
     return { winner, method: 'Judges', time: this.fightTime, cards, totals, split: w0 !== 0 && w0 !== cards.length };
   }
 
+  /** Read-only running score: the judges' points each robot would get on the
+   * stats so far, without the per-judge noise. Drivers read it to manage the clock. */
+  judgesEstimate(): [number, number] {
+    const [a, b] = this.bots;
+    const share = (x: number, y: number) => (x + y > 1e-6 ? x / (x + y) : 0.5);
+    const p = JUDGING.points;
+    const s = share(a.damageDealt, b.damageDealt) * p.damage + share(a.aggression, b.aggression) * p.aggression + share(a.control, b.control) * p.control;
+    const total = (p.damage + p.aggression + p.control) * JUDGING.judges;
+    return [s * JUDGING.judges, total - s * JUDGING.judges];
+  }
+
   finish(r: MatchResult) {
     if (this.result) return;
     this.result = r;
