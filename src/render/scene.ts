@@ -15,6 +15,7 @@ import { MATERIALS } from '../sim/parts';
 import { ArenaView } from './arena';
 import { BotMesh, buildBot, poseBot } from './botmesh';
 import { Effects, FloorScars } from './effects';
+import { BotDamage } from './damage';
 
 export type CameraMode = 'broadcast' | 'chase' | 'overhead' | 'free' | 'intro' | 'gallery' | 'hero';
 
@@ -27,6 +28,8 @@ export class GameView {
   private controls: OrbitControls;
   arena!: ArenaView;
   private bots: BotMesh[] = [];
+  /** battle damage per robot (issue #4) */
+  damage: BotDamage[] = [];
   private designs: BotDesign[] = [];
   private debris = new Map<number, THREE.Object3D>();
   readonly fx: Effects;
@@ -127,6 +130,8 @@ export class GameView {
       this.scene.add(m.root);
       return m;
     });
+    for (const dm of this.damage) dm.dispose();
+    this.damage = this.bots.map((m, i) => new BotDamage(m, designs[i], this.fx, this.scars, this.scene));
   }
 
   resize(w: number, h: number) {
@@ -190,6 +195,7 @@ export class GameView {
         if (!replay && p.y < 0.12 && kj > 1) this.scars.gouge(p.x, p.z, dir.x, dir.z, 0.15 + kj * 0.01);
         if (!replay && kj > 6) this.scars.scorch(p.x, p.z, 0.3 + kj * 0.01, 0.6);
         if (!replay && e.target >= 0 && kj > 3) this.addDent(e.target, p, kj);
+        if (!replay && e.target >= 0) this.damage[e.target]?.hit(e);
         biggest = Math.max(biggest, e.energy);
       } else if (e.type === 'debris') {
         this.spawnDebris(e.id, e.spec);
@@ -275,9 +281,12 @@ export class GameView {
       });
       // dents cool from glowing orange to dark
       const now = performance.now();
-      for (const d of this.dents) {
+      for (let i = this.dents.length - 1; i >= 0; i--) {
+        const d = this.dents[i];
         const age = (now - (d.userData.born as number)) / 1000;
-        (d.material as THREE.MeshStandardMaterial).emissiveIntensity = Math.max(0, 2.2 - age * 0.9);
+        (d.material as THREE.MeshStandardMaterial).emissiveIntensity = Math.max(0, 2.2 - age * 1.8);
+        // after the glow the mark lives on in the damage layer
+        if (age > 1.2) { d.parent?.remove(d); this.dents.splice(i, 1); }
       }
     }
     if (this.bloomPulse > 0 && this.quality === 'high') this.bloom.strength = 0.55 + this.bloomPulse * 6;
@@ -297,6 +306,7 @@ export class GameView {
       if (this.arena) this.arena.siren = false;
     }
     this.feedPyro(dt);
+    this.damage.forEach((dm, i) => { const bv = this.lastView?.bots[i]; if (bv) dm.frame(dt, bv); });
     this.fx.update(dt);
     this.scars.flush();
     this.updateCamera(dt);

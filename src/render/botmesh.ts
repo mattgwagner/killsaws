@@ -33,6 +33,14 @@ export interface BotMesh {
   headFlame?: THREE.Vector3;
   /** stabilizer legs group (swings over when the robot is flipped) */
   legs?: THREE.Object3D | null;
+  /** for the damage layer */
+  hullMeshes: THREE.Mesh[];
+  deckParts: THREE.Object3D[];
+  wheelStubs: THREE.Object3D[];
+  weaponPivot: THREE.Object3D | null;
+  /** top-view UV frame the hull (and its damage canvas) is mapped with */
+  uvSize: { L: number; W: number };
+  paintCanvas: HTMLCanvasElement;
 }
 
 const std = (color: string | number, metal = 0.2, rough = 0.5, extra: Partial<THREE.MeshPhysicalMaterialParameters> = {}) =>
@@ -103,6 +111,8 @@ export function buildBot(d: BotDesign): BotMesh {
   const hull = new THREE.Mesh(hullGeo, bp?.front?.color ? [paint, std(bp.front.color, 0.75, 0.5, { side: THREE.DoubleSide })] : paint);
   hull.castShadow = true; hull.receiveShadow = true;
   body.add(hull);
+  const hullMeshes: THREE.Mesh[] = [hull];
+  const deckParts: THREE.Object3D[] = [];
   // vertical spinners sit in a slot cut through the nose: draw the hull as a rear block + two cheeks
   const wv = d.weapon;
   if (!bp && wv.type === 'spinner' && isVertical(wv.style) && d.id !== 'huge' && d.chassis.shape !== 'ring') {
@@ -116,10 +126,12 @@ export function buildBot(d: BotDesign): BotMesh {
         if (Math.max(...side.map((v) => Math.abs(v.z))) > slot + 0.015) pieces.push(side);
       }
       hull.visible = false;
+      hullMeshes.length = 0;
       for (const pc of pieces) {
         const g = new ConvexGeometry(pc);
         topUV(g, L, W);
         const m = new THREE.Mesh(g, paint);
+        hullMeshes.push(m);
         m.castShadow = true; m.receiveShadow = true;
         body.add(m);
       }
@@ -136,6 +148,7 @@ export function buildBot(d: BotDesign): BotMesh {
     const plate = deckPlate(bp);
     if (plate) {
       const m = new THREE.Mesh(plate.geometry, second);
+      deckParts.push(m);
       second.side = THREE.DoubleSide;
       m.receiveShadow = true;
       body.add(m);
@@ -156,10 +169,12 @@ export function buildBot(d: BotDesign): BotMesh {
       }
       bolts.count = k;
       body.add(bolts);
+      deckParts.push(bolts);
     }
   }
   if (!bp && d.chassis.shape !== 'ring') {
     const deck = box(L * 0.82, 0.004, W * 0.78 * (d.chassis.noseTaper ?? 1) ** 0.3, second);
+    deckParts.push(deck);
     deck.position.set(-L * 0.04, hy + 0.002, 0);
     body.add(deck);
     const boltMat = darkSteel();
@@ -176,6 +191,7 @@ export function buildBot(d: BotDesign): BotMesh {
     }
     bolts.count = k;
     body.add(bolts);
+    deckParts.push(bolts);
   }
   if (look.logo) {
     const t = textTexture(look.logo, { color: f.has('bare-metal') ? '#1a1a1a' : '#ffffff', stroke: '#000', font: '"Oswald", "Impact", sans-serif' });
@@ -186,6 +202,7 @@ export function buildBot(d: BotDesign): BotMesh {
     logo.position.set(logoAt.x, hy + 0.0065, logoAt.z);
     if (d.chassis.shape === 'ring') logo.position.y = hy + 0.02;
     body.add(logo);
+    deckParts.push(logo);
   }
 
   // forks / wedgelets
@@ -214,6 +231,7 @@ export function buildBot(d: BotDesign): BotMesh {
 
   // --- wheels ---
   const wheels: THREE.Object3D[] = [];
+  const wheelStubs: THREE.Object3D[] = [];
   const r = d.drive.wheelDiameter / 2;
   const wy = wheelCenterY(d) - 0.006;
   const xs = d.drive.wheels === 2 ? [d.drive.axleX ?? 0] : d.drive.wheels === 4
@@ -265,6 +283,16 @@ export function buildBot(d: BotDesign): BotMesh {
     }
     root.add(g);
     wheels.push(g);
+    // what's left when the wheel is torn off: a bare axle stub and a hub
+    const stub = new THREE.Group();
+    stub.position.copy(g.position);
+    const shaft = cyl(0.015, d.drive.wheelWidth * 1.2, steel(), 12, 'z');
+    shaft.position.z = side * d.drive.wheelWidth * 0.2;
+    stub.add(shaft);
+    stub.add(cyl(Math.min(0.045, r * 0.35), 0.02, darkSteel(), 6, 'z'));
+    stub.visible = false;
+    root.add(stub);
+    wheelStubs.push(stub);
   }
 
   // --- weapon ---
@@ -274,6 +302,7 @@ export function buildBot(d: BotDesign): BotMesh {
   let armKind: BotMesh['armKind'] = null;
   let saw: THREE.Object3D | null = null;
   let armRange: [number, number] | undefined;
+  let weaponPivot: THREE.Object3D | null = null;
   let headFlame: THREE.Vector3 | undefined;
   let slide: THREE.Object3D | null = null;
   let secondaryArm: THREE.Object3D | null = null;
@@ -529,6 +558,7 @@ export function buildBot(d: BotDesign): BotMesh {
       secondaryArm = armG;
     }
     body.add(pivot);
+    weaponPivot = pivot;
   } else if (w.type === 'flipper') {
     const g = new THREE.Group();
     if (w.style === 'flipper') {
@@ -983,7 +1013,7 @@ export function buildBot(d: BotDesign): BotMesh {
   body.add(damage);
 
   return {
-    root, body, wheels, rotor, rotorAxis, arm, armKind, saw, slide, secondaryArm, flameNozzle, glow, paint, damage, armRange, headFlame, legs,
+    root, body, wheels, rotor, rotorAxis, arm, armKind, saw, slide, secondaryArm, flameNozzle, glow, paint, damage, armRange, headFlame, legs, hullMeshes, deckParts, wheelStubs, weaponPivot, uvSize: { L, W }, paintCanvas: paintTex.image as HTMLCanvasElement,
     hullHalf: new THREE.Vector3(hx, hy, hz),
   };
 }
@@ -995,6 +1025,7 @@ export function poseBot(m: BotMesh, d: BotDesign, v: { weaponAngle: number; actu
     const g = m.wheels[i];
     if (!g) return;
     g.visible = w.attached;
+    if (m.wheelStubs[i]) m.wheelStubs[i].visible = !w.attached;
     g.rotation.z = -w.angle;
   });
   if (m.rotor) {
