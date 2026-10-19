@@ -601,9 +601,17 @@ export class BotRuntime {
     return before > 0 && this.internals[part] === 0;
   }
 
-  /** Clear of the floor (thrown, launched, falling). */
+  /** Clear of every support (thrown, launched, falling). Resting on the rail or the deck is supported, however high the body sits. */
   airborne() {
-    return this.pos.y > this.design.chassis.clearance + Math.max(this.half.y, this.design.drive.wheelDiameter / 2) + 0.12;
+    if (this.wheels.some((w) => w.attached && w.contact)) return false;
+    let supported = false;
+    for (let i = 0; i < this.body.numColliders() && !supported; i++) {
+      this.world.contactPairsWith(this.body.collider(i), (other) => {
+        const tag = this.tags.get(other.handle);
+        if (!tag || tag.bot !== this) supported = true;
+      });
+    }
+    return !supported;
   }
 
   /** Is the robot capable of controlled translational movement? (KO rule) */
@@ -614,7 +622,10 @@ export class BotRuntime {
     // (a robot truly on its side has its axle vertical, so its wheels already lose contact below;
     //  judging by the body's up-vector alone wrongly counted HUGE out when it stood on end with both wheels down)
     if (this.inverted && !this.stats.invertible) return false;
-    return this.wheels.some((w) => w.attached && w.contact);
+    const down = this.wheels.filter((w) => w.attached && w.contact);
+    // one wheel on a 2WD, or fewer than half the wheels down, can only spin in place
+    if (down.length < this.wheels.length / 2) return false;
+    return down.some((w) => w.side === 0) && down.some((w) => w.side === 1);
   }
 
   weaponEnergy() {

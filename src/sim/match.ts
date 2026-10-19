@@ -500,13 +500,15 @@ export class Match {
     let held: { victim: BotRuntime; attacker: BotRuntime } | null = null;
     for (const b of this.bots) {
       const other = this.bots[1 - b.index];
-      const mobile = b.canMove();
+      // two wheels on the spiked rail still "can move" by the wheel test, and still can't translate
+      const mobile = b.canMove() && !this.propped(b);
       const inContact = !mobile && this.touching(b, other);
       if (inContact) held = { victim: b, attacker: other };
-      // the count only runs on a robot that is down on its own: not being held, not in the air, not still sliding
+      // the count only runs on a robot that is down on its own: not being held, not unsupported in the air, not still sliding
       const counting = !mobile && !inContact && !b.airborne() && b.speed < 0.3;
       if (counting) this.immobile[b.index] += DT;
-      else if (mobile) this.immobile[b.index] = Math.max(0, this.immobile[b.index] - DT * 2);
+      // a robot that is actually driving is showing movement, even if it is still touching the rail
+      else if (mobile || (b.canMove() && b.speed >= 0.3)) this.immobile[b.index] = Math.max(0, this.immobile[b.index] - DT * 2);
       if (!this.ko && this.immobile[b.index] > 1.5 && counting) {
         this.ko = { bot: b.index, t: 0, reason: this.koReason(b) };
         this.events.push({ type: 'ko-start', bot: b.index });
@@ -602,19 +604,43 @@ export class Match {
     this.events.push({ type: 'over', result: r });
   }
 
+  /** Collider contacts with the arena (floor, rail, deck, wall, hazard), by hazard id or part. */
+  private restingOn(b: BotRuntime) {
+    const on = new Set<string>();
+    for (let i = 0; i < b.body.numColliders(); i++) {
+      this.world.contactPairsWith(b.body.collider(i), (o) => {
+        const t = this.tags.get(o.handle);
+        if (t && !t.bot) on.add(t.hazardId ?? t.part);
+      });
+    }
+    return on;
+  }
+
+  /** On the spiked rail or the deck lip with at most half its wheels down. More than that, and a brush with the rail is not a beaching. */
+  private propped(b: BotRuntime) {
+    const down = b.wheels.filter((w) => w.attached && w.contact).length;
+    if (down > b.wheels.length / 2) return false;
+    const on = this.restingOn(b);
+    return on.has('rail') || (on.has('deck') && !this.onDeck(b));
+  }
+
   private koReason(b: BotRuntime) {
     const base = koReason(b);
     if (!base.endsWith('could not show controlled movement')) return base;
     // wheels off the floor: say what it's beached on
-    const on = new Set<string>();
-    for (let i = 0; i < b.body.numColliders(); i++) {
-      this.world.contactPairsWith(b.body.collider(i), (o) => { const t = this.tags.get(o.handle); if (t) on.add(t.hazardId ?? t.part); });
-    }
+    const on = this.restingOn(b);
     const n = b.design.name;
     if (on.has('rail')) return `${n} is high-centred on the spiked rail`;
     if (on.has('deck')) return `${n} is high-centred on the Upper Deck edge`;
     for (const h of on) if (h.includes('screw')) return `${n} is caught in the screws`;
     if (on.has('wall')) return `${n} is wedged against the wall`;
+    const down = b.wheels.filter((w) => w.attached && w.contact);
+    // a wheel still on the floor, but not enough of them to translate: say so.
+    // "beached with its wheels off the floor" is only true when none of them are down.
+    if (down.length > 0 && down.length < b.wheels.length) {
+      if (b.wheels.some((w) => !w.attached)) return `${n} lost a wheel and can't drive`;
+      return `${n} is high-centred`;
+    }
     return `${n} is beached with its wheels off the floor`;
   }
 
