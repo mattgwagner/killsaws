@@ -5,7 +5,7 @@
 import type RAPIERNS from '@dimforge/rapier3d-compat';
 import { RAPIER, COLLIDE, G, initPhysics } from './physics';
 import { ARENA_SIZE, HALF, LEXAN_HEIGHT, RAIL_DEPTH, RAIL_HEIGHT, WALL_HEIGHT, ArenaLayout, defaultLayout } from './arena';
-import { BotInput, BotRuntime, FACES, Face, Internals, TagMap } from './bot';
+import { BotInput, BotRuntime, FACES, Face, INTERNAL_HP, Internals, TagMap } from './bot';
 import { BotDesign } from './design';
 import {
   CombatContext, DebrisSpawn, SimEvent, actuatorStep, applyDamage, contactDamage, secondaryStep, selfRighterStep, spinnerStep,
@@ -18,6 +18,7 @@ export const DT = 1 / 240;
 export const MATCH_SECONDS = 180;
 export const COUNTDOWN_SECONDS = 3;
 export const KO_COUNT_SECONDS = 10;
+const INTERNAL_PARTS = Object.keys(INTERNAL_HP) as (keyof Internals)[];
 
 export type Phase = 'countdown' | 'fight' | 'over';
 export type WinMethod = 'KO' | 'Judges';
@@ -343,8 +344,8 @@ export class Match {
           const J = b.mass * (1.4 + this.rand() * 1.3);
           b.impulse(add(v3(0, J, 0), scale(along, (this.rand() < 0.5 ? -1 : 1) * J * 0.4)), p);
           const E = 3500 + this.rand() * 3500;
-          applyDamage(ctx, b, p, E, undefined, b.inverted ? 'top' : 'bottom');
-          this.creditHazard(b, E);
+          // one hit per 0.5 s over a live saw: the hit stands for that half second
+          this.hazardHit(ctx, b, p, E, b.inverted ? 'top' : 'bottom', 0.5);
           this.events.push({ type: 'hit', kind: 'hazard', pos: p, dir: v3(0, 1, 0), energy: E, impulse: J, attacker: -1, target: b.index, material: b.panels.bottom.material, hazardId: slot.id });
         }
       }
@@ -358,8 +359,7 @@ export class Match {
         const reach = s.radius + Math.min(b.half.x, b.half.z) + 0.05;
         if (off < reach && along < s.length / 2 + 0.15 && b.pos.y < 0.9) {
           const E = 1800 * DT;
-          applyDamage(ctx, b, b.pos, E, undefined, 'bottom');
-          this.creditHazard(b, E);
+          this.hazardHit(ctx, b, b.pos, E, 'bottom', DT);
           if (this.rand() < DT * 14) {
             this.events.push({ type: 'hit', kind: 'hazard', pos: v3(s.axis === 'z' ? s.x : b.pos.x, 0.25, s.axis === 'z' ? b.pos.z : s.z), dir: v3(0, 1, 0), energy: 300, impulse: 0, attacker: -1, target: b.index, material: 'ar500', hazardId: s.id });
           }
@@ -387,8 +387,8 @@ export class Match {
               const p = add(b.pos, v3(0, b.half.y, 0));
               b.impulse(v3(0, -b.mass * 2.6, 0), p);
               const E = 6000 + this.rand() * 4000; // 100 lb diamond head
-              applyDamage(ctx, b, p, E, undefined, b.inverted ? 'bottom' : 'top');
-              this.creditHazard(b, E, pz.team);
+              // the hammer is down for 0.5 s
+              this.hazardHit(ctx, b, p, E, b.inverted ? 'bottom' : 'top', 0.5, pz.team);
               this.events.push({ type: 'hit', kind: 'hazard', pos: p, dir: v3(0, -1, 0), energy: E, impulse: b.mass * 2.6, attacker: -1, target: b.index, material: b.panels.top.material, hazardId: pz.id });
             }
           }
@@ -444,13 +444,29 @@ export class Match {
     return Math.abs(l.x) < b.half.x + 0.05 && Math.abs(l.z) < b.half.z + 0.05 && b.pos.y < 0.7;
   }
 
-  private creditHazard(victim: BotRuntime, E: number, team?: number) {
+  /** Armour and internals a robot has left, in joules: what a hit can still take off it. */
+  private toughness(b: BotRuntime) {
+    let j = 0;
+    for (const f of FACES) j += b.panels[f].integrity * b.panels[f].capacity;
+    for (const k of INTERNAL_PARTS) j += b.internals[k] * INTERNAL_HP[k];
+    return j;
+  }
+
+  /** A hazard hits a robot for E joules, covering `seconds` of real time in the hazard. */
+  private hazardHit(ctx: CombatContext, b: BotRuntime, p: V3, E: number, face: Face, seconds: number, team?: number) {
+    const before = this.toughness(b);
+    applyDamage(ctx, b, p, E, undefined, face);
+    // credit what the hit took off, not what it carried: a stripped robot on the screws has nothing left to lose
+    this.creditHazard(b, clamp(before - this.toughness(b), 0, E), seconds, team);
+  }
+
+  private creditHazard(victim: BotRuntime, E: number, seconds: number, team?: number) {
     const other = this.bots[1 - victim.index];
     // pushing someone into a hazard (or dropping your Pulverizer on them) counts for you
     const recent = team === other.index || this.lastTouch[victim.index] === other.index && this.time - this.lastTouchT[victim.index] < 2.5;
     other.damageDealt += E * (recent ? 0.8 : 0.35);
     other.hazardDamageDealt += E;
-    if (recent) other.control += 1.0;
+    if (recent) other.control += seconds;
   }
 
   private judgeStep() {
