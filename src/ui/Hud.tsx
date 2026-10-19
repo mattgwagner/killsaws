@@ -113,6 +113,34 @@ function Plate({ color, d, b }: { color: 'red' | 'blue'; d: BotDesign; b: BotVie
       <div className="n">{d.name}</div>
       <div className="t">{d.team}</div>
       <div className="bar"><i style={{ width: `${health(b) * 100}%` }} /></div>
+      <DamageGlyph b={b} flip={color === 'blue'} />
+    </div>
+  );
+}
+
+/** white (whole) to red (gone) */
+const hurt = (h: number) => `hsl(${Math.round(Math.max(0, h) * 8 + 352) % 360}, ${Math.round((1 - Math.max(0, h)) * 85)}%, ${Math.round(100 - (1 - Math.max(0, h)) * 48)}%)`;
+
+/** The robot from above, nose right, each armour face coloured by its health; then drive, weapon and battery. */
+function DamageGlyph({ b, flip }: { b: BotView; flip: boolean }) {
+  const p = b.panels, i = b.internals;
+  const drive = Math.min(i.driveL, i.driveR);
+  const sys = (h: number, warn: number) => (h <= 0 ? '#e5232f' : h < warn ? '#f2c400' : '#e8e8e8');
+  return (
+    <div className={`dmg-glyph${flip ? ' flip' : ''}`} title="armour from above (nose right), drive, weapon, battery">
+      <svg viewBox="0 0 44 26" width="57" height="34">
+        <rect x="9" y="7" width="26" height="12" fill={hurt(p.top)} />
+        <polygon points="3,3 41,3 35,7 9,7" fill={hurt(p.left)} />
+        <polygon points="3,23 41,23 35,19 9,19" fill={hurt(p.right)} />
+        <polygon points="41,3 41,23 35,19 35,7" fill={hurt(p.front)} />
+        <polygon points="3,3 3,23 9,19 9,7" fill={hurt(p.rear)} />
+        <rect x="3" y="3" width="38" height="20" fill="none" stroke="#000" strokeOpacity="0.5" />
+      </svg>
+      <svg viewBox="0 0 54 18" width="70" height="23">
+        <g fill="none" stroke={sys(drive, 0.6)} strokeWidth="2.2"><circle cx="9" cy="9" r="6" /><circle cx="9" cy="9" r="1.6" fill={sys(drive, 0.6)} /></g>
+        <path d="M27 2 L31 7 L36 9 L31 11 L27 16 L23 11 L18 9 L23 7 Z" fill={sys(i.weapon, 0.5)} />
+        <g fill={b.onFire ? '#ff7a1a' : sys(i.battery, 0.7)}><rect x="41" y="4" width="11" height="11" rx="1" /><rect x="44" y="2" width="5" height="2" /></g>
+      </svg>
     </div>
   );
 }
