@@ -87,5 +87,5 @@ describe('seeded AI matches', () => {
     }
     expect(fallback).toBe(0);
     expect(judges).toBeGreaterThan(0);
-  }, 300_000);
+  }, 600_000); // ~230s on a busy box; 5 min timed out when the machine was loaded (#11)
 });
