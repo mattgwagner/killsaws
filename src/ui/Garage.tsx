@@ -125,6 +125,11 @@ export function Garage({ onBack, onTest }: { onBack: () => void; onTest: (d: Bot
           {d.chassis.wedgeLength > 0 && <Num label="Wedge length" unit="in" value={d.chassis.wedgeLength / IN} min={2} max={16} step={0.5} on={(v) => up((x) => { x.chassis.wedgeLength = v * IN; })} />}
           <Num label="Nose width" unit="%" value={(d.chassis.noseTaper ?? 1) * 100} min={25} max={100} step={5} on={(v) => up((x) => { x.chassis.noseTaper = v / 100; })} />
           <Check label="Hinged forks / wedgelets" value={!!d.chassis.forks} on={(v) => up((x) => { x.chassis.forks = v; })} />
+          {d.drive.wheels === 2 && (
+            <Check label="Stabilizing legs (axle-centre two-wheelers like HUGE)" value={!!d.chassis.stabilizers} on={(v) => up((x) => {
+              x.chassis.stabilizers = v ? { span: Math.max(0.15, x.drive.wheelDiameter * 0.4), strut: 0.038, offsetZ: x.chassis.width * 0.2 } : undefined;
+            })} />
+          )}
           <div className="field"><span>Self-righter</span><Pick value={d.chassis.selfRighter ?? 'none'} options={['none', 'arm', 'pole', 'torque']} on={(v) => up((x) => { x.chassis.selfRighter = v === 'none' ? undefined : v as 'arm'; })} /><span /></div>
           <div className="field"><span>Frame</span><Mat value={d.chassis.frame} on={(v) => up((x) => { x.chassis.frame = v; })} /><Thick v={d.chassis.frameThickness} on={(v) => up((x) => { x.chassis.frameThickness = v; })} /></div>
 

@@ -106,6 +106,9 @@ export interface BotDesign {
     armor: { front: Panel; rear: Panel; sides: Panel; top: Panel; bottom: Panel };
     /** arm = powered srimech; pole = passive roll-over bar; torque = weapon spin-up torque rolls it back */
     selfRighter?: 'arm' | 'pole' | 'torque';
+    /** stabilizing legs (HUGE): A-frames splayed from under the body to the floor, ahead of and behind the
+     *  axle, so a two-wheeler's body can't spin around its axle. They swing over when it is flipped. Metres. */
+    stabilizers?: { span: number; strut: number; offsetZ: number };
     forks?: boolean; // hinged wedgelets that drag the floor
     /** front face width as a fraction of the body (tapered nose) */
     noseTaper?: number;
@@ -243,6 +246,11 @@ export function computeStats(d: BotDesign): DerivedStats {
   if (d.chassis.selfRighter === 'pole') items.push({ label: 'Self-righting pole', kg: 1.6 });
   if (d.secondary) items.push({ label: d.secondary.type === 'lifter' ? 'Lifting arm drive' : 'Sliding weapon carriage', kg: d.secondary.systemMass });
   if (d.flame) items.push({ label: 'Flamethrower (propane, cosmetic)', kg: 1.8 });
+  if (d.chassis.stabilizers) {
+    const s = d.chassis.stabilizers;
+    const reach = d.chassis.height / 2 + d.chassis.clearance;
+    items.push({ label: 'Stabilizing legs, 4 x UHMW struts', kg: 4 * 940 * s.strut * s.strut * Math.hypot(s.span, reach) * 1.6 });
+  }
   if (d.chassis.forks) items.push({ label: 'Hinged forks / wedgelets', kg: 2.2 });
 
   const w = d.weapon;

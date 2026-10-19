@@ -5,7 +5,7 @@
 import * as THREE from 'three';
 import { ConvexGeometry } from 'three/examples/jsm/geometries/ConvexGeometry.js';
 import { BotDesign, isVertical, wheelCenterY } from '../sim/design';
-import { chassisHull } from '../sim/bot';
+import { chassisHull, stabilizerStruts } from '../sim/bot';
 import { paintTexture, textTexture } from './textures';
 import { IN } from '../sim/parts';
 import { blueprintGeometry, deckPlate } from './blueprintMesh';
@@ -31,6 +31,8 @@ export interface BotMesh {
   armRange?: [number, number];
   /** flame nozzle in the arm's frame (Blacksmith's flaming hammer head) */
   headFlame?: THREE.Vector3;
+  /** stabilizer legs group (swings over when the robot is flipped) */
+  legs?: THREE.Object3D | null;
 }
 
 const std = (color: string | number, metal = 0.2, rough = 0.5, extra: Partial<THREE.MeshPhysicalMaterialParameters> = {}) =>
@@ -953,6 +955,26 @@ export function buildBot(d: BotDesign): BotMesh {
       lidRoot.add(eye);
     }
   }
+  // stabilizing legs (HUGE): white UHMW struts from under the body to skids just off the floor,
+  // built from the same strut list as the colliders; the group swings over when the robot is flipped
+  let legs: THREE.Object3D | null = null;
+  const struts = stabilizerStruts(d);
+  if (struts.length) {
+    legs = new THREE.Group();
+    const legMat = std('#eeeeea', 0.05, 0.6);
+    for (const st of struts) {
+      const a = new THREE.Vector3(st.a.x, st.a.y, st.a.z), b = new THREE.Vector3(st.b.x, st.b.y, st.b.z);
+      const len = a.distanceTo(b);
+      const bar = box(len, st.strut, st.strut, legMat);
+      bar.position.copy(a).add(b).multiplyScalar(0.5);
+      bar.rotation.z = Math.atan2(b.y - a.y, b.x - a.x);
+      legs.add(bar);
+      const pad = box(st.strut * 2.4, st.strut * 0.6, st.strut * 2.4, legMat);
+      pad.position.set(b.x, b.y - st.strut * 0.4, b.z);
+      legs.add(pad);
+    }
+    body.add(legs);
+  }
 
   // flame nozzle location (front top)
   const flameNozzle = d.flame ? new THREE.Vector3(hx + 0.03, hy + 0.05, f.has('flame-hammer') ? 0 : hz * 0.3) : null;
@@ -961,13 +983,14 @@ export function buildBot(d: BotDesign): BotMesh {
   body.add(damage);
 
   return {
-    root, body, wheels, rotor, rotorAxis, arm, armKind, saw, slide, secondaryArm, flameNozzle, glow, paint, damage, armRange, headFlame,
+    root, body, wheels, rotor, rotorAxis, arm, armKind, saw, slide, secondaryArm, flameNozzle, glow, paint, damage, armRange, headFlame, legs,
     hullHalf: new THREE.Vector3(hx, hy, hz),
   };
 }
 
 /** Pose the moving parts from the sim view. */
-export function poseBot(m: BotMesh, d: BotDesign, v: { weaponAngle: number; actuator: number; saw: number; wheels: { angle: number; attached: boolean }[] }, slidePos = 0, secondary = 0) {
+export function poseBot(m: BotMesh, d: BotDesign, v: { weaponAngle: number; actuator: number; saw: number; wheels: { angle: number; attached: boolean }[]; inverted?: boolean }, slidePos = 0, secondary = 0) {
+  if (m.legs) m.legs.rotation.x = v.inverted ? Math.PI : 0;
   v.wheels.forEach((w, i) => {
     const g = m.wheels[i];
     if (!g) return;

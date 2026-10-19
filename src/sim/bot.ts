@@ -159,6 +159,9 @@ export class BotRuntime {
   immobileTime = 0;
 
   private tags: TagMap;
+  /** stabilizer legs swing over to whichever side is down */
+  private legColliders: Collider[] = [];
+  legsFlipped = false;
   /** belly skids (2WD bots ride on these, like the real ones' front skids) */
   readonly skids: V3[] = [];
   private k: number;
@@ -203,6 +206,15 @@ export class BotRuntime {
       .setContactForceEventThreshold(this.mass * 9.81 * 12);
     this.chassisCollider = world.createCollider(cd, this.body);
     tags.set(this.chassisCollider.handle, { bot: this, part: 'chassis' });
+    // stabilizing legs: UHMW skids on steel, so they slide without steering
+    for (const pts of chassisHulls(design).slice(1)) {
+      const td = RAPIER.ColliderDesc.convexHull(pts);
+      if (!td) continue;
+      td.setDensity(0).setFriction(0.15).setRestitution(0.1).setCollisionGroups(COLLIDE.chassis);
+      const tc = world.createCollider(td, this.body);
+      tags.set(tc.handle, { bot: this, part: 'chassis' });
+      this.legColliders.push(tc);
+    }
 
     if (ch.forks) {
       for (const s of [-1, 1]) {
@@ -239,7 +251,7 @@ export class BotRuntime {
         });
       }
     }
-    if (d.wheels === 2) {
+    if (d.wheels === 2 && !ch.stabilizers) {
       // two-wheelers rest on a skid at each end of the belly instead of nosing into the floor
       const belly = -ch.height / 2 - ch.clearance + 0.0025;
       const front = ch.wedgeLength > 0 ? ch.length / 2 + ch.wedgeLength * 0.6 : ch.length / 2 - 0.02;
@@ -356,6 +368,27 @@ export class BotRuntime {
       const l = -(t - u), r = -(t + u);
       const mm = Math.max(1, Math.abs(l), Math.abs(r));
       left = l / mm; right = r / mm;
+    }
+
+    // stabilizer legs hang toward the floor: when the robot is flipped they swing over
+    if (this.legColliders.length && this.inverted !== this.legsFlipped) {
+      this.legsFlipped = this.inverted;
+      const q = this.legsFlipped ? { x: 1, y: 0, z: 0, w: 0 } : { x: 0, y: 0, z: 0, w: 1 };
+      for (const c of this.legColliders) c.setRotationWrtParent(q);
+    }
+
+    // flexible stabilizing legs spring back under the robot: past ~17 degrees of pitch about the axle
+    // they push it back toward level (whichever side is down), instead of letting it balance on end
+    if (d.chassis.stabilizers && this.wheels.some((w) => w.contact)) {
+      const f = this.forward;
+      let pitch = Math.asin(clamp(f.y, -1, 1));
+      if (this.legsFlipped) pitch = -pitch;
+      const axle = this.dirWorld(v3(0, 0, 1));
+      const k = this.mass * 9.81 * d.chassis.stabilizers.span;
+      const excess = Math.sign(pitch) * Math.max(0, Math.abs(pitch) - 0.3);
+      const wz = dot(this.body.angvel() as V3, axle);
+      const tq = -(this.legsFlipped ? -1 : 1) * k * excess - 0.15 * k * wz * (Math.abs(pitch) > 0.3 ? 1 : 0);
+      this.body.applyTorqueImpulse(scale(axle, tq * dt), true);
     }
 
     // ---- wheels ----
@@ -578,7 +611,8 @@ export class BotRuntime {
     if (this.dead || this.tappedOut) return false;
     if (this.internals.electronics <= 0 || this.internals.battery <= 0) return false;
     if (this.internals.driveL <= 0 && this.internals.driveR <= 0) return false;
-    if (this.onSide) return false;
+    // (a robot truly on its side has its axle vertical, so its wheels already lose contact below;
+    //  judging by the body's up-vector alone wrongly counted HUGE out when it stood on end with both wheels down)
     if (this.inverted && !this.stats.invertible) return false;
     return this.wheels.some((w) => w.attached && w.contact);
   }
@@ -607,6 +641,34 @@ export class BotRuntime {
 
 export interface StepContext {
   tags: TagMap;
+}
+
+/** HUGE's stabilizing legs as struts (body frame, metres): from under the body to just off the floor,
+ *  one ahead of and one behind the axle on each side of the weapon. Drawn upright; flipped with the bot. */
+export function stabilizerStruts(d: BotDesign) {
+  const s = d.chassis.stabilizers;
+  if (!s) return [];
+  // skid pads (half a strut below the tip line) ride 8 mm off the floor when level
+  const reach = d.chassis.height / 2 + d.chassis.clearance - 0.008 - s.strut / 2;
+  const out: { a: V3; b: V3; strut: number }[] = [];
+  for (const z of [-s.offsetZ, s.offsetZ]) for (const x of [-s.span, s.span]) {
+    out.push({ a: v3(0, -d.chassis.height / 2, z), b: v3(x, -reach, z), strut: s.strut });
+  }
+  return out;
+}
+
+/** Every convex piece of the chassis collider: the hull, plus one hull per stabilizer strut. */
+export function chassisHulls(d: BotDesign): Float32Array[] {
+  const out = [chassisHull(d)];
+  for (const st of stabilizerStruts(d)) {
+    const h = st.strut / 2;
+    const pts: number[] = [];
+    for (const p of [st.a, st.b]) for (const dy of [-h, h]) for (const dz of [-h, h]) pts.push(p.x, p.y + dy, p.z + dz);
+    // a wider UHMW skid pad at the tip
+    for (const dx of [-h * 2, h * 2]) for (const dz of [-h * 2, h * 2]) pts.push(st.b.x + dx, st.b.y - h, st.b.z + dz);
+    out.push(new Float32Array(pts));
+  }
+  return out;
 }
 
 /** Convex hull points for the chassis, in body frame. */

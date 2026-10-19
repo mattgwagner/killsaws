@@ -45,6 +45,8 @@ interface Spec {
   /** real silhouette; overrides L/W/H/clear/shape/wedge */
   bp?: Blueprint;
   axleStubs?: number; // in
+  /** stabilizing legs: fore/aft span of the tips, strut size, offset either side of the weapon (in) */
+  stabilizers?: [number, number, number];
 }
 
 function spinner(o: {
@@ -74,7 +76,7 @@ function build(s: Spec): BotDesign {
     chassis: {
       shape: s.shape ?? 'box', length: s.L * IN, width: s.W * IN, height: s.H * IN, clearance: (s.clear ?? 0.5) * IN,
       wedgeLength: (s.wedge ?? 0) * IN, frame: s.frame ?? 'al7075', frameThickness: 6, armor: s.armor,
-      selfRighter: s.selfRighter, forks: s.forks, noseTaper: s.noseTaper, invertibleOverride: s.invertible, blueprint: s.bp,
+      selfRighter: s.selfRighter, forks: s.forks, stabilizers: s.stabilizers ? { span: s.stabilizers[0] * IN, strut: s.stabilizers[1] * IN, offsetZ: s.stabilizers[2] * IN } : undefined, noseTaper: s.noseTaper, invertibleOverride: s.invertible, blueprint: s.bp,
     },
     drive: {
       wheels: s.wheels, wheelDiameter: s.wheelDia * IN, wheelWidth: ww * IN, tire: s.tire ?? 'colson', motor: dm,
@@ -253,8 +255,8 @@ const SPECS: Spec[] = [
     id: 'huge', name: 'HUGE', team: 'Team HUGE',
     L: 8, W: 30, H: 5, clear: 17.5, shape: 'box',
     armor: { front: P('uhmw', 20), rear: P('uhmw', 20), sides: P('uhmw', 20), top: P('uhmw', 15), bottom: P('uhmw', 15) },
-    wheels: 2, wheelDia: 40, wheelWidth: 1.75, track: 33, axleStubs: 6, tire: 'uhmw-disc', topMph: 15, driveMotor: 'bl80-150', invertible: true,
-    weapon: spinner({ style: 'vertical-bar', lb: 35, dia: 26, width: 3, teeth: 2, tooth: 1.5, rpm: rpmAt(180, 26), motor: 'bl80100-130', motors: 1, mountX: 0, mountY: 0 }),
+    wheels: 2, wheelDia: 40, wheelWidth: 1.75, track: 33, axleStubs: 6, stabilizers: [16, 1.5, 6], tire: 'uhmw-disc', topMph: 15, driveMotor: 'bl80-150', invertible: true,
+    weapon: spinner({ style: 'vertical-bar', lb: 35, dia: 26, width: 3, teeth: 2, tooth: 1.5, rpm: rpmAt(180, 26), motor: 'bl80100-130', motors: 1, mountX: 0, mountY: 0, dir: -1 }),
     look: { primary: '#f2f2ee', secondary: '#e2e2de', accent: '#24406b', logo: 'HUGE', features: ['uhmw-wheels', 'axle-stubs'], tireColor: '#f2f2ee' },
   },
   {
