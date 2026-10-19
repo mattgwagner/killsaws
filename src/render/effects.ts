@@ -75,6 +75,19 @@ export class Effects {
     }
   }
 
+  /** A slow, long-lived column puff (LiPo fire smoke): rises steadily for several metres. */
+  plume(pos: THREE.Vector3, amount: number, shade = 0.82, size = 0.35) {
+    for (let i = 0; i < amount; i++) {
+      if (this.puffs.length >= MAX_PUFFS) this.puffs.shift();
+      const g = shade + Math.random() * 0.08;
+      this.puffs.push({
+        p: pos.clone().add(new THREE.Vector3((Math.random() - 0.5) * 0.12, 0, (Math.random() - 0.5) * 0.12)),
+        v: new THREE.Vector3((Math.random() - 0.5) * 0.25, 1.1 + Math.random() * 0.5, (Math.random() - 0.5) * 0.25),
+        life: 5 + Math.random() * 2, max: 7, size: size * (0.7 + Math.random() * 0.6), color: new THREE.Color(g, g, g * 1.02), additive: false,
+      });
+    }
+  }
+
   fire(pos: THREE.Vector3, dir: THREE.Vector3, amount: number, green = false) {
     for (let i = 0; i < amount; i++) {
       if (this.puffs.length >= MAX_PUFFS) this.puffs.shift();
@@ -217,10 +230,10 @@ export class FloorScars {
     this.ctx.stroke();
     this.dirty = true;
   }
-  rubber(x: number, z: number, w: number) {
+  rubber(x: number, z: number, w: number, alpha = 0.035) {
     const [px, py] = this.toPx(x, z);
     const s = (w / this.size) * this.ctx.canvas.width;
-    this.ctx.fillStyle = 'rgba(8,8,8,0.035)';
+    this.ctx.fillStyle = `rgba(8,8,8,${alpha})`;
     this.ctx.fillRect(px - s / 2, py - s / 2, s, s);
     this.dirty = true;
   }
