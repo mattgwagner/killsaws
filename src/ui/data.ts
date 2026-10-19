@@ -13,11 +13,15 @@ export const LORE = loreJson as Lore[];
 export const loreFor = (id: string) => LORE.find((l) => l.id === id);
 
 const KEY = 'killsaws.custom.v1';
+// JSON has no Infinity: unlimited shots (flywheel, electric) travel as 'Infinity' in saves and share codes.
+// Saves from before that held null, which would leave the flipper unable to fire.
+export const infinityReplacer = (_k: string, v: unknown) => (v === Infinity ? 'Infinity' : v);
+export const infinityReviver = (k: string, v: unknown) => (v === 'Infinity' || (k === 'shots' && v === null) ? Infinity : v);
 export function loadCustom(): BotDesign[] {
-  try { return JSON.parse(localStorage.getItem(KEY) ?? '[]'); } catch { return []; }
+  try { return JSON.parse(localStorage.getItem(KEY) ?? '[]', infinityReviver); } catch { return []; }
 }
 export function saveCustom(list: BotDesign[]) {
-  try { localStorage.setItem(KEY, JSON.stringify(list)); } catch { /* private mode */ }
+  try { localStorage.setItem(KEY, JSON.stringify(list, infinityReplacer)); } catch { /* private mode */ }
 }
 export function allBots(): BotDesign[] {
   return [...ROSTER, ...loadCustom()];
@@ -48,7 +52,7 @@ export const WEAPON_LABEL: Record<string, string> = {
 export function weaponLabel(d: BotDesign) {
   const w = d.weapon;
   if (w.type === 'spinner') return WEAPON_LABEL[w.style];
-  if (w.type === 'flipper') return `${w.actuator === 'pneumatic' ? 'Pneumatic' : w.actuator === 'hydraulic' ? 'Hydraulic' : 'Electric'} ${w.style}`;
+  if (w.type === 'flipper') return `${w.actuator === 'pneumatic' ? 'Pneumatic' : w.actuator === 'hydraulic' ? 'Hydraulic' : w.actuator === 'flywheel' ? 'Flywheel' : 'Electric'} ${w.style}`;
   if (w.type === 'hammer') return WEAPON_LABEL[w.style];
   return WEAPON_LABEL[w.type];
 }

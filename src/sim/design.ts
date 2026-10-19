@@ -39,13 +39,14 @@ export interface SpinnerWeapon {
 export interface FlipperWeapon {
   type: 'flipper';
   style: 'flipper' | 'lifter';
-  actuator: 'pneumatic' | 'electric' | 'hydraulic';
-  /** Energy delivered to the target per full shot (J). */
+  /** flywheel: a motor-driven flywheel dumps its energy into the plate through a clutch (Blip) */
+  actuator: 'pneumatic' | 'electric' | 'hydraulic' | 'flywheel';
+  /** Energy delivered to the target per full shot (J). For a flywheel, a shot at full flywheel speed. */
   energy: number;
   plateLength: number; // m
   plateWidth: number; // m
-  shots: number; // gas supply (pneumatic) or Infinity for electric
-  cooldown: number; // s between fires
+  shots: number; // gas supply (pneumatic) or Infinity for electric / hydraulic / flywheel
+  cooldown: number; // s between fires; for a flywheel, the re-spin to full speed (an early shot is weaker, not blocked)
   systemMass: number; // kg: tank, valve, ram, plate
 }
 
@@ -436,7 +437,7 @@ export function runtimeMinutes(d: BotDesign) {
   const driveW = 2 * d.drive.motorsPerSide * dm.maxCurrent * s.nominalV * 0.12;
   let weaponW = 0;
   if (d.weapon.type === 'spinner' && s.weapon) weaponW = (s.weapon.energyKJ * 1000) / 12 + (d.weapon.motor === 'ice-engine' ? 0 : 400);
-  if (d.weapon.type === 'flipper' && d.weapon.actuator !== 'pneumatic') weaponW = 300;
+  if (d.weapon.type === 'flipper' && d.weapon.actuator !== 'pneumatic') weaponW = d.weapon.actuator === 'flywheel' ? 500 : 300;
   if (d.weapon.type === 'hammer' || d.weapon.type === 'crusher') weaponW = 500;
   return (s.batteryWh * 0.8) / (driveW + weaponW + 40) * 60;
 }

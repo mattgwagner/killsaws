@@ -7,6 +7,7 @@ import type RAPIERNS from '@dimforge/rapier3d-compat';
 import { RAPIER, COLLIDE } from './physics';
 import { ActuatorState, BotRuntime, Face, ColliderTag, Internals, TagMap } from './bot';
 import { MATERIALS } from './parts';
+import type { FlipperWeapon } from './design';
 import { V3, add, clamp, cross, dot, len, madd, norm, rotate, scale, sub, v3 } from './vec';
 
 type Collider = RAPIERNS.Collider;
@@ -336,7 +337,7 @@ function overlapBots(ctx: CombatContext, a: BotRuntime, center: V3, half: V3) {
 
 interface FlipperLike {
   style: 'flipper' | 'lifter';
-  actuator: 'pneumatic' | 'electric' | 'hydraulic';
+  actuator: FlipperWeapon['actuator'];
   energy: number; plateLength: number; plateWidth: number; cooldown: number;
 }
 
@@ -346,6 +347,8 @@ function runFlipper(ctx: CombatContext, a: BotRuntime, act: ActuatorState, w: Fl
   if (act.phase === 'rest' && pressed && working && act.cooldown <= 0 && act.shots > 0) {
     act.phase = 'firing'; act.timer = 0; act.struck = false;
     if (w.actuator === 'pneumatic') act.shots--;
+    // the clutch dumps whatever the flywheel holds into this shot; it re-spins from empty
+    if (w.actuator === 'flywheel') { act.shotPower = act.charge ?? 0; act.charge = 0; }
   }
   if (act.phase === 'firing') {
     const rise = w.style === 'lifter' ? 0.45 : 0.07;
@@ -382,7 +385,8 @@ function runFlipper(ctx: CombatContext, a: BotRuntime, act: ActuatorState, w: Fl
   } else if (act.phase === 'returning') {
     act.timer += dt;
     act.pos = Math.max(0, 1 - act.timer / 0.5);
-    if (act.pos <= 0) { act.phase = 'rest'; act.cooldown = w.cooldown; }
+    // a flywheel never blocks the trigger: its cooldown is the re-spin, paid as a weaker next shot
+    if (act.pos <= 0) { act.phase = 'rest'; act.cooldown = w.actuator === 'flywheel' ? 0 : w.cooldown; }
   }
 }
 
@@ -400,6 +404,13 @@ export function actuatorStep(ctx: CombatContext, a: BotRuntime, dt: number) {
   const up = a.up;
 
   if (w.type === 'flipper') {
+    if (w.actuator === 'flywheel') {
+      // the weapon motor re-spins the flywheel: full speed in `cooldown` seconds, slower as the motor is hurt
+      if (working) act.charge = Math.min(1, (act.charge ?? 0) + (dt * a.internals.weapon) / w.cooldown);
+      // energy is read when the plate lands, after the trigger has set this shot's share of the flywheel
+      if (pressed || act.phase !== 'rest') runFlipper(ctx, a, act, { ...w, get energy() { return w.energy * (act.shotPower ?? 0); } }, pressed, working, dt);
+      return;
+    }
     runFlipper(ctx, a, act, w, pressed, working, dt);
     return;
   }

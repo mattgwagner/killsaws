@@ -1697,5 +1697,135 @@
   "sources": [
    "https://battlebots.fandom.com/wiki/MadCatter"
   ]
+ },
+ {
+  "id": "blip",
+  "name": "Blip",
+  "team": "Seems Reasonable Robotics",
+  "captain": "Aren Hill",
+  "hometown": "Mountain View, CA",
+  "debut": "World Championship VI (2021)",
+  "weaponType": "flipper",
+  "weapon": "A rear-hinged flipper with no pneumatics. A 16 lb internal flywheel spinning at around 9,000 rpm stores the energy; solenoids engage a clutch that twists a bundle of greased Dyneema cord (over 400 windings, about a quarter of a mile of string), which yanks the flipper up in about four hundredths of a second. With no gas to run out of, it fires as often as the flywheel can re-spin, and it self-rights with the same flipper. Ran twin forks, hinged 'piano key' wedgelets or extra armor depending on the opponent.",
+  "armor": [
+   "Titanium underside (bent with help from Team Whyachi)",
+   "Armor materials shared with Tantrum",
+   "Tegris wings (vs Hydra, WC VI)"
+  ],
+  "giantNuts": [],
+  "runnerUp": [],
+  "awards": [
+   "Grant Imahara Award for Best Design (World Championship VI)"
+  ],
+  "records": [
+   "First debuting robot of the 2021 season to reach 3-0",
+   "18 flips in one fight (vs Valkyrie), the highest 14 ft off the floor",
+   "Heaviest load flipped: 946 lb",
+   "9-6 overall (8-6 competitive)"
+  ],
+  "fights": [
+   {
+    "opponent": "Rusty",
+    "season": "World Championship VI (2021)",
+    "summary": "Debut. Launched Rusty across the BattleBox, then threw it onto the Pulverizer, which peeled its top armor off. Counted out.",
+    "result": "Won (KO)"
+   },
+   {
+    "opponent": "Overhaul",
+    "season": "World Championship VI (2021)",
+    "summary": "Overhaul flipped Blip first; Blip self-righted almost at once, then kept flipping Overhaul until it was stuck on its side against the wall missing both rear tires.",
+    "result": "Won (KO)"
+   },
+   {
+    "opponent": "Lock-Jaw",
+    "season": "World Championship VI (2021)",
+    "summary": "Ran 'piano key' wedgelets. Breached Lock-Jaw's ground clearance and flipped it repeatedly, including onto the new arena hazard, to go 3-0.",
+    "result": "Won (JD)"
+   },
+   {
+    "opponent": "Valkyrie",
+    "season": "World Championship VI (2021)",
+    "summary": "Round of 32. Valkyrie's disk died ten seconds in; Blip landed 18 flips and the last one beached Valkyrie on the wall.",
+    "result": "Won (KO)"
+   },
+   {
+    "opponent": "JackPot",
+    "season": "World Championship VI (2021)",
+    "summary": "Round of 16. Flipped JackPot onto its own disks and fired again against the Pulverizer; with a fork stuck up, JackPot could not right itself.",
+    "result": "Won (KO)"
+   },
+   {
+    "opponent": "Hydra",
+    "season": "World Championship VI (2021)",
+    "summary": "Quarter-final, flipper vs flipper. Hydra won the ground game and threw Blip twice; Blip kept twisting through the air trying to self-right, then got high-centered on the Upper Deck screws with a buckled wheel.",
+    "result": "Lost (KO)"
+   },
+   {
+    "opponent": "Big Dill",
+    "season": "World Championship VI (2021)",
+    "summary": "Exhibition. Carried Big Dill to the middle and launched it, then a deliberately soft flip followed by a full one spiked Big Dill into the Upper Deck.",
+    "result": "Won (KO)"
+   },
+   {
+    "opponent": "Whiplash",
+    "season": "re:MARS all:STARS (2022)",
+    "summary": "17 throws; one was estimated at 12 to 16 ft. Shattered Whiplash's arm gearbox and cracked its chassis before the last throw left it on the Upper Deck.",
+    "result": "Won (KO)"
+   },
+   {
+    "opponent": "HyperShock",
+    "season": "re:MARS all:STARS (2022)",
+    "summary": "Flipped HyperShock once, then stopped dead when its batteries desoldered.",
+    "result": "Lost (KO)"
+   },
+   {
+    "opponent": "End Game",
+    "season": "World Championship VII (2022)",
+    "summary": "Pinned End Game early, but End Game's uppercuts stripped Blip's wedgelets and threw it twice. Blip self-righted each time but had no ground game left.",
+    "result": "Lost (JD)"
+   },
+   {
+    "opponent": "HUGE",
+    "season": "World Championship VII (2022)",
+    "summary": "Flipped HUGE, then got HUGE's blade embedded in its flipper panel. After the unstick the flipper no longer worked.",
+    "result": "Lost (JD)"
+   },
+   {
+    "opponent": "Tantrum",
+    "season": "World Championship VII (2022)",
+    "summary": "The first competitive fight between two robots from the same team. Blip flipped the defending champion in front of its own drivers and finished by throwing it onto the Upper Deck.",
+    "result": "Won (JD)"
+   },
+   {
+    "opponent": "Banshee",
+    "season": "World Championship VII (2022)",
+    "summary": "A metal block on the flipper kept it from getting under Banshee for most of the fight; a late run of flips sealed a 2-2 record.",
+    "result": "Won (JD)"
+   },
+   {
+    "opponent": "SawBlaze",
+    "season": "World Championship VII (2022)",
+    "summary": "Round of 32. An early hit disabled the weapon solenoid, so Blip fought as a wedge and took about a dozen hammer-saw strikes. Zero flips.",
+    "result": "Lost (JD)"
+   },
+   {
+    "opponent": "Black Dragon",
+    "season": "BattleBots: Champions II (2023)",
+    "summary": "Flipped Black Dragon twice, but a drive speed controller caught fire and Aren Hill conceded.",
+    "result": "Lost (KO)"
+   }
+  ],
+  "trivia": "Originally called MoonShot, renamed to avoid a space-theme clash with Orion. A sticker on the underside reads #FlipWithBlip, and a big wind-up key locks the weapon. The cord bundle was rebuilt after every WC VI fight. The WC VI chassis later fought as 'Fat Tail' in a Mark Rober vs Dude Perfect video.",
+  "selfRighting": "With the flipper; struggled to self-right in the corner against Hydra",
+  "uncertain": [
+   "weaponSpecs.storedEnergy",
+   "drive.topSpeedMph",
+   "armor.dimensionsIn"
+  ],
+  "sources": [
+   "https://battlebots.fandom.com/wiki/Blip",
+   "https://www.facebook.com/tantrum.battlebot/posts/1460678624272608",
+   "https://www.youtube.com/watch?v=P4gNS0Iiu0Q"
+  ]
  }
 ]

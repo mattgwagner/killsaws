@@ -9,7 +9,7 @@ import {
 import { IN, LB, MATERIALS, MOTORS, MaterialId, MotorId, TIRES, TireId, batteryMaxCurrent } from '../sim/parts';
 import { ROSTER } from '../sim/roster';
 import { buildBot, poseBot } from '../render/botmesh';
-import { loadCustom, saveCustom, weaponLabel } from './data';
+import { infinityReplacer, infinityReviver, loadCustom, saveCustom, weaponLabel } from './data';
 
 const clone = (d: BotDesign): BotDesign => structuredClone(d);
 
@@ -39,6 +39,13 @@ function defaultWeapon(kind: string, d: BotDesign): Weapon {
   return { type: 'none' };
 }
 
+/** Flipper power sources: what each one weighs and what it costs you in the fight. */
+const FLIPPER_ACTUATORS: Record<'pneumatic' | 'hydraulic' | 'flywheel', { label: string; shots: number; cooldown: number; systemMass: number; cost: string }> = {
+  pneumatic: { label: 'Pneumatic (CO₂)', shots: 20, cooldown: 1.2, systemMass: 26, cost: 'Every shot spends gas: when the tank is empty the flipper is dead weight.' },
+  hydraulic: { label: 'Hydraulic (Hydra)', shots: Infinity, cooldown: 3.6, systemMass: 26, cost: 'A pump never runs out, but the ram is slow to reset between fires.' },
+  flywheel: { label: 'Flywheel + clutch (Blip)', shots: Infinity, cooldown: 1.5, systemMass: 30, cost: 'Never runs out: a motor re-spins a flywheel and a clutch dumps it into the plate. Heavier, draws from the battery, and a shot fired before the wheel is back up to speed is weaker. A hurt weapon motor re-spins slower.' },
+};
+
 export function Garage({ onBack, onTest }: { onBack: () => void; onTest: (d: BotDesign) => void }) {
   const [saved, setSaved] = useState<BotDesign[]>(loadCustom);
   const [d, setD] = useState<BotDesign>(() => saved[0] ? clone(saved[0]) : clone(BLANK));
@@ -55,14 +62,14 @@ export function Garage({ onBack, onTest }: { onBack: () => void; onTest: (d: Bot
     flash(stats.legal ? `Saved. ${nd.name} is in the Exhibition roster.` : `Saved, but ${nd.name} is over 250 lb and won't pass tech inspection.`);
   };
   const exportCode = async () => {
-    const code = 'KS1:' + btoa(unescape(encodeURIComponent(JSON.stringify(d, (_k, v) => (v === Infinity ? 'Infinity' : v)))));
+    const code = 'KS1:' + btoa(unescape(encodeURIComponent(JSON.stringify(d, infinityReplacer))));
     try { await navigator.clipboard.writeText(code); flash('Bot code copied. Paste it in Discord.'); } catch { prompt('Copy this bot code:', code); }
   };
   const importCode = () => {
     const code = prompt('Paste a KILLSAWS bot code (starts with KS1:)');
     if (!code?.startsWith('KS1:')) return;
     try {
-      const nd = JSON.parse(decodeURIComponent(escape(atob(code.slice(4)))), (_k, v) => (v === 'Infinity' ? Infinity : v)) as BotDesign;
+      const nd = JSON.parse(decodeURIComponent(escape(atob(code.slice(4)))), infinityReviver) as BotDesign;
       nd.id = `custom-${Date.now().toString(36)}`;
       setD(nd); flash(`Imported ${nd.name}. Save it to fight with it.`);
     } catch { flash("That code didn't decode."); }
@@ -172,8 +179,16 @@ export function Garage({ onBack, onTest }: { onBack: () => void; onTest: (d: Bot
             <>
               <Num label="Energy per shot" unit="kJ" value={w.energy / 1000} min={0.5} max={14} step={0.25} on={(v) => up((x) => { (x.weapon as typeof w).energy = v * 1000; })} />
               <Num label="Plate length" unit="in" value={w.plateLength / IN} min={8} max={40} step={0.5} on={(v) => up((x) => { (x.weapon as typeof w).plateLength = v * IN; })} />
+              {w.style === 'flipper' && (
+                <div className="field"><span>Actuator</span>
+                  <Pick value={w.actuator} options={Object.keys(FLIPPER_ACTUATORS)}
+                    labels={Object.values(FLIPPER_ACTUATORS).map((a) => `${a.label} · ${(a.systemMass / LB).toFixed(0)} lb`)}
+                    on={(v) => up((x) => { const a = FLIPPER_ACTUATORS[v as keyof typeof FLIPPER_ACTUATORS]; Object.assign(x.weapon, { actuator: v, shots: a.shots, cooldown: a.cooldown, systemMass: a.systemMass }); })} /><span /></div>
+              )}
               {w.actuator === 'pneumatic' && <Num label="Gas (shots)" value={w.shots} min={4} max={40} step={1} on={(v) => up((x) => { (x.weapon as typeof w).shots = v; })} />}
+              {w.actuator === 'flywheel' && <Num label="Flywheel re-spin" unit="s" value={w.cooldown} min={1} max={2} step={0.1} on={(v) => up((x) => { (x.weapon as typeof w).cooldown = v; })} />}
               <Num label="System mass" unit="lb" value={w.systemMass / LB} min={10} max={100} step={1} on={(v) => up((x) => { (x.weapon as typeof w).systemMass = v * LB; })} />
+              {w.actuator in FLIPPER_ACTUATORS && <p className="flag">{FLIPPER_ACTUATORS[w.actuator as keyof typeof FLIPPER_ACTUATORS].cost}</p>}
             </>
           )}
           {w.type === 'hammer' && (

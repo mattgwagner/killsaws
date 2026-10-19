@@ -102,6 +102,9 @@ export interface ActuatorState {
   struck: boolean;
   lastFire: boolean;
   sawAngle: number;
+  /** flywheel flippers: stored energy as a fraction of a full-speed shot (0..1), and the fraction the current shot carries */
+  charge?: number;
+  shotPower?: number;
 }
 
 export class BotRuntime {

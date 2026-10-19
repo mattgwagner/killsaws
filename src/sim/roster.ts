@@ -450,6 +450,23 @@ const SPECS: Spec[] = [
     wheels: 2, wheelDia: 7, track: 18, topMph: 12, selfRighter: 'pole', packs: 1, ah: 8,
     weapon: spinner({ style: 'shell', lb: 120, dia: 47, width: 9, teeth: 2, tooth: 1.5, rpm: rpmAt(170, 47), motor: 'bl160-50', motors: 1, mountX: 0, mountY: 0, material: 'ar500' }),
     look: { primary: '#111111', secondary: '#9a9ea3', accent: '#ff7a1a', logo: 'GIGABYTE', features: ['flames', 'wear-plates', 'pole'] },
+  },  {
+    id: 'blip', name: 'Blip', team: 'Seems Reasonable Robotics',
+    L: 32, W: 28, H: 10,
+    // low, wide wedge; the whole top is the rear-hinged flipper lid; twin forks on the nose (WC VI set-up).
+    // Dimensions are unpublished: sized from the team photos and Aren Hill's "about half Hydra's size" (estimate)
+    bp: {
+      outline: [[-16, -13], [-14, -14], [11, -14], [16, -12], [16, 12], [11, 14], [-14, 14], [-16, 13]],
+      // the lid is the wedge: hinged high at the back, sloping down to a thin nose.
+      // The slope's run (21.4 in) is the 23.6 in lid laid along the 10 in drop, so the lid lies on it
+      height: 10, clearance: 0.5, front: { at: -5.4, lip: 0.5, floor: true },
+    },
+    armor: { front: P('ar500', 8), rear: P('al7075', 8), sides: P('al7075', 8), top: P('al7075', 6), bottom: P('titanium', 5) },
+    wheels: 4, wheelDia: 6, wheelWidth: 2.5, wheelbase: 12, axleX: -6, driveMotor: 'bl56-inrunner', motorsPerSide: 1, topMph: 15, forks: true, invertible: false,
+    // 16 lb flywheel at ~9000 rpm dumped through a clutch into a twisted Dyneema cord: no gas limit.
+    // Shot energy and the 1.5 s re-spin are estimates (a 250 lb load thrown ~20 ft is ~7 kJ at the top)
+    weapon: { type: 'flipper', style: 'flipper', actuator: 'flywheel', energy: 9000, plateLength: 0.6, plateWidth: 0.6, shots: Infinity, cooldown: 1.5, systemMass: 30 },
+    look: { primary: '#1f74b8', secondary: '#1a1a1a', accent: '#ffffff', logo: 'BLIP', features: ['black-forks', 'sloped-lid', 'racing-stripes', 'cartoon-eyes'], tireColor: '#1b1b1b' },
   },
 ];
 

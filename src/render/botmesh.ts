@@ -188,7 +188,7 @@ export function buildBot(d: BotDesign): BotMesh {
 
   // forks / wedgelets
   if (d.chassis.forks) {
-    const forkMat = f.has('green-forks') || f.has('three-forks') || f.has('accent-forks') || f.has('crab-legs') ? accent : f.has('piano-keys') ? second : steel();
+    const forkMat = f.has('green-forks') || f.has('three-forks') || f.has('accent-forks') || f.has('crab-legs') ? accent : f.has('piano-keys') ? second : f.has('black-forks') ? std('#161616', 0.6, 0.5) : steel();
     const n = f.has('piano-keys') ? 6 : f.has('three-forks') ? 3 : f.has('crab-legs') ? 4 : 2;
     for (let i = 0; i < n; i++) {
       const zc = n === 2 ? (i === 0 ? -1 : 1) * W * 0.33 : (i / (n - 1) - 0.5) * W * 0.8;
@@ -884,6 +884,74 @@ export function buildBot(d: BotDesign): BotMesh {
     const glass = box(L * 0.6, 0.006, W * 0.5, new THREE.MeshPhysicalMaterial({ color: '#cde', transmission: 0.6, roughness: 0.1, transparent: true, opacity: 0.45 }));
     glass.position.set(-L * 0.1, hy + 0.008, 0);
     body.add(glass);
+  }
+
+  // Blip's lid is the wedge itself: hinge it at the top of the nose slope and lay it along the slope at rest
+  let lidRoot = arm;
+  if (f.has('sloped-lid') && arm && bp && d.weapon.type === 'flipper') {
+    const fr = frameOf(bp), pl = d.weapon.plateLength;
+    const tiltA = Math.asin(Math.min(1, (hy - fr.top(hx)) / pl));
+    arm.position.x = hx - pl * Math.cos(tiltA);
+    const tilt = new THREE.Group();
+    tilt.rotation.z = -tiltA;
+    // no scoop lip: the lid's own edge is the nose, and a lip pitched down from it would sit in the floor
+    tilt.add(...arm.children.filter((c) => !(c.position.x === pl && c.position.y < 0)));
+    arm.clear();
+    arm.add(tilt);
+    lidRoot = tilt;
+  }
+  if (f.has('racing-stripes') && lidRoot && d.weapon.type === 'flipper') {
+    // Blip: black-white-black stripes with a yellow square, down the lid (they ride up with the flip) and along each side
+    const pl = d.weapon.plateLength;
+    // the stripes take the lid's painted name (the real lid has none; the deck keeps the logo)
+    for (const c of [...lidRoot.children]) if (c instanceof THREE.Mesh && c.material instanceof THREE.MeshBasicMaterial) lidRoot.remove(c);
+    const black = std('#141414', 0.2, 0.5), white = std('#f2f2f2', 0.1, 0.45), yellow = std('#f2c230', 0.2, 0.45);
+    const lid = new THREE.Group();
+    lid.position.y = 0.0092;
+    for (const [z, w, m] of [[-0.035, 0.022, black], [0, 0.03, white], [0.035, 0.022, black]] as const) {
+      const st = box(pl * 0.98, 0.001, w, m);
+      st.position.set(pl / 2, 0, z);
+      lid.add(st);
+    }
+    const sq = box(0.03, 0.0015, 0.03, yellow);
+    sq.position.set(pl * 0.3, 0.0003, 0);
+    lid.add(sq);
+    lidRoot.add(lid);
+    if (bp) {
+      // side stripes run parallel to the sloped top, from the hinge forward while the side is still tall enough to hold them
+      const fr = frameOf(bp);
+      const x0 = fr.frontAt, x1 = Math.min(x0 + 0.45, hx - 0.2);
+      const ang = Math.atan2(fr.top(x0) - fr.top(x1), x1 - x0);
+      const xc = (x0 + x1) / 2, run = (x1 - x0) / Math.cos(ang);
+      for (const s of [-1, 1]) {
+        for (const [dy, w, m] of [[0.03, 0.018, black], [0.052, 0.024, white], [0.074, 0.018, black]] as const) {
+          const st = box(run, w, 0.002, m);
+          st.position.set(xc, fr.top(xc) - dy, s * (hz + 0.002));
+          st.rotation.z = -ang;
+          body.add(st);
+        }
+        const ys = box(0.028, 0.024, 0.003, yellow);
+        ys.position.set(x0 + 0.06, fr.top(x0 + 0.06) - 0.052, s * (hz + 0.003));
+        ys.rotation.z = -ang;
+        body.add(ys);
+      }
+    }
+  }
+  if (f.has('cartoon-eyes') && lidRoot && d.weapon.type === 'flipper') {
+    // Blip: two round cartoon eyes painted on the lid, looking forward
+    const pl = d.weapon.plateLength, pw = d.weapon.plateWidth;
+    for (const s of [-1, 1]) {
+      const eye = new THREE.Group();
+      eye.position.set(pl * (s < 0 ? 0.8 : 0.62), 0.0098, s * pw * 0.3);
+      const rim = new THREE.Mesh(new THREE.CircleGeometry(0.052, 28), std('#0a0a0a', 0, 0.6));
+      const white = new THREE.Mesh(new THREE.CircleGeometry(0.042, 28), std('#f4f4f4', 0, 0.4));
+      white.position.z = 0.0004;
+      const pupil = new THREE.Mesh(new THREE.CircleGeometry(0.024, 20), std('#0a0a0a', 0, 0.6));
+      pupil.position.set(0.012, 0, 0.0008);
+      for (const m of [rim, white, pupil]) eye.add(m);
+      eye.rotation.x = -Math.PI / 2;
+      lidRoot.add(eye);
+    }
   }
 
   // flame nozzle location (front top)
