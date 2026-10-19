@@ -133,6 +133,8 @@ export class BotRuntime {
   deckTime = 0;
   chassisCollider!: Collider;
   weaponCollider: Collider | null = null;
+  /** Floor-skimming vertical on an invertible bot: the swept cylinder drops the floor while flipped. */
+  private weaponDropsFloor = false;
 
   input: BotInput = { ...NO_INPUT };
   soc = 1;
@@ -293,13 +295,15 @@ export class BotRuntime {
       const halfWidth = w.width / 2;
       const shape = new RAPIER.Cylinder(halfWidth + 0.01, w.radius);
       const restLow = ch.clearance + ch.height / 2 + w.mountY - (vertical ? w.radius : halfWidth);
+      const ridesFloor = restLow < 0.03;
       const wcd = RAPIER.ColliderDesc.cylinder(halfWidth, w.radius * 0.97)
         .setTranslation(w.mountX, w.mountY, 0)
         .setRotation(shapeRotLocal)
         .setDensity(0).setFriction(0).setRestitution(0.1)
         .setFrictionCombineRule(RAPIER.CoefficientCombineRule.Min)
-        .setCollisionGroups(restLow < 0.03 ? COLLIDE.weapon : COLLIDE.weaponHigh);
+        .setCollisionGroups(ridesFloor ? COLLIDE.weapon : COLLIDE.weaponHigh);
       this.weaponCollider = world.createCollider(wcd, this.body);
+      if (ridesFloor && vertical && ch.invertibleOverride === true) this.weaponDropsFloor = true;
       tags.set(this.weaponCollider.handle, { bot: this, part: 'weapon' });
       this.spinner = {
         kind: 'spinner', omega: 0, angle: 0, on: false, inertia: rotorInertia(w), axisLocal,
@@ -368,6 +372,22 @@ export class BotRuntime {
       const l = -(t - u), r = -(t + u);
       const mm = Math.max(1, Math.abs(l), Math.abs(r));
       left = l / mm; right = r / mm;
+    }
+
+    // a swept vertical that skims the floor upright is the lowest point once flipped,
+    // and it holds every wheel in the air. Drop the floor while inverted, and keep
+    // it dropped until the cylinder has rotated clear, so the floor doesn't pop a deep overlap.
+    if (this.weaponCollider && this.weaponDropsFloor && this.spinner) {
+      const now = this.weaponCollider.collisionGroups();
+      let groups = this.inverted ? COLLIDE.weaponHigh : COLLIDE.weapon;
+      if (!this.inverted && now === COLLIDE.weaponHigh) {
+        const ax = this.dirWorld(this.spinner.axisLocal);
+        const low = this.toWorld(this.spinner.mountLocal).y
+          - this.spinner.radius * Math.sqrt(Math.max(0, 1 - ax.y * ax.y))
+          - Math.abs(ax.y) * this.spinner.halfWidth;
+        if (low < 0.004) groups = COLLIDE.weaponHigh;
+      }
+      if (now !== groups) this.weaponCollider.setCollisionGroups(groups);
     }
 
     // stabilizer legs hang toward the floor: when the robot is flipped they swing over
