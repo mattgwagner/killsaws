@@ -6,9 +6,10 @@ export interface SettingsState {
   matchSeconds: number;
   announcer: boolean;
   volume: number;
+  quality: 'high' | 'low';
 }
 const KEY = 'killsaws.settings.v1';
-export const DEFAULT_SETTINGS: SettingsState = { hazards: true, koCount: 'broadcast', matchSeconds: 180, announcer: true, volume: 0.8 };
+export const DEFAULT_SETTINGS: SettingsState = { hazards: true, koCount: 'broadcast', matchSeconds: 180, announcer: true, volume: 0.8, quality: 'high' };
 export function loadSettings(): SettingsState {
   try { return { ...DEFAULT_SETTINGS, ...JSON.parse(localStorage.getItem(KEY) ?? '{}') }; } catch { return DEFAULT_SETTINGS; }
 }
@@ -39,6 +40,12 @@ export function Settings({ value, onChange, onBack }: { value: SettingsState; on
           </label>
           <label>Announcer voice <input type="checkbox" checked={value.announcer} onChange={(e) => set('announcer', e.target.checked)} /></label>
           <label>Volume <input type="range" min={0} max={1} step={0.05} value={value.volume} onChange={(e) => set('volume', Number(e.target.value))} /></label>
+          <label>Graphics
+            <select value={value.quality} onChange={(e) => set('quality', e.target.value as SettingsState['quality'])}>
+              <option value="high">High</option>
+              <option value="low">Low</option>
+            </select>
+          </label>
           <p className="flag">Rules follow the 2021 BattleBots tournament rules: no tap-outs; a pin or lift is limited to a 10 count before the refs separate you; killsaws fire in the final minute; each team controls its own Pulverizer; three judges score Damage 5, Aggression 3, Control 3.</p>
         </div>
         <div className="opts">

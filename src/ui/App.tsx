@@ -51,6 +51,7 @@ export default function App() {
     bindKeys();
     const canvas = canvasRef.current!;
     const view = new GameView(canvas);
+    view.quality = settings.quality;
     const onResize = () => view.resize(window.innerWidth, window.innerHeight);
     onResize();
     window.addEventListener('resize', onResize);
@@ -75,6 +76,10 @@ export default function App() {
 
   useEffect(() => saveSettings(settings), [settings]);
   useEffect(() => { audioRef.current.announcer = settings.announcer; audioRef.current.setVolume(settings.volume); }, [settings]);
+  useEffect(() => {
+    const v = sessionRef.current?.view;
+    if (v) v.quality = settings.quality;
+  }, [settings.quality]);
 
   const attractRef = useRef(false);
   const startAttract = useCallback((session: GameSession) => {
@@ -129,6 +134,11 @@ export default function App() {
     setIntroStep(0);
     setScreen('intro');
   }, [settings, net]);
+
+  useEffect(() => {
+    const k = (window as unknown as { killsaws?: { begin?: (ctx: FightContext) => Promise<void> } }).killsaws;
+    if (k) k.begin = (ctx) => beginFight(ctx);
+  }, [beginFight]);
 
   // intro: lower-thirds for each corner, then release the sim (3-2-1 is in the sim countdown)
   useEffect(() => {

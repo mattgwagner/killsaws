@@ -111,7 +111,7 @@ export class GameSession {
   private ring: Snap[] = [];
   private big: { j: number; t: number; clip: Snap[] | null } = { j: 0, t: 0, clip: null };
   private bigCap: { until: number; snaps: Snap[] } | null = null;
-  private play: { snaps: Snap[]; acc: number; overhead: boolean } | null = null;
+  private play: { snaps: Snap[]; acc: number; overhead: boolean; at: number } | null = null;
   private playedBig = false;
   paused = false;
   /** intro: render but don't advance the sim */
@@ -165,8 +165,23 @@ export class GameSession {
   private loop = () => {
     this.raf = requestAnimationFrame(this.loop);
     const now = performance.now();
-    let dt = Math.min(0.05, (now - this.last) / 1000);
+    const dt = Math.min(0.05, (now - this.last) / 1000);
     this.last = now;
+    this.tick(dt, now);
+  };
+
+  /** One broadcast frame without waiting on requestAnimationFrame. Headless Chromium does not tick rAF. */
+  pump(dt = 1 / 60) {
+    const paused = this.paused;
+    const hold = this.hold;
+    this.paused = false;
+    this.hold = false;
+    this.tick(dt, performance.now());
+    this.paused = paused;
+    this.hold = hold;
+  }
+
+  private tick(dt: number, now: number) {
     if (this.paused || this.hold) {
       if (this.match) this.view.apply(this.match.view());
       this.view.frame(this.paused ? 0 : dt);
@@ -240,13 +255,13 @@ export class GameSession {
       this.koLeft -= dt;
       if (this.koLeft <= 0) this.startFinishReplay();
     }
-  };
+  }
 
   /**
    * Step the sim forward without drawing. One recorded frame per 1/60 s of sim
    * time, so a test can reach a KO and still have a replay of it.
    */
-  fastForward(seconds: number) {
+  fastForward(seconds: number, coast = false) {
     const m = this.match;
     if (!m) return;
     const frames = Math.max(1, Math.round(seconds * 60));
@@ -255,7 +270,8 @@ export class GameSession {
       for (let s = 0; s < 4; s++) {
         for (let b = 0; b < 2; b++) {
           const d = this.drivers[b];
-          if (d instanceof BotAI) this.inputs[b] = d.think(m, DT);
+          if (coast) this.inputs[b] = { ...NO_INPUT };
+          else if (d instanceof BotAI) this.inputs[b] = d.think(m, DT);
           else if (d instanceof HumanDriver) this.inputs[b] = d.read(DT);
           else this.inputs[b] = this.remoteInput;
           m.setInput(b, this.inputs[b]);
@@ -312,7 +328,7 @@ export class GameSession {
 
   private playClip(snaps: Snap[], overhead: boolean) {
     this.moment = 'replay';
-    this.play = { snaps, acc: 0, overhead };
+    this.play = { snaps, acc: 0, overhead, at: 0 };
     this.audio.replay = true;
     this.audio.duck();
     this.view.focus = this.winner;
@@ -324,15 +340,22 @@ export class GameSession {
     if (!p) return;
     p.acc += dt * 0.35;
     const target = p.snaps[0].t + p.acc;
-    let snap = p.snaps[0];
-    for (const s of p.snaps) { if (s.t <= target) snap = s; else break; }
+    const shown: SimEvent[] = [];
+    while (p.at < p.snaps.length && p.snaps[p.at].t <= target) {
+      for (const e of p.snaps[p.at].events) {
+        if (e.type === 'hit' || e.type === 'break' || e.type === 'actuate' || e.type === 'debris') shown.push(e);
+      }
+      p.at++;
+    }
+    const snap = p.snaps[Math.max(0, p.at - 1)];
     const end = p.snaps[p.snaps.length - 1].t;
     this.view.setMode(p.overhead && target >= end - 1 ? 'overhead' : 'chase');
     this.view.focus = this.winner;
     this.view.apply(snap.view, { slide: snap.slide, secondary: snap.secondary });
-    const shown = snap.events.filter((e) => e.type === 'hit' || e.type === 'break' || e.type === 'actuate' || e.type === 'debris');
-    this.view.events(shown, true);
-    this.audio.events(shown.filter((e) => e.type === 'hit' || e.type === 'break'), snap.view);
+    if (shown.length) {
+      this.view.events(shown, true);
+      this.audio.events(shown.filter((e) => e.type === 'hit' || e.type === 'break'), snap.view);
+    }
     this.view.frame(dt, snap.flame);
     this.onFrame({ view: snap.view, inputs: this.inputs, slowmo: false, moment: 'replay' });
     if (target >= end) { this.play = null; this.afterClip(); }

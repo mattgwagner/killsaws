@@ -49,6 +49,9 @@ export class GameView {
   private pyroVictory = false;
   private readonly up = new THREE.Vector3(0, 1, 0);
   private readonly smokeAt = new THREE.Vector3();
+  /** World offset of the KO camera, captured once so a spinning winner doesn't swing it through the body. */
+  private heroHold = new THREE.Vector3();
+  private heroHeld = false;
 
   constructor(readonly canvas: HTMLCanvasElement) {
     this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance', preserveDrawingBuffer: true });
@@ -135,6 +138,7 @@ export class GameView {
   }
 
   setMode(mode: CameraMode) {
+    if (mode !== this.mode) this.heroHeld = false;
     this.mode = mode;
     this.controls.enabled = mode === 'free';
     if (mode === 'free') this.controls.target.copy(this.camLook);
@@ -194,7 +198,7 @@ export class GameView {
         const p = new THREE.Vector3(e.pos.x, e.pos.y, e.pos.z);
         this.fx.sparksAt(p, new THREE.Vector3(0, 1, 0), 60, 8);
         this.fx.smoke(p, 10, 0.3, 0.3);
-        if ((e.part === 'weapon' || e.part === 'tooth') && this.bots[e.bot]) hideBroken(this.bots[e.bot], e.part);
+        if (!replay && (e.part === 'weapon' || e.part === 'tooth') && this.bots[e.bot]) hideBroken(this.bots[e.bot], e.part);
       } else if (!replay && e.type === 'phase') {
         this.fightStart();
       } else if (!replay && e.type === 'hazards-live') {
@@ -349,13 +353,20 @@ export class GameView {
     if (this.mode === 'hero') {
       const me = this.bots[this.focus]?.root;
       const c = me ? me.position : mid;
-      const fwd = new THREE.Vector3(1, 0, 0);
-      if (me) fwd.applyQuaternion(me.quaternion);
-      fwd.y = 0;
-      if (fwd.lengthSq() < 1e-4) fwd.set(0, 0, 1);
-      fwd.normalize();
-      pos = new THREE.Vector3(c.x + fwd.x * 2.5, 0.32, c.z + fwd.z * 2.5);
-      look = new THREE.Vector3(c.x, 0.4, c.z);
+      if (!this.heroHeld) {
+        const fwd = new THREE.Vector3(1, 0, 0);
+        if (me) fwd.applyQuaternion(me.quaternion);
+        fwd.y = 0;
+        if (fwd.lengthSq() < 1e-4) fwd.set(0, 0, 1);
+        fwd.normalize();
+        this.heroHold.set(fwd.x * 3.4, 1.05, fwd.z * 3.4);
+        this.heroHeld = true;
+        // Start here. Lerping in from the broadcast rail flies the lens through the winner.
+        this.camPos.set(c.x + this.heroHold.x, this.heroHold.y, c.z + this.heroHold.z);
+        this.camLook.set(c.x, 0.25, c.z);
+      }
+      pos = new THREE.Vector3(c.x + this.heroHold.x, this.heroHold.y, c.z + this.heroHold.z);
+      look = new THREE.Vector3(c.x, 0.25, c.z);
       const k = 1 - Math.exp(-dt * 1.5);
       this.camPos.lerp(pos, k);
       this.camLook.lerp(look, 1 - Math.exp(-dt * 2));

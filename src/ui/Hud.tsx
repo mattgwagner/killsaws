@@ -86,7 +86,7 @@ export function Hud({ frame, designs, callouts, intro, cam, seats, moment }: {
           </div>
         ))}
       </div>
-      {v.phase !== 'over' && (
+      {v.phase !== 'over' && moment !== 'replay' && (
         <div className="hint">
           {seats.map((s, i) => s.kind === 'kb1' || s.kind === 'kb2' ? (
             <span key={i} style={{ marginRight: 14 }}>
