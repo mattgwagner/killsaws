@@ -426,6 +426,42 @@ function runFlipper(ctx: CombatContext, a: BotRuntime, act: ActuatorState, w: Fl
   }
 }
 
+// Saw arms and crushers do their damage per engagement, not as a wattage per tick.
+/** m the saw blade cuts below the struck surface before the arm bottoms it (blade radius 0.16 m, guard and hub) */
+const SAW_DEPTH = 0.03;
+/** m: the blade's contact chord at mid depth; one spot of plate on the cut map */
+const SAW_CHORD = 0.1;
+/** m/s the teeth feed down at 4000 rpm into plate of hardness 0.7 (slower in harder plate) */
+const SAW_FEED = 0.06;
+/** J per m of cut depth in one spot: a spot cut to full depth is ~2 kJ */
+const SAW_J_PER_M = 70000;
+/** W the blade motor can put into the cut; the rest of its power is heat and sparks */
+const SAW_MOTOR_W = 1500;
+/** m the beak sinks past first contact before it bottoms on the target's frame */
+const CRUSH_DEPTH = 0.025;
+/** m/s the beak closes against plate */
+const CRUSH_CLOSE_SPEED = 0.06;
+
+interface Engagement { target: number; depth: number; bit: boolean; cells: Map<string, number> }
+const engagements = new WeakMap<ActuatorState, Engagement>();
+/** saw arms: how deep each spot on each target is already cut, for the whole match */
+const cutMaps = new WeakMap<ActuatorState, Map<number, Map<string, number>>>();
+/** The current bite or cut on `t`; a different target starts a fresh one. */
+function engagementOf(act: ActuatorState, t: BotRuntime): Engagement {
+  let e = engagements.get(act);
+  if (!e || e.target !== t.index) {
+    let maps = cutMaps.get(act);
+    if (!maps) cutMaps.set(act, maps = new Map());
+    let cells = maps.get(t.index);
+    if (!cells) maps.set(t.index, cells = new Map());
+    e = { target: t.index, depth: 0, bit: false, cells };
+    engagements.set(act, e);
+  }
+  return e;
+}
+/** Arm lifted / jaw opened: the next contact is a new engagement. */
+function disengage(act: ActuatorState) { engagements.delete(act); }
+
 /** Flippers, lifters, hammers, axes, saw arms and crushers. */
 export function actuatorStep(ctx: CombatContext, a: BotRuntime, dt: number) {
   const act = a.actuator;
@@ -465,17 +501,32 @@ export function actuatorStep(ctx: CombatContext, a: BotRuntime, dt: number) {
         const targets = overlapBots(ctx, a, zc, v3(w.armLength * 0.4, 0.25, 0.14));
         act.timer += dt;
         for (const [t] of targets) {
-          const power = 9000 * a.internals.weapon; // W into the target
           const pt = madd(t.comWorld, v3(0, 1, 0), t.half.y);
-          applyDamage(ctx, t, pt, power * dt, undefined, faceAt(t, a.toWorld(v3(L / 2 + w.armLength * 0.5, H, 0))) === 'bottom' ? 'bottom' : 'top');
-          a.damageDealt += power * dt;
+          const face = faceAt(t, a.toWorld(v3(L / 2 + w.armLength * 0.5, H, 0))) === 'bottom' ? 'bottom' : 'top';
+          const cut = engagementOf(act, t);
+          const hard = MATERIALS[t.panels[face].material as keyof typeof MATERIALS]?.hardness ?? 0.7;
+          const rpm = (w.sawRpm ?? 4000) / 4000;
+          let joules = 0;
+          // the drop: the head lands once per lowering
+          if (!cut.bit) { cut.bit = true; joules += w.energy * a.internals.weapon; }
+          // where the blade bites on the target's plate, on a grid the size of the blade's contact chord.
+          // Each spot cuts down at the feed rate (no faster than the motor can drive the teeth) until the
+          // blade bottoms out; going back over a spot that is already cut finds nothing new.
+          const tip = rotateInv(t, sub(a.toWorld(v3(L / 2 + w.armLength, 0, 0)), t.pos));
+          const cell = `${Math.round(tip.x / SAW_CHORD)},${Math.round(tip.z / SAW_CHORD)}`;
+          const was = cut.cells.get(cell) ?? 0;
+          const feed = Math.min(SAW_FEED * rpm / (0.3 + hard), SAW_MOTOR_W / SAW_J_PER_M) * a.internals.weapon;
+          const plunge = Math.min(SAW_DEPTH - was, feed * dt);
+          if (plunge > 0) { cut.cells.set(cell, was + plunge); joules += SAW_J_PER_M * plunge; }
+          applyDamage(ctx, t, pt, joules, undefined, face);
+          a.damageDealt += joules;
           t.impulse(v3(0, -900 * dt, 0), pt);
           if (act.timer > 0.05) {
             act.timer = 0;
-            ctx.emit({ type: 'hit', kind: 'saw', pos: a.toWorld(v3(L / 2 + w.armLength * 0.6, H / 2, 0)), dir: up, energy: power * 0.05, impulse: 0, attacker: a.index, target: t.index, face: 'top', material: t.panels.top.material });
+            ctx.emit({ type: 'hit', kind: 'saw', pos: a.toWorld(v3(L / 2 + w.armLength * 0.6, H / 2, 0)), dir: up, energy: Math.max(joules, 450 * a.internals.weapon), impulse: 0, attacker: a.index, target: t.index, face: 'top', material: t.panels.top.material });
           }
         }
-      }
+      } else if (act.pos < 0.5) disengage(act);
       return;
     }
     if (act.phase === 'rest' && pressed && working && act.cooldown <= 0) {
@@ -530,20 +581,27 @@ export function actuatorStep(ctx: CombatContext, a: BotRuntime, dt: number) {
       const targets = overlapBots(ctx, a, zc, v3(w.reach * 0.5, 0.3, 0.18));
       act.timer += dt;
       for (const [t] of targets) {
-        const power = w.force * 0.06 * a.internals.weapon; // N × closing speed
+        // work is force × distance: the beak does F·dx while it sinks through the plate and into the frame,
+        // then bottoms out. Holding the grip after that does no work; another bite needs the jaw opened again.
+        const bite = engagementOf(act, t);
+        const sink = Math.min(CRUSH_DEPTH - bite.depth, CRUSH_CLOSE_SPEED * dt);
         const pt = madd(t.comWorld, v3(0, 1, 0), t.half.y);
-        applyDamage(ctx, t, pt, power * dt, undefined, 'top');
-        a.damageDealt += power * dt;
+        const joules = Math.max(0, sink) * w.force * a.internals.weapon;
+        if (sink > 0) {
+          bite.depth += sink;
+          applyDamage(ctx, t, pt, joules, undefined, 'top');
+          a.damageDealt += joules;
+        }
         a.control += dt;
         // grip: drag the target along with us
         const rel = sub(a.body.linvel() as V3, t.body.linvel() as V3);
         t.impulse(scale(rel, t.mass * 0.15), pt);
         if (act.timer > 0.12) {
           act.timer = 0;
-          ctx.emit({ type: 'hit', kind: 'crush', pos: pt, dir: v3(0, -1, 0), energy: power * 0.12, impulse: 0, attacker: a.index, target: t.index, face: 'top', material: t.panels.top.material });
+          ctx.emit({ type: 'hit', kind: 'crush', pos: pt, dir: v3(0, -1, 0), energy: Math.max(joules / dt * 0.12, 300), impulse: 0, attacker: a.index, target: t.index, face: 'top', material: t.panels.top.material });
         }
       }
-    }
+    } else if (act.pos < 0.3) disengage(act);
   }
 }
 
