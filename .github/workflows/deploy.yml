@@ -14,6 +14,9 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    # job-level env, because a step's `if` is evaluated before that step's own env exists
+    env:
+      CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -29,5 +32,5 @@ jobs:
         if: ${{ env.CF_TOKEN != '' }}
         run: npx wrangler deploy
         env:
-          CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ab1da25c524f59bc61f776304bd88558
