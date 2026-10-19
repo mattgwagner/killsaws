@@ -10,13 +10,14 @@
 import { spawn } from 'node:child_process';
 import { availableParallelism } from 'node:os';
 import { writeFileSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { Match } from '../src/sim/match';
 import { BotAI, AILevel } from '../src/sim/ai';
 import { ROSTER, rosterById } from '../src/sim/roster';
 import { HALF } from '../src/sim/arena';
 import type { SimEvent } from '../src/sim/combat';
 import { driverFor } from '../src/sim/drivers';
+import type { BotRuntime } from '../src/sim/bot';
 
 interface BotStats {
   /** when its last KO count began: s since the last hazard hit on it, and how long the opponent had
@@ -29,8 +30,13 @@ interface BotStats {
   spunBeforeContact: boolean | null;
   /** s since the opponent last touched this robot when its last KO count began */
   untouchedAtCount: number;
+  /** time of the last opponent hit or flip, and of the current excursion off the floor or onto a hazard.
+   * -99 means it hasn't happened this excursion. */
+  lastBlow: number;
+  leftFloorAt: number;
+  beachedAt: number;
 }
-interface Fight {
+export interface Fight {
   ids: [string, string];
   seed: number;
   winner: 0 | 1;
@@ -44,17 +50,51 @@ interface Fight {
 
 /** KO reasons that name where it's beached */
 const HAZARD_WORDS = ['screw', 'rail', 'deck'];
+/** An opponent hit or flip inside this window before the loser left the floor or beached is their launch. */
+const LAUNCH_WINDOW = 2;
+
+/** Chassis resting on the rail, the deck or the screws with too few wheels down to drive off. */
+function hazardSupported(m: Match, b: BotRuntime) {
+  const on = new Set<string>();
+  for (let i = 0; i < b.body.numColliders(); i++) {
+    m.world.contactPairsWith(b.body.collider(i), (o) => {
+      const t = m.tags.get(o.handle);
+      if (t && !t.bot) on.add(t.hazardId ?? t.part);
+    });
+  }
+  if (on.has('rail') || on.has('deck')) return true;
+  for (const id of on) if (id.includes('screw')) return true;
+  return false;
+}
+
+/** Remember when this excursion off the floor, or onto a hazard, started. Back on its wheels, it ends. */
+function noteDeparture(m: Match, k: number, leftFloorAt: number[], beachedAt: number[]) {
+  const b = m.bots[k];
+  const down = b.wheels.filter((w) => w.attached && w.contact).length;
+  if (down > b.wheels.length / 2) {
+    leftFloorAt[k] = -99;
+    beachedAt[k] = -99;
+    return;
+  }
+  if (b.airborne()) {
+    if (leftFloorAt[k] < 0) leftFloorAt[k] = m.time;
+    return;
+  }
+  if (beachedAt[k] < 0 && hazardSupported(m, b)) beachedAt[k] = m.time;
+}
 
 async function fight(a: string, b: string, seed: number, level: AILevel): Promise<Fight> {
   const m = await Match.create([rosterById(a)!, rosterById(b)!], { seed, humans: [false, false] });
   const ais = [new BotAI(0, level, seed), new BotAI(1, level, seed + 100)];
   const stats = (k: number): BotStats => ({
     hazardBeforeCount: Infinity, untouchedAtHazard: 0, wallStuck: 0, untouchedAtCount: 0,
+    lastBlow: -99, leftFloorAt: -99, beachedAt: -99,
     spunBeforeContact: m.bots[k].spinner ? false : null,
   });
   const st: [BotStats, BotStats] = [stats(0), stats(1)];
   const wallRun = [0, 0];
   const hazardAt = [-99, -99], untouchedAtHazard = [0, 0];
+  const lastBlow = [-99, -99], leftFloorAt = [-99, -99], beachedAt = [-99, -99];
   let lastTouch = -10, noContactRun = 0, noContact = 0, contacted = false;
   let steps = 0;
   const dt = 1 / 240, every = 12;
@@ -68,14 +108,23 @@ async function fight(a: string, b: string, seed: number, level: AILevel): Promis
         untouchedAtHazard[e.target] = m.time - lastTouch;
       }
       // spinner strikes are impulses, not lasting contact: a robot-on-robot hit counts as contact
-      if (e.type === 'hit' && e.attacker >= 0 && e.target >= 0 && e.attacker !== e.target) { lastTouch = m.time; contacted = true; }
+      if (e.type === 'hit' && e.attacker >= 0 && e.target >= 0 && e.attacker !== e.target) {
+        lastTouch = m.time; contacted = true;
+        lastBlow[e.target] = m.time;
+        noteDeparture(m, e.target, leftFloorAt, beachedAt);
+      }
       if (e.type === 'ko-start') {
         st[e.bot].untouchedAtCount = m.time - lastTouch;
         st[e.bot].hazardBeforeCount = m.time - hazardAt[e.bot];
         st[e.bot].untouchedAtHazard = untouchedAtHazard[e.bot];
+        st[e.bot].lastBlow = lastBlow[e.bot];
+        st[e.bot].leftFloorAt = leftFloorAt[e.bot];
+        st[e.bot].beachedAt = beachedAt[e.bot];
       }
     }
     if (m.phase !== 'fight' || steps % every) continue;
+    noteDeparture(m, 0, leftFloorAt, beachedAt);
+    noteDeparture(m, 1, leftFloorAt, beachedAt);
     const touching = m.touching(m.bots[0], m.bots[1]);
     if (touching) { lastTouch = m.time; contacted = true; }
     // only a driveable robot counts as stalling: one that lost a wheel or a drive side, or is beached on
@@ -105,18 +154,27 @@ async function fight(a: string, b: string, seed: number, level: AILevel): Promis
   };
 }
 
+/** Opponent hit or flip in the 2 s before this robot left the floor or beached: they were thrown. */
+export function opponentLaunch(s: Pick<BotStats, 'lastBlow' | 'leftFloorAt' | 'beachedAt'>) {
+  if (s.lastBlow < 0) return false;
+  return [s.leftFloorAt, s.beachedAt].some((t) => t >= 0 && t >= s.lastBlow && t - s.lastBlow <= LAUNCH_WINDOW);
+}
+
 /** A KO loss the arena did: counted out beached on the rail, deck or screws, or a hazard (killsaw,
  * screw, Pulverizer, ramrod) hit it in the 3 s before its final count began. Self-inflicted: it got
  * there on its own. For a hazard hit, the opponent hadn't touched it for 1.5 s before the hit; for a
  * beaching, not for 5 s before the count (which starts 1.5 s after it stops, and a big hit can fling
- * a robot for a second or more). */
-function hazardLoss(f: Fight, loser: 0 | 1) {
-  if (f.method !== 'KO') return { hazard: false, self: false };
+ * a robot for a second or more). A launch is not self-inflicted: an opponent hit or flip in the 2 s
+ * before the loser left the floor or beached threw it there, and a thrown robot stays where it lands. */
+export function hazardLoss(f: Fight, loser: 0 | 1) {
+  if (f.method !== 'KO') return { hazard: false, self: false, launched: false };
   const s = f.bots[loser];
   const hit = s.hazardBeforeCount < 3;
   const beached = HAZARD_WORDS.some((w) => (f.koReason ?? '').toLowerCase().includes(w));
   const hazard = hit || beached;
-  return { hazard, self: hazard && (hit ? s.untouchedAtHazard > 1.5 : s.untouchedAtCount > 5) };
+  const launched = hazard && opponentLaunch(s);
+  const alone = hazard && (hit ? s.untouchedAtHazard > 1.5 : s.untouchedAtCount > 5);
+  return { hazard, launched, self: alone && !launched };
 }
 
 function flag(name: string): string | undefined {
@@ -139,15 +197,16 @@ for (let i = 0; i < ids.length; i++) {
   }
 }
 
+const invoked = process.argv[1] !== undefined && import.meta.url === pathToFileURL(process.argv[1]).href;
 const shard = flag('--shard');
-if (shard) {
+if (invoked && shard) {
   // child: run every nth job and write one JSON line per fight
   const [k, n] = shard.split('/').map(Number);
   for (let i = k; i < jobs.length; i += n) {
     const [a, b, seed] = jobs[i];
     process.stdout.write(JSON.stringify(await fight(a, b, seed, level)) + '\n');
   }
-} else {
+} else if (invoked) {
   const workers = Math.min(Number(flag('--workers') ?? Math.min(12, Math.max(1, availableParallelism() - 2))), jobs.length);
   const self = fileURLToPath(import.meta.url);
   const passthrough = process.argv.slice(2);
@@ -178,7 +237,7 @@ if (shard) {
 
 function report(fights: Fight[], secs: number) {
   const row = new Map(ids.map((id) => [id, { w: 0, l: 0, koW: 0, koL: 0, len: 0, n: 0, hazL: 0, selfHazL: 0 }]));
-  let losses = 0, hazardLosses = 0, selfHazard = 0, noResult = 0;
+  let losses = 0, hazardLosses = 0, selfHazard = 0, launched = 0, noResult = 0;
   const wallStuck: string[] = [], circling: string[] = [], coldSpin = new Map<string, number>(), spinFights = new Map<string, number>();
   for (const f of fights) {
     if (f.method === 'none') { noResult++; continue; }
@@ -189,6 +248,7 @@ function report(fights: Fight[], secs: number) {
     for (const r of [w, l]) { r.len += f.time; r.n++; }
     const h = hazardLoss(f, loser);
     if (h.hazard) { l.hazL++; hazardLosses++; }
+    if (h.launched) launched++;
     if (h.self) { l.selfHazL++; selfHazard++; }
     const tag = `${f.ids[0]} v ${f.ids[1]} #${f.seed}`;
     for (let k = 0; k < 2; k++) {
@@ -210,6 +270,7 @@ function report(fights: Fight[], secs: number) {
   const ko = fights.filter((f) => f.method === 'KO').length;
   console.log(`\nKO rate ${(100 * ko / Math.max(1, fights.length)).toFixed(0)}%, judges ${fights.length - ko - noResult}, no result ${noResult}`);
   console.log(`hazard-caused losses ${hazardLosses}/${losses}; self-inflicted ${selfHazard} (${(100 * selfHazard / Math.max(1, losses)).toFixed(1)}% of all losses, bound 5%)`);
+  console.log(`opponent-caused launches ${launched} (a hit or flip in the ${LAUNCH_WINDOW}s before it left the floor or beached; excluded from self)`);
   console.log(`wall-stuck > 10 s: ${wallStuck.length}${wallStuck.length ? '\n  ' + wallStuck.slice(0, 12).join('\n  ') : ''}`);
   console.log(`no contact > 30 s: ${circling.length}${circling.length ? '\n  ' + circling.slice(0, 12).join('\n  ') : ''}`);
   const cold = [...coldSpin.entries()].map(([id, n]) => `${id} ${n}/${spinFights.get(id)}`);
