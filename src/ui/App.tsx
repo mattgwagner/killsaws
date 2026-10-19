@@ -27,7 +27,7 @@ export interface FightContext {
 
 export default function App() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [screen, setScreen] = useState<Screen>(() => (new URLSearchParams(location.search).get('join') ? 'online' : 'title'));
+  const [screen, setScreen] = useState<Screen>(() => ((new URLSearchParams(location.search).get('join') || new URLSearchParams(location.search).get('host')) ? 'online' : 'title'));
   const [frame, setFrame] = useState<FrameInfo | null>(null);
   const [callouts, setCallouts] = useState<HitCallout[]>([]);
   const [result, setResult] = useState<MatchResult | null>(null);

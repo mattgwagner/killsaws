@@ -26,10 +26,10 @@ export function Online({ onBack, net, setNet, session, onHostFight, onGuestStart
 
   useEffect(() => { try { localStorage.setItem('killsaws.name', name); } catch { /* private */ } }, [name]);
   useEffect(() => {
-    if (host) { host.onChange = rerender; host.lobby(botById(pick) ?? null); }
+    if (host) { host.onChange = rerender; host.setPick(botById(pick) ?? null, name || 'Host'); }
     if (guest) {
       guest.onChange = rerender;
-      guest.pick(botById(pick)!, name || 'Guest');
+      guest.setPick(botById(pick)!, name || 'Guest');
       guest.onStart = (designs) => {
         if (!session) return;
         session.stop();
@@ -40,12 +40,11 @@ export function Online({ onBack, net, setNet, session, onHostFight, onGuestStart
       guest.onResult = onGuestResult;
     }
   }, [host, guest, pick, name]); // eslint-disable-line react-hooks/exhaustive-deps
+  // ?host=CODE opens that room directly (handy for a fixed family room, and for e2e tests)
   useEffect(() => {
-    // host keeps re-announcing the lobby so a late joiner sees it
-    if (!host) return;
-    const t = setInterval(() => host.lobby(botById(pick) ?? null), 1500);
-    return () => clearInterval(t);
-  }, [host, pick]);
+    const code = new URLSearchParams(location.search).get('host');
+    if (code && !net && /^[A-Z0-9]{4,8}$/.test(code)) { session?.audio.unlock(); setNet({ host: new NetHost(code) }); }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const link = host ? `${location.origin}/?join=${host.code}` : '';
   const mine = botById(pick)!;
@@ -95,12 +94,12 @@ export function Online({ onBack, net, setNet, session, onHostFight, onGuestStart
               )}
               <div className="flag">{host?.status ?? guest?.status}</div>
               {host && (host.guestDesign
-                ? <div>Opponent{host.guestName ? ` (${host.guestName})` : ''} picked <b style={{ color: '#6aa8ff' }}>{host.guestDesign.name}</b></div>
+                ? <div>Opponent{host.guestName ? ` (${host.guestName})` : ''} picked <b style={{ color: '#6aa8ff' }}>{host.guestDesign.name}</b>{host.guestHere ? '' : ' (reconnecting…)'}</div>
                 : <div className="flag">Waiting for them to pick a bot…</div>)}
-              {guest && (guest.lobby.host
-                ? <div>Host picked <b style={{ color: '#ff6b73' }}>{guest.lobby.host.name}</b>. They start the fight.</div>
+              {guest && (guest.hostDesign
+                ? <div>Host{guest.hostName ? ` (${guest.hostName})` : ''} picked <b style={{ color: '#ff6b73' }}>{guest.hostDesign.name}</b>. They start the fight.</div>
                 : <div className="flag">Waiting for the host…</div>)}
-              {host && <button className="btn primary" disabled={!host.guestDesign} onClick={() => {
+              {host && <button className="btn primary" disabled={!host.guestDesign || !host.guestHere} onClick={() => {
                 const blue = host.guestDesign!;
                 host.start([mine, blue]);
                 onHostFight(mine, blue);
