@@ -5,6 +5,7 @@ import { describe, expect, it } from 'vitest';
 import { Match } from '../src/sim/match';
 import { rosterById } from '../src/sim/roster';
 import { fitToWeight } from '../src/sim/design';
+import { plateOf } from '../src/sim/plate';
 
 const RESPIN = 1.5; // s, Blip's stated re-spin to full flywheel speed
 
@@ -17,15 +18,19 @@ const run = (m: Match, seconds: number, weapon = false) => {
   for (let i = 0; i < Math.round(seconds * 240); i++) { m.setInput(0, { throttle: 0, turn: 0, weapon }); m.step(); }
 };
 
-/** Park DUCK! nose-to-nose on Blip's plate, wait `delay` s into the fight, fire once, return the flip's hit energy. */
+/** Rest DUCK! on Blip's plate, wait `delay` s into the fight, fire once, return the flip's hit energy. */
 async function flipEnergyAfter(delay: number) {
   const m = await fight();
   const [a, t] = m.bots;
   run(m, delay - 0.05);
-  const ay = a.pos.y, ty = t.pos.y;
+  const ay = a.pos.y;
   a.body.setTranslation({ x: 0, y: ay, z: 0 }, true);
   a.body.setRotation({ x: 0, y: 0, z: 0, w: 1 }, true);
-  t.body.setTranslation({ x: a.design.chassis.length / 2 + t.half.x + 0.02, y: ty, z: 0 }, true);
+  // on the lid, not nosed against it: a robot touching only the front edge is not on the plate (#5)
+  // Blip's lid is its sloped nose, so rest DUCK!'s tail on it: belly clear of the highest point of lid beneath it
+  const pl = plateOf(a.design, 'flipper');
+  const px = pl.tipX(0) - 0.1, rear = Math.max(pl.fromX, px - t.half.x);
+  t.body.setTranslation({ x: px, y: ay + pl.surface(rear) + t.half.y + t.design.chassis.clearance + 0.01, z: 0 }, true);
   t.body.setRotation({ x: 0, y: 0, z: 0, w: 1 }, true);
   run(m, 0.05);
   m.drainEvents();

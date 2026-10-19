@@ -8,6 +8,7 @@ import { RAPIER, COLLIDE } from './physics';
 import { ActuatorState, BotRuntime, Face, ColliderTag, Internals, TagMap } from './bot';
 import { MATERIALS } from './parts';
 import type { FlipperWeapon } from './design';
+import { Plate, plateOf, plateSamples } from './plate';
 import { V3, add, clamp, cross, dot, len, madd, norm, rotate, scale, sub, v3 } from './vec';
 
 type Collider = RAPIERNS.Collider;
@@ -341,8 +342,35 @@ interface FlipperLike {
   energy: number; plateLength: number; plateWidth: number; cooldown: number;
 }
 
-function runFlipper(ctx: CombatContext, a: BotRuntime, act: ActuatorState, w: FlipperLike, pressed: boolean, working: boolean, dt: number) {
-  const L = a.design.chassis.length, H = a.design.chassis.height;
+/** How far above the plate's surface the column at each sample reaches: "on the plate" means within this. */
+const PLATE_GAP = 0.04;
+
+/**
+ * Which robots are on the plate at rest, and where: a short column is cast up at each sample point of the
+ * plate, from just below its surface to a few cm above it. A robot whose hull starts in a column is
+ * resting on the plate there; one beside it, nosed against its front edge, or under a lid, is in none.
+ */
+export function onPlate(ctx: Pick<CombatContext, 'world' | 'tags'>, a: BotRuntime, plate: Plate) {
+  const found = new Map<BotRuntime, V3[]>();
+  const dir = a.dirWorld(v3(0, 1, 0));
+  for (const smp of plateSamples(plate)) {
+    const len = smp.surface.y - smp.low.y + PLATE_GAP;
+    const origin = a.toWorld(v3(smp.low.x, smp.low.y, smp.low.z));
+    const hit = ctx.world.castRay(new RAPIER.Ray(origin, dir), len, true, undefined, undefined, undefined, a.body, (col) => {
+      const tag = ctx.tags.get(col.handle);
+      return !!tag?.bot && tag.bot !== a && (tag.part === 'chassis' || tag.part === 'fork' || tag.part === 'wheel');
+    });
+    // a hull already through the bottom of the column is under the lid (on the nose wedge), not on it
+    if (!hit || plate.restsOn && hit.timeOfImpact <= 1e-4) continue;
+    const t = ctx.tags.get(hit.collider.handle)!.bot!;
+    const pts = found.get(t) ?? [];
+    pts.push(a.toWorld(v3(smp.surface.x, smp.surface.y, smp.surface.z)));
+    found.set(t, pts);
+  }
+  return found;
+}
+
+function runFlipper(ctx: CombatContext, a: BotRuntime, act: ActuatorState, w: FlipperLike, plate: Plate, pressed: boolean, working: boolean, dt: number) {
   const fwd = a.forward;
   if (act.phase === 'rest' && pressed && working && act.cooldown <= 0 && act.shots > 0) {
     act.phase = 'firing'; act.timer = 0; act.struck = false;
@@ -355,14 +383,22 @@ function runFlipper(ctx: CombatContext, a: BotRuntime, act: ActuatorState, w: Fl
     act.timer += dt;
     act.pos = Math.min(1, act.timer / rise);
     if (!act.struck) {
-      const zc = a.toWorld(v3(L / 2 + a.design.chassis.wedgeLength * 0.4 - w.plateLength * 0.35, H / 2 + 0.06, 0));
-      const targets = overlapBots(ctx, a, zc, v3(w.plateLength * 0.55, H / 2 + 0.12, w.plateWidth / 2));
+      // only what was resting on the plate when it fired goes over, pushed where the plate meets it
+      // (judged on the plate at rest: by the first tick of the stroke it has already risen into the target)
+      const targets = [...onPlate(ctx, a, plate)];
       if (targets.length) {
         act.struck = true;
-        for (const [t] of targets) {
+        const fwdH = norm(v3(fwd.x, 0, fwd.z));
+        const hinge = a.toWorld(v3(plate.hingeX, plate.hingeY, 0));
+        let at = a.pos;
+        for (const [t, pts] of targets) {
           const E = w.energy * (0.75 + 0.15 * a.internals.weapon) * (w.style === 'lifter' ? 0.45 : 1);
-          const dir = norm(add(scale(v3(0, 1, 0), 0.9), scale(norm(v3(fwd.x, 0, fwd.z)), 0.42)));
-          const pt = madd(madd(t.comWorld, norm(v3(fwd.x, 0, fwd.z)), -t.half.x * 0.6), v3(0, 1, 0), -0.04);
+          // centroid of the contact on the plate's surface
+          const pt = scale(pts.reduce((s, q) => add(s, q), v3(0, 0, 0)), 1 / pts.length);
+          // the plate's motion there: ahead of the hinge it throws up and forward, behind it up and back
+          const ahead = dot(sub(pt, hinge), fwdH) >= 0 ? 1 : -1;
+          const dir = norm(add(scale(v3(0, 1, 0), 0.9), scale(fwdH, 0.42 * ahead)));
+          at = pt;
           const inv = t.invMassAt(pt, dir);
           const J = Math.sqrt((2 * E) / inv);
           t.impulse(scale(dir, J), pt);
@@ -372,7 +408,7 @@ function runFlipper(ctx: CombatContext, a: BotRuntime, act: ActuatorState, w: Fl
           a.control += 2.5;
           ctx.emit({ type: 'hit', kind: 'flip', pos: pt, dir, energy: E * 0.05, impulse: J, attacker: a.index, target: t.index, face: 'bottom', material: t.panels.bottom.material });
         }
-        ctx.emit({ type: 'actuate', bot: a.index, kind: w.style === 'lifter' ? 'lift' : 'flip', pos: zc });
+        ctx.emit({ type: 'actuate', bot: a.index, kind: w.style === 'lifter' ? 'lift' : 'flip', pos: at });
       } else if (act.pos >= 1 && (a.inverted || a.onSide)) {
         act.struck = true;
         selfRight(ctx, a, w.energy * 0.6);
@@ -408,10 +444,10 @@ export function actuatorStep(ctx: CombatContext, a: BotRuntime, dt: number) {
       // the weapon motor re-spins the flywheel: full speed in `cooldown` seconds, slower as the motor is hurt
       if (working) act.charge = Math.min(1, (act.charge ?? 0) + (dt * a.internals.weapon) / w.cooldown);
       // energy is read when the plate lands, after the trigger has set this shot's share of the flywheel
-      if (pressed || act.phase !== 'rest') runFlipper(ctx, a, act, { ...w, get energy() { return w.energy * (act.shotPower ?? 0); } }, pressed, working, dt);
+      if (pressed || act.phase !== 'rest') runFlipper(ctx, a, act, { ...w, get energy() { return w.energy * (act.shotPower ?? 0); } }, plateOf(a.design, w.style), pressed, working, dt);
       return;
     }
-    runFlipper(ctx, a, act, w, pressed, working, dt);
+    runFlipper(ctx, a, act, w, plateOf(a.design, w.style), pressed, working, dt);
     return;
   }
 
@@ -557,7 +593,7 @@ export function secondaryStep(ctx: CombatContext, a: BotRuntime, dt: number) {
   st.cooldown = Math.max(0, st.cooldown - dt);
   const working = a.internals.weapon > 0.15 && a.internals.electronics > 0 && a.internals.battery > 0;
   if (sec.type === 'lifter') {
-    runFlipper(ctx, a, st, { style: 'lifter', actuator: 'electric', energy: sec.energy, plateLength: sec.plateLength, plateWidth: sec.plateWidth, cooldown: sec.cooldown }, pressed, working, dt);
+    runFlipper(ctx, a, st, { style: 'lifter', actuator: 'electric', energy: sec.energy, plateLength: sec.plateLength, plateWidth: sec.plateWidth, cooldown: sec.cooldown }, plateOf(a.design, 'arm'), pressed, working, dt);
     return;
   }
   // sliding drum: punch forward while held

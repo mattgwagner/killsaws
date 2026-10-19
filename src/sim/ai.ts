@@ -9,6 +9,8 @@ import type { Match } from './match';
 import { HALF } from './arena';
 import { clamp, rng } from './vec';
 import { Approach, ClockMode, DriverProfile, clockMode, driverFor } from './drivers';
+import { onPlate } from './combat';
+import { Plate, plateOf } from './plate';
 
 export type AILevel = 'rookie' | 'veteran' | 'champion';
 
@@ -67,6 +69,7 @@ export class BotAI {
   private spinWait = 0;
   private downT = 0;
   private lastStall = -99;
+  private plate?: Plate;
   private escapeDir = 1;
   private touchT = 0;
   private touching = false;
@@ -374,9 +377,9 @@ export class BotAI {
     // --- weapon discipline ---
     const opUpright = !(op.inverted && !op.stats.invertible) && !op.onSide;
     if (w.type === 'flipper') {
-      // don't flip a beached robot back onto its wheels; save limited gas for a robot on the plate
-      const plate = Number.isFinite(w.shots) ? 0.45 : 0.55;
-      out.weapon = armed && opUpright && facing && realDist < reach + w.plateLength * plate;
+      // only fire with them actually on the plate (the sim flips nothing else), and never flip a beached robot back onto its wheels
+      this.plate ??= plateOf(me.design, w.style);
+      out.weapon = armed && opUpright && realDist < reach + w.plateLength && onPlate(m, me, this.plate).has(op);
     }
     if (w.type === 'hammer') {
       // over the top deck only
