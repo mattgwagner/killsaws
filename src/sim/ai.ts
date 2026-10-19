@@ -6,7 +6,7 @@
 
 import { BotInput, BotRuntime } from './bot';
 import type { Match } from './match';
-import { HALF } from './arena';
+import { HALF, RAIL_DEPTH } from './arena';
 import { clamp, rng } from './vec';
 import { Approach, ClockMode, DriverProfile, clockMode, driverFor } from './drivers';
 import { onPlate } from './combat';
@@ -27,6 +27,83 @@ const wrap = (a: number) => {
 };
 /** yaw of the direction (dx, dz) in the XZ plane, same convention as heading */
 const yaw = (dx: number, dz: number) => Math.atan2(-dz, dx);
+
+type FlatRect = { x: number; z: number; w: number; d: number };
+
+/** Metres of floor left before the spiked rail's inner face. Negative is over the rail. */
+const railInset = (x: number, z: number) => HALF - RAIL_DEPTH - Math.max(Math.abs(x), Math.abs(z));
+
+/** Signed distance to a deck rectangle: positive outside, negative inside. */
+function deckClear(x: number, z: number, dk: FlatRect) {
+  const dx = Math.abs(x - dk.x) - dk.w / 2;
+  const dz = Math.abs(z - dk.z) - dk.d / 2;
+  if (dx > 0 || dz > 0) return Math.hypot(Math.max(dx, 0), Math.max(dz, 0));
+  return Math.max(dx, dz);
+}
+
+/** Unit-ish direction from a deck footprint back onto the open floor. The back edge is the wall. */
+function awayFromDeck(x: number, z: number, dk: FlatRect) {
+  const hx = dk.w / 2, hz = dk.d / 2;
+  const dx = x - dk.x, dz = z - dk.z;
+  const onX = Math.abs(dx) >= hx - 1e-3;
+  const onZ = Math.abs(dz) >= hz - 1e-3;
+  if (onX || onZ) {
+    return {
+      x: onX ? Math.sign(dx) || 1 : 0,
+      z: onZ ? Math.sign(dz) || 1 : 0,
+    };
+  }
+  const faces = [
+    { d: hx - dx, x: 1, z: 0 },
+    { d: hx + dx, x: -1, z: 0 },
+    { d: hz - dz, x: 0, z: 1 },
+    { d: hz + dz, x: 0, z: -1 },
+  ].sort((a, b) => a.d - b.d);
+  const open = faces.find((f) => f.z >= 0) ?? faces[0];
+  const face = faces[0].z < 0 ? open : faces[0];
+  return { x: face.x, z: face.z };
+}
+
+/**
+ * Drive toward (dx, dz). Reverse when that way is behind us, so a bot facing the
+ * rail backs straight off it instead of pivoting on the lip.
+ */
+function driveToward(heading: number, dx: number, dz: number, gain: number) {
+  const err = wrap(yaw(dx, dz) - heading);
+  const facing = Math.abs(err) <= Math.PI / 2;
+  const steer = facing ? err : wrap(err - Math.sign(err || 1) * Math.PI);
+  return { throttle: facing ? 0.9 : -0.9, turn: clamp(-steer * gain, -1, 1) };
+}
+
+/**
+ * A wheel already on the rail, or off the floor within half a metre of the rail
+ * or the deck lip. The way back is toward the open floor. Deliberate hazard play
+ * may approach these edges; climbing them is how a bot beaches itself.
+ */
+function edgeThreat(me: BotRuntime, deck: FlatRect | null): { x: number; z: number } | null {
+  let best = 0;
+  let dx = 0, dz = 0;
+  const worse = (score: number, x: number, z: number) => {
+    if (score > best) { best = score; dx = x; dz = z; }
+  };
+  for (const w of me.wheels) {
+    if (!w.attached) continue;
+    const q = me.toWorld(w.local);
+    const inset = railInset(q.x, q.z);
+    if (inset < 0.02) worse(1.4 - inset, -q.x, -q.z);
+    else if (!w.contact && inset < 0.5) worse(0.7 - inset, -q.x, -q.z);
+    if (!deck) continue;
+    const clear = deckClear(q.x, q.z, deck);
+    const lip = clear < 0.06 && clear > -0.4;
+    // the deck screws sit just in front of the lip and high-centre a bot the same way
+    const screws = !lip && !w.contact && clear < 0.75 && clear > -0.5;
+    if (!lip && !screws) continue;
+    const away = awayFromDeck(q.x, q.z, deck);
+    if (lip) worse(1.2 - clear, away.x, away.z);
+    else worse(0.6 - clear, away.x, away.z);
+  }
+  return best > 0 ? { x: dx, z: dz } : null;
+}
 
 /** Down and not getting up by itself: let the count run. (Lifted robots are not down.) */
 function down(b: BotRuntime) {
@@ -73,6 +150,11 @@ export class BotAI {
   private escapeDir = 1;
   private touchT = 0;
   private touching = false;
+  /** seconds left backing off the rail or the deck lip, and when this spell started */
+  private edgeT = 0;
+  private edgeSince = -1;
+  private edgeX = 0;
+  private edgeZ = 1;
   private cfg;
 
   /** @param profile override the team's game plan (default: the profile for the robot in this square) */
@@ -123,8 +205,10 @@ export class BotAI {
       return out;
     }
 
-    // upright but balanced on the rim of a spinning shell: cut the weapon and settle
-    if (sp && !me.canMove() && me.up.y > 0.7 && sp.on && me.speed < 0.3) {
+    // upright but balanced on the rim of a spinning shell: cut the weapon and settle.
+    // a wheel unloaded on the rail is not that — fall through and back off the edge.
+    const edge = edgeThreat(me, m.layout.deck);
+    if (sp && !me.canMove() && me.up.y > 0.7 && sp.on && me.speed < 0.3 && !edge) {
       out.weapon = !this.lastWeapon;
       this.lastWeapon = out.weapon;
       return out;
@@ -293,13 +377,19 @@ export class BotAI {
       }
     }
 
-    // never aim at a point beyond the rail (retreats and kites pick a spot 3 m away, which can be in the wall)
-    // unless the point is to drive someone into it
-    if (!pushing) { const lim = HALF - 1.6; tx = clamp(tx, -lim, lim); tz = clamp(tz, -lim, lim); }
-    // on the Upper Deck: its own 10-count runs, so get off it toward the arena floor
+    // never aim past the rail. A hazard or wall delivery may close on the screws; the
+    // aim point still stays inside the inner face, so the nose isn't the thing that climbs.
+    const lim = pushing ? HALF - RAIL_DEPTH - 0.15 : HALF - 1.6;
+    tx = clamp(tx, -lim, lim); tz = clamp(tz, -lim, lim);
+    // on the Upper Deck, or drifting onto its lip when we aren't delivering someone to the screws
     const dk = lay.deck;
-    if (dk && Math.abs(p.x - dk.x) < dk.w / 2 && Math.abs(p.z - dk.z) < dk.d / 2 + 0.2) {
-      hold = false; tx = clamp(p.x, dk.x - dk.w / 2 + 0.4, dk.x + dk.w / 2 - 0.4); tz = dk.z + Math.sign(-dk.z || 1) * (dk.d / 2 + 2);
+    if (dk) {
+      const clear = deckClear(p.x, p.z, dk);
+      if (clear < 0 || (!pushing && clear < 0.35)) {
+        hold = false;
+        const away = awayFromDeck(p.x, p.z, dk);
+        goTo(p.x + away.x * 2.2, p.z + away.z * 2.2);
+      }
     }
 
     // hazard and wall avoidance (steering bias), stronger for better drivers
@@ -322,6 +412,14 @@ export class BotAI {
     const wallK = pushing ? 0 : 4 * sense;
     if (p.x > wallD) ax -= wallK; if (p.x < -wallD) ax += wallK;
     if (p.z > wallD) az -= wallK; if (p.z < -wallD) az += wallK;
+    // keep the chassis off the spiked rail even while pushing someone into the screws or the wall
+    const inset = railInset(p.x, p.z);
+    const railBand = pushing ? 0.42 : 1.05;
+    if (inset < railBand) {
+      const k = 8 * cfg.hazardSense * (1 - Math.max(inset, 0) / railBand);
+      if (Math.abs(p.x) >= Math.abs(p.z)) ax -= Math.sign(p.x || 1) * k;
+      else az -= Math.sign(p.z || 1) * k;
+    }
     tx += ax * 0.8; tz += az * 0.8;
 
     const want = yaw(tx - p.x, tz - p.z);
@@ -350,7 +448,13 @@ export class BotAI {
     }
     if (this.reverseT > 0) {
       this.reverseT -= dt;
-      throttle = -0.9; turn = 0.6 * this.reverseTurn;
+      // reversing while facing the middle drives the bot up onto the rail. Near it, unstick inward.
+      if (inset < 1) {
+        const back = driveToward(heading, -p.x, -p.z, cfg.gain);
+        throttle = back.throttle; turn = back.turn;
+      } else {
+        throttle = -0.9; turn = 0.6 * this.reverseTurn;
+      }
     }
     // no ground made and no damage done in 3 s: a shoving stalemate means back out and reset;
     // alone, it's beached on the rail or wedged in a corner, so rock out.
@@ -369,6 +473,26 @@ export class BotAI {
       this.escapeT -= dt;
       const rock = this.escapeT > 0.8 ? -1 : 1;
       throttle = rock; turn = this.escapeDir * (rock < 0 ? 0.5 : -0.8);
+    }
+    // a wheel on the rail, or unloaded at the lip: back onto the floor. This wins over a rock or a reverse.
+    // with the wheels in the air a steady throttle does nothing, so rock off instead.
+    if (edge) {
+      if (this.edgeT <= 0) this.edgeSince = t;
+      this.edgeT = 0.5; this.edgeX = edge.x; this.edgeZ = edge.z;
+    }
+    if (this.edgeT > 0) {
+      this.edgeT -= dt;
+      const back = driveToward(heading, this.edgeX, this.edgeZ, cfg.gain);
+      const downN = me.wheels.filter((w) => w.attached && w.contact).length;
+      const stuck = t - this.edgeSince > 0.25 && downN * 2 < me.wheels.length && me.speed < 0.55;
+      if (stuck) {
+        const yank = Math.sin(t * 9);
+        const dir = back.throttle >= 0 ? 1 : -1;
+        throttle = yank >= -0.2 ? dir : -dir * 0.7;
+        turn = clamp(Math.cos(t * 7) * 0.9, -1, 1);
+      } else {
+        throttle = back.throttle; turn = back.turn;
+      }
     }
 
     out.throttle = clamp(throttle, -1, 1);
