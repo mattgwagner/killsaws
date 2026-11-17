@@ -160,10 +160,9 @@ function BriefScreen({ b, onBack, onGo }: { b: Brief; onBack: () => void; onGo: 
         <h4>You calculate</h4>
         <ul className="specs">{b.hidden.map((q) => <li key={q}>{QUANTITIES[q].label}{QUANTITIES[q].unit ? ` (${QUANTITIES[q].unit})` : ''}</li>)}</ul>
         <p className="dim">The Garage shows these as ??. Use the reference card, and a calculator. Tech inspection allows ±3% (weight ±1 lb).</p>
-        {b.think && <p className="think">Think about it: {b.think}</p>}
+        {b.think && <p className="think">Crew chief: {b.think}</p>}
         <h4>Opponent</h4>
         <p><b>{opp.name}</b> · {weaponLabel(opp)} · {os.mph.toFixed(0)} mph{os.kj ? ` · ${os.kj.toFixed(0)} kJ` : ''} · {b.ai} AI driver</p>
-        <p className="dim">Math: {b.topic}</p>
         <div className="row-btns">
           <button className="btn primary" onClick={onGo}>Open the garage</button>
         </div>
@@ -301,7 +300,7 @@ function SeasonCard({ state, onBack, onOpen, confirmReset, setConfirmReset, onRe
         <div className="stat"><b>{done.filter((r) => r!.revised).length}</b><span>revisions used</span></div>
       </div>
       <table className="cards season">
-        <thead><tr><th>#</th><th>Brief</th><th>Math</th><th>Opponent</th><th>Result</th><th>Nut</th></tr></thead>
+        <thead><tr><th>#</th><th>Brief</th><th>Opponent</th><th>Result</th><th>Nut</th></tr></thead>
         <tbody>
           {BRIEFS.map((b, i) => {
             const r = recs[i];
@@ -312,7 +311,6 @@ function SeasonCard({ state, onBack, onOpen, confirmReset, setConfirmReset, onRe
               <tr key={b.id} className={cur?.id === b.id ? 'current' : ''}>
                 <td>{b.n}</td>
                 <td><b>{b.title}</b><br /><span className="dim">{b.team}</span></td>
-                <td className="dim">{b.topic}</td>
                 <td>{opponentOf(b).name}</td>
                 <td>{res ? (res.forfeit ? <span className="miss">Forfeit (weigh-in)</span> : <span className={res.won ? 'ok' : 'miss'}>{res.won ? 'W' : 'L'} · {res.method}{res.method === 'KO' ? ` ${t}` : ''}</span>) : cur?.id === b.id ? (r && r.stage !== 'brief' ? 'In progress' : 'Up next') : '—'}</td>
                 <td>{res && fin?.perfect ? <span className="nut" title="Exactly right">⬢</span> : ''}</td>
