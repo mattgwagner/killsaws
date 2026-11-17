@@ -14,15 +14,16 @@ import { Garage } from './Garage';
 import { Tournament, TournamentState } from './Tournament';
 import { Online } from './Online';
 import { Files } from './Files';
+import { DesignOffice, recordOfficeFight } from './DesignOffice';
 import { Settings, SettingsState, loadSettings, saveSettings } from './Settings';
 import { NetHost, NetGuest, BotSummary, summarize } from '../net/net';
 
-export type Screen = 'title' | 'select' | 'intro' | 'fight' | 'results' | 'garage' | 'tournament' | 'online' | 'files' | 'settings';
+export type Screen = 'title' | 'select' | 'intro' | 'fight' | 'results' | 'garage' | 'tournament' | 'online' | 'files' | 'settings' | 'office';
 
 export interface FightContext {
   designs: [BotDesign, BotDesign];
   seats: [SeatConfig, SeatConfig];
-  from: 'exhibition' | 'tournament' | 'online';
+  from: 'exhibition' | 'tournament' | 'online' | 'office';
 }
 
 export default function App() {
@@ -40,6 +41,7 @@ export default function App() {
   const [tourney, setTourney] = useState<TournamentState | null>(null);
   const [net, setNet] = useState<{ host?: NetHost; guest?: NetGuest } | null>(null);
   const [setup, setSetup] = useState<MatchSetup | null>(null);
+  const [officeNotes, setOfficeNotes] = useState<string[]>([]);
   const sessionRef = useRef<GameSession | null>(null);
   const padDown = useRef(false);
   const lastMoment = useRef<FrameInfo['moment']>('live');
@@ -209,6 +211,7 @@ export default function App() {
             <button onClick={goExhibition} autoFocus>Exhibition<small>Pick two robots. You vs a friend on one keyboard, or vs the AI.</small></button>
             <button onClick={() => { audioRef.current.unlock(); setScreen('tournament'); }}>Giant Nut Tournament<small>16-robot bracket. Win four fights, lift the nut.</small></button>
             <button onClick={() => setScreen('garage')}>Garage<small>Build your own 250 lb bot from real parts.</small></button>
+            <button onClick={() => { audioRef.current.unlock(); setScreen('office'); }}>Design Office<small>A season of design briefs. You do the engineering math; the arena checks it.</small></button>
             <button onClick={() => { audioRef.current.unlock(); setScreen('online'); }}>Fight Online<small>Send a room code to a friend on Discord.</small></button>
             <button onClick={() => setScreen('files')}>Robot Files<small>Teams, records, famous fights.</small></button>
             <button onClick={() => setScreen('settings')}>Settings &amp; Controls</button>
@@ -248,6 +251,11 @@ export default function App() {
           onRematch={() => beginFight(fight)}
           onMenu={toMenu}
           onNew={() => setScreen('select')}
+          notes={fight.from === 'office' ? officeNotes : undefined}
+          onOffice={() => {
+            recordOfficeFight({ won: result.winner === 0, method: result.method === 'Judges' ? (result.split ? 'Split decision' : 'Decision') : 'KO', time: result.time, reason: result.koReason });
+            setScreen('office');
+          }}
           onReveal={() => { if (result.method === 'Judges') sessionRef.current?.view.victoryPyro(); }}
           onTournament={() => {
             if (tourney) setTourney({ ...tourney, pendingResult: { winner: fight.designs[result.winner].id, method: result.method, time: result.time } });
@@ -281,6 +289,12 @@ export default function App() {
           }}
           onGuestFrame={(f) => { if (++frameTick.current % 3 === 0) setFrame(f); }}
           onGuestResult={(r, s) => { setTimeout(() => { setSummary(s); setResult(r); setScreen('results'); }, 2200); }}
+        />
+      )}
+      {screen === 'office' && (
+        <DesignOffice
+          onBack={() => setScreen('title')}
+          onFight={(red, blue, seats, notes) => { setOfficeNotes(notes); beginFight({ designs: [red, blue], seats, from: 'office' }); }}
         />
       )}
       {screen === 'files' && <Files onBack={() => setScreen('title')} />}

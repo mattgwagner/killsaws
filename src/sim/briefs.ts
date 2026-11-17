@@ -375,6 +375,9 @@ export function withinTolerance(id: QuantityId, claimed: number | null, actual: 
   return Math.abs(claimed - actual) <= bound + 1e-9;
 }
 
+/** Solve-for-the-unknown quantities: the true value is what the brief's target needs, not what the robot has. */
+const SOLVED: QuantityId[] = ['armorMm', 'driveRatio', 'weaponRatio', 'sideMm', 'topMm'];
+
 export interface EntryCheck { id: QuantityId; label: string; claimed: number | null; actual: number; ok: boolean; designedFor: string; got: string; cost?: string }
 export interface Inspection { entries: EntryCheck[]; specs: SpecResult[]; forfeit: boolean; forfeitReason?: string; perfect: boolean; realLb: number }
 
@@ -396,6 +399,8 @@ export function inspect(b: Brief, d: BotDesign, raw: Partial<Record<QuantityId, 
         e.cost = `Fails the weigh-in: the scale reads ${realLb.toFixed(1)} lb, over 250.0. Forfeit, no fight.`;
       } else if (id === 'runtimeMin' && actual < FIGHT_MINUTES) {
         e.cost = `The pack is rated for ${fmtMinutes(actual)} and the fight is ${fmtMinutes(FIGHT_MINUTES)}. It fights anyway, on true physics: the pack drains with every amp and its voltage sags as it empties.`;
+      } else if (SOLVED.includes(id)) {
+        e.cost = `The brief's target needs ${e.got}; you worked out ${e.designedFor}. The robot fights as you built it: ${realLb.toFixed(1)} lb.`;
       } else {
         e.cost = `You designed for ${e.designedFor}, you got ${e.got}. The fight runs on ${e.got}.`;
       }

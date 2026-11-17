@@ -182,3 +182,49 @@ table.cards .judge { animation: reveal 0.5s ease-out both; }
   .telemetry { width: 44vw; font-size: 10px; }
   .hint { display: none; }
 }
+
+/* --- design office --- */
+.office .dim, .office-aside .dim, .refcard .dim { color: var(--dim); }
+.office h4, .office-aside h4 { font-family: var(--head); letter-spacing: 0.08em; margin: 16px 0 6px; color: var(--yellow); font-size: 15px; text-transform: uppercase; }
+.office .ok, .office-notes .ok { color: var(--green); }
+.office .miss { color: var(--orange); }
+.office-aside { background: var(--panel); border: 1px solid var(--line); border-left: 4px solid var(--yellow); padding: 8px 12px; margin-bottom: 12px; }
+.office-aside summary { cursor: pointer; color: var(--yellow); font-family: var(--head); letter-spacing: 0.06em; margin-top: 4px; }
+.office-aside details[open] .refcard { max-height: 38vh; overflow: auto; }
+.office-aside + .garage { height: calc(100vh - 200px); }
+.brief-strip { display: flex; flex-wrap: wrap; gap: 4px 18px; align-items: baseline; font-size: 14px; }
+.brief-strip b { font-family: var(--head); letter-spacing: 0.04em; font-size: 17px; }
+.brief { max-width: 760px; background: var(--panel); border: 1px solid var(--line); border-top: 5px solid var(--yellow); padding: 18px 24px; }
+.brief h3 { font-family: var(--head); font-size: 40px; margin: 4px 0 8px; letter-spacing: 0.03em; }
+.brief-text { font-size: 18px; line-height: 1.4; }
+.specs { margin: 4px 0; padding-left: 20px; font-family: var(--mono); font-size: 14px; }
+.office ul.specs li.ok, .office ul.specs li.miss { list-style: none; margin-left: -18px; }
+.think { border-left: 3px solid var(--blue, #2a7bf0); padding: 4px 10px; background: rgba(42,123,240,0.08); }
+.refcard section { margin: 8px 0 12px; }
+.refcard h5 { font-family: var(--head); letter-spacing: 0.08em; margin: 0 0 4px; font-size: 15px; text-transform: uppercase; }
+.refcard .formula { margin: 0 0 6px; padding-left: 20px; font-family: var(--mono); font-size: 13px; line-height: 1.5; }
+table.cardtbl { border-collapse: collapse; font-family: var(--mono); font-size: 13px; width: 100%; }
+table.cardtbl td { padding: 2px 6px; border-bottom: 1px solid var(--line); }
+table.cardtbl td:last-child { text-align: right; white-space: nowrap; color: #fff; }
+.specsheet { display: grid; grid-template-columns: minmax(320px, 0.8fr) minmax(360px, 1.2fr); gap: 16px; }
+.specsheet .col { background: var(--panel); border: 1px solid var(--line); padding: 12px 16px; overflow: auto; max-height: calc(100vh - 110px); }
+.entry { display: grid; grid-template-columns: 1fr 160px 44px; align-items: center; gap: 10px; margin: 8px 0; font-size: 17px; }
+.entry input { font-family: var(--mono); font-size: 18px; text-align: right; }
+.entry .unit { color: var(--dim); font-family: var(--mono); }
+.inspect { max-width: 900px; }
+.inspect table.insp td { text-align: left; }
+.inspect tr.ok td:last-child { color: var(--green); }
+.inspect tr.miss td:last-child { color: var(--orange); }
+.forfeit { background: var(--red); color: #fff; font-family: var(--head); letter-spacing: 0.12em; font-size: 26px; padding: 8px 14px; margin-bottom: 10px; }
+.cost { border-left: 3px solid var(--orange); padding: 4px 10px; background: rgba(255,122,26,0.08); margin: 6px 0; }
+.nut-line { color: var(--yellow); font-family: var(--head); letter-spacing: 0.05em; font-size: 20px; }
+.tally { display: grid; grid-template-columns: repeat(4, minmax(120px, 200px)); gap: 8px; margin-bottom: 8px; }
+table.season td { text-align: left; vertical-align: top; }
+table.season tr.current { background: rgba(242,196,0,0.08); }
+table.season .nut { color: var(--yellow); font-size: 20px; }
+.office-notes { text-align: left; border-left: 3px solid var(--yellow); padding: 4px 12px; margin-top: 10px; }
+.office-notes p { margin: 4px 0; }
+@media (max-width: 900px) {
+  .specsheet, .tally { grid-template-columns: 1fr; }
+  .office-aside + .garage { height: auto; }
+}

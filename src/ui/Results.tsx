@@ -3,10 +3,13 @@ import { BotDesign } from '../sim/design';
 import { MatchResult } from '../sim/match';
 import { BotSummary } from '../net/net';
 
-export function Results({ result, designs, stats: bots, from, onRematch, onMenu, onNew, onTournament, onReveal }: {
+export function Results({ result, designs, stats: bots, from, onRematch, onMenu, onNew, onTournament, onReveal, notes, onOffice }: {
   result: MatchResult; designs: BotDesign[]; stats: BotSummary[]; from: string;
   onRematch: () => void; onMenu: () => void; onNew: () => void; onTournament: () => void;
   onReveal?: () => void;
+  /** Design Office: what the design was meant to be against what it was */
+  notes?: string[];
+  onOffice?: () => void;
 }) {
   const [shown, setShown] = useState(result.method === 'Judges' ? 0 : 99);
   useEffect(() => {
@@ -78,8 +81,16 @@ export function Results({ result, designs, stats: bots, from, onRematch, onMenu,
             </tbody>
           </table>
         )}
+        {reveal && notes && notes.length > 0 && (
+          <div className="office-notes">
+            <div className="flag">DESIGN OFFICE · TECH NOTES</div>
+            {notes.map((n) => <p key={n}>{n}</p>)}
+          </div>
+        )}
         <div className="row-btns">
-          {from === 'tournament' ? (
+          {from === 'office' ? (
+            <button className="btn primary" onClick={onOffice}>Back to the Design Office</button>
+          ) : from === 'tournament' ? (
             <button className="btn primary" onClick={onTournament}>Back to the bracket</button>
           ) : from === 'online' ? (
             <button className="btn primary" onClick={onMenu}>Done</button>

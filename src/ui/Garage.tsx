@@ -1,6 +1,6 @@
 // The Garage: build a 250 lb robot from real parts. Every number on the
 // right is derived from the parts on the left by the same model the fights use.
-import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
+import { Fragment, ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import {
@@ -10,6 +10,7 @@ import { IN, LB, MATERIALS, MOTORS, MaterialId, MotorId, TIRES, TireId, batteryM
 import { ROSTER } from '../sim/roster';
 import { buildBot, poseBot } from '../render/botmesh';
 import { infinityReplacer, infinityReviver, loadCustom, saveCustom, weaponLabel } from './data';
+import type { GarageMask } from '../sim/briefs';
 
 const clone = (d: BotDesign): BotDesign => structuredClone(d);
 
@@ -46,9 +47,25 @@ const FLIPPER_ACTUATORS: Record<'pneumatic' | 'hydraulic' | 'flywheel', { label:
   flywheel: { label: 'Flywheel + clutch (Blip)', shots: Infinity, cooldown: 1.5, systemMass: 30, cost: 'Never runs out: a motor re-spins a flywheel and a clutch dumps it into the plate. Heavier, draws from the battery, and a shot fired before the wheel is back up to speed is weaker. A hurt weapon motor re-spins slower.' },
 };
 
-export function Garage({ onBack, onTest }: { onBack: () => void; onTest: (d: BotDesign) => void }) {
+/** Design Office mode: start from the brief's chassis, hide the stats the player has to calculate, hand off to the spec sheet. */
+export interface GarageOffice {
+  title: string;
+  initial: BotDesign;
+  mask: GarageMask;
+  /** the brief and its reference card, live against the current design */
+  aside: (d: BotDesign) => ReactNode;
+  onChange: (d: BotDesign) => void;
+  onDone: (d: BotDesign) => void;
+}
+
+const HID = '??';
+
+export function Garage({ onBack, onTest, office }: { onBack: () => void; onTest?: (d: BotDesign) => void; office?: GarageOffice }) {
   const [saved, setSaved] = useState<BotDesign[]>(loadCustom);
-  const [d, setD] = useState<BotDesign>(() => saved[0] ? clone(saved[0]) : clone(BLANK));
+  const [d, setD] = useState<BotDesign>(() => office ? clone(office.initial) : saved[0] ? clone(saved[0]) : clone(BLANK));
+  const mask: GarageMask = office?.mask ?? {};
+  const onChange = office?.onChange;
+  useEffect(() => { onChange?.(d); }, [d, onChange]);
   const [toast, setToast] = useState('');
   const stats = useMemo(() => computeStats(d), [d]);
   const up = (f: (x: BotDesign) => void) => setD((prev) => { const n = clone(prev); f(n); return n; });
@@ -82,8 +99,11 @@ export function Garage({ onBack, onTest }: { onBack: () => void; onTest: (d: Bot
     <div className="screen">
       <div className="topbar">
         <button className="btn small" onClick={onBack}>← Back</button>
-        <h2>Garage</h2>
+        <h2>{office ? office.title : 'Garage'}</h2>
         <span className="spacer" />
+        {office ? (
+          <button className="btn small primary" onClick={() => office.onDone(d)}>Spec sheet →</button>
+        ) : (<>
         <select value="" onChange={(e) => {
           const v = e.target.value;
           if (!v) return;
@@ -100,8 +120,10 @@ export function Garage({ onBack, onTest }: { onBack: () => void; onTest: (d: Bot
         <button className="btn small" onClick={importCode}>Import code</button>
         <button className="btn small" onClick={exportCode}>Share code</button>
         <button className="btn small" onClick={save}>Save</button>
-        <button className="btn small primary" onClick={() => { save(); onTest(d); }}>Test fight</button>
+        <button className="btn small primary" onClick={() => { save(); onTest?.(d); }}>Test fight</button>
+        </>)}
       </div>
+      {office && office.aside(d)}
       <div className="garage">
         <div className="col">
           <h4>Identity</h4>
@@ -211,45 +233,53 @@ export function Garage({ onBack, onTest }: { onBack: () => void; onTest: (d: Bot
           <Preview d={d} />
           <div className="weigh">
             <div className="flag">TECH INSPECTION · WEIGH-IN</div>
-            <div className={`scale ${stats.legal ? 'ok' : 'over'}`}>{kgToLb(stats.mass).toFixed(1)} lb <span style={{ fontSize: 16 }}>/ 250.0</span></div>
-            <MassBar items={stats.massItems} />
+            {mask.weight
+              ? <><div className="scale">{HID} lb <span style={{ fontSize: 16 }}>/ 250.0</span></div><div className="flag">Scale hidden: work it out from the parts list</div></>
+              : <div className={`scale ${stats.legal ? 'ok' : 'over'}`}>{kgToLb(stats.mass).toFixed(1)} lb <span style={{ fontSize: 16 }}>/ 250.0</span></div>}
+            {!mask.weight && <MassBar items={stats.massItems} />}
             <div className="legend">
-              {stats.massItems.map((i) => (<Fragment key={i.label}><span>{i.label}</span><span>{kgToLb(i.kg).toFixed(1)} lb</span></Fragment>))}
+              {stats.massItems.map((i) => (<Fragment key={i.label}><span>{i.label}</span><span>{
+                mask.massRows?.some((p) => i.label.startsWith(p)) ? HID : mask.massKg ? `${i.kg.toFixed(2)} kg` : `${kgToLb(i.kg).toFixed(1)} lb`
+              }</span></Fragment>))}
             </div>
-            <div className="row-btns">
-              <button className="btn small" onClick={() => setD(fitToWeight(d))}>Fill armor to 250 lb</button>
-            </div>
+            {!mask.weight && (
+              <div className="row-btns">
+                <button className="btn small" onClick={() => setD(fitToWeight(d))}>Fill armor to 250 lb</button>
+              </div>
+            )}
           </div>
         </div>
 
         <div className="col">
           <h4>Performance</h4>
           <div className="stats">
-            <Stat v={`${stats.topSpeedMph.toFixed(1)} mph`} k="top speed" />
+            <Stat v={mask.topSpeed ? `${HID} mph` : `${stats.topSpeedMph.toFixed(1)} mph`} k="top speed" />
             <Stat v={`${(stats.pushForceN / 4.448).toFixed(0)} lbf`} k="pushing force" />
             <Stat v={`${stats.accel0to10ft.toFixed(2)} s`} k="0 to 10 ft" />
             <Stat v={stats.invertible ? 'YES' : 'NO'} k="drives inverted" />
             <Stat v={`${stats.batteryWh.toFixed(0)} Wh`} k="battery" />
-            <Stat v={`${runtimeMinutes(d).toFixed(1)} min`} k="est. fight time" />
+            <Stat v={mask.runtime ? `${HID} min` : `${runtimeMinutes(d).toFixed(1)} min`} k="est. fight time" />
           </div>
           {stats.weapon && (
             <div className="stats">
-              <Stat v={Math.round(stats.weapon.maxRpm).toLocaleString()} k="weapon rpm" />
-              <Stat v={`${stats.weapon.tipSpeedMph.toFixed(0)} mph`} k="tip speed" />
-              <Stat v={`${stats.weapon.energyKJ.toFixed(1)} kJ`} k="stored energy" />
+              <Stat v={mask.weaponRpm ? HID : Math.round(stats.weapon.maxRpm).toLocaleString()} k="weapon rpm" />
+              <Stat v={mask.tipSpeed ? `${HID} mph` : `${stats.weapon.tipSpeedMph.toFixed(0)} mph`} k="tip speed" />
+              <Stat v={mask.energy ? `${HID} kJ` : `${stats.weapon.energyKJ.toFixed(1)} kJ`} k="stored energy" />
               <Stat v={`${stats.weapon.spinUpS.toFixed(1)} s`} k="spin-up (90%)" />
               <Stat v={`${Math.round(stats.weapon.peakAmps)} A`} k="peak weapon draw" />
-              <Stat v={`${(stats.weapon.inertia).toFixed(2)}`} k="inertia kg·m²" />
+              <Stat v={mask.inertia ? HID : `${(stats.weapon.inertia).toFixed(2)}`} k="inertia kg·m²" />
             </div>
           )}
-          {stats.weapon && stats.weapon.tipSpeedMph > 250 && <p style={{ color: 'var(--orange)' }}>⚠ Tip speed is over the 250 mph limit BattleBots set in 2018. Gear it down.</p>}
+          {stats.weapon && !mask.tipSpeed && stats.weapon.tipSpeedMph > 250 && <p style={{ color: 'var(--orange)' }}>⚠ Tip speed is over the 250 mph limit BattleBots set in 2018. Gear it down.</p>}
           {ampsOver && <p style={{ color: 'var(--orange)' }}>⚠ Weapon draws more than the pack's {batteryMaxCurrent(d.battery).toFixed(0)} A rating. Expect voltage sag and a hot pack. Add a parallel pack or higher C.</p>}
-          {!stats.legal && <p style={{ color: 'var(--red)' }}>✖ Over 250.0 lb. It won't pass the weigh-in.</p>}
+          {!stats.legal && !mask.weight && <p style={{ color: 'var(--red)' }}>✖ Over 250.0 lb. It won't pass the weigh-in.</p>}
           {d.weapon.type === 'none' && <p style={{ color: 'var(--orange)' }}>⚠ BattleBots requires at least one independently powered weapon.</p>}
           {!stats.invertible && !d.chassis.selfRighter && d.weapon.type !== 'flipper' && d.weapon.type !== 'hammer' && <p style={{ color: 'var(--orange)' }}>⚠ Not invertible and no self-righter: one flip and you're counted out.</p>}
-          <h4>Drive: speed from a standstill</h4>
-          <Chart pts={accelCurve(d).map((p) => [p.t, p.mph])} xLabel="s" yLabel="mph" color="#3ee06b" />
-          {sp && (
+          {!mask.topSpeed && (<>
+            <h4>Drive: speed from a standstill</h4>
+            <Chart pts={accelCurve(d).map((p) => [p.t, p.mph])} xLabel="s" yLabel="mph" color="#3ee06b" />
+          </>)}
+          {sp && !mask.weaponRpm && (
             <>
               <h4>Weapon spin-up</h4>
               <Chart pts={spinUpCurve(sp, stats.nominalV, stats.batteryR).map((p) => [p.t, p.rpm])} xLabel="s" yLabel="rpm" color="#f2c400" />
